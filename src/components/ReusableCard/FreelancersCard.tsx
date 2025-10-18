@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Star } from "lucide-react";
+import Link from "next/link";
 
 // ✅ Type for Freelancer
 type Freelancer = {
@@ -19,6 +20,7 @@ type FreelancerCardProps = Freelancer;
 
 // ✅ Reusable FreelancerCard Component
 export const FreelancerCard: React.FC<FreelancerCardProps> = ({
+  id, // ✅ fixed
   name,
   image,
   bio,
@@ -64,21 +66,23 @@ export const FreelancerCard: React.FC<FreelancerCardProps> = ({
           </div>
 
           {/* View Profile Button */}
-          <button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-8 rounded-full transition-colors flex items-center justify-center gap-2">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9 1C4.58 1 0.73 4.05 0.09 8C0.73 11.95 4.58 15 9 15C13.42 15 17.27 11.95 17.91 8C17.27 4.05 13.42 1 9 1ZM9 13C5.67 13 2.95 10.87 2.54 8C2.95 5.13 5.67 3 9 3C12.33 3 15.05 5.13 15.46 8C15.05 10.87 12.33 13 9 13ZM9 5C7.34 5 6 6.34 6 8C6 9.66 7.34 11 9 11C10.66 11 12 9.66 12 8C12 6.34 10.66 5 9 5ZM9 9C8.45 9 8 8.55 8 8C8 7.45 8.45 7 9 7C9.55 7 10 7.45 10 8C10 8.55 9.55 9 9 9Z"
-                fill="currentColor"
-              />
-            </svg>
-            View Profile
-          </button>
+          <Link href={`/explore-freelancers/${id}`}>
+            <button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-8 rounded-full transition-colors flex items-center justify-center gap-2">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 1C4.58 1 0.73 4.05 0.09 8C0.73 11.95 4.58 15 9 15C13.42 15 17.27 11.95 17.91 8C17.27 4.05 13.42 1 9 1ZM9 13C5.67 13 2.95 10.87 2.54 8C2.95 5.13 5.67 3 9 3C12.33 3 15.05 5.13 15.46 8C15.05 10.87 12.33 13 9 13ZM9 5C7.34 5 6 6.34 6 8C6 9.66 7.34 11 9 11C10.66 11 12 9.66 12 8C12 6.34 10.66 5 9 5ZM9 9C8.45 9 8 8.55 8 8C8 7.45 8.45 7 9 7C9.55 7 10 7.45 10 8C10 8.55 9.55 9 9 9Z"
+                  fill="currentColor"
+                />
+              </svg>
+              View Profile
+            </button>
+          </Link>
         </div>
       </div>
     </div>
