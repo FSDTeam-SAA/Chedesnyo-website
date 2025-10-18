@@ -27,13 +27,13 @@ const blogPosts: BlogPost[] = [
 export default function BlogPage() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 6;
 
   const totalPages = Math.ceil(blogPosts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedPosts = blogPosts.slice(startIndex, startIndex + itemsPerPage);
 
-  // Generate page numbers with ellipsis
+  // Pagination numbers with ellipsis
   const getPageNumbers = () => {
     const pages: number[] = [];
     const maxPagesToShow = 5;
@@ -44,9 +44,7 @@ export default function BlogPage() {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
 
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
+    for (let i = startPage; i <= endPage; i++) pages.push(i);
 
     return pages;
   };
@@ -81,6 +79,7 @@ export default function BlogPage() {
               {paginatedPosts.map((post) => (
                 <BlogCard
                   key={post.id}
+                  id={post.id} // fixed here
                   image={post.image}
                   date={post.date}
                   title={post.title}
@@ -92,7 +91,6 @@ export default function BlogPage() {
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="w-full flex items-center justify-between mt-12 pt-6">
-                {/* Previous Button */}
                 <button
                   onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
@@ -101,7 +99,6 @@ export default function BlogPage() {
                   <ChevronLeft size={20} className="text-gray-600" />
                 </button>
 
-                {/* Page Numbers */}
                 <div className="flex items-center justify-center gap-2 flex-wrap">
                   {pageNumbers[0] > 1 && (
                     <>
@@ -144,7 +141,6 @@ export default function BlogPage() {
                   )}
                 </div>
 
-                {/* Next Button */}
                 <button
                   onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
