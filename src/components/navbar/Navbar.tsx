@@ -12,7 +12,7 @@ export default function Navbar() {
     { label: "Home", href: "/" },
     { label: "Assignments", href: "/assignments" },
     { label: "Explore Freelancers", href: "/explore-freelancers" },
-    { label: "Find Businesses", href: "/businesses" },
+    { label: "Find Businesses", href: "/find-business" },
     { label: "Courses", href: "/courses" },
     { label: "Leaderboard", href: "/leaderboard" },
     { label: "Blogs", href: "/blogs" },

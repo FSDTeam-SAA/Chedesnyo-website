@@ -2,6 +2,7 @@ import React from "react";
 import { MessageCircle, Phone, Star, MapPin } from "lucide-react";
 import Image from "next/image";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
+import CustomerReviews from "@/components/share/CustomerReviews";
 
 // ✅ Define TypeScript type for Freelancer Details
 type FreelancerDetails = {
@@ -151,6 +152,9 @@ function ExploreFreelancersDetails() {
               </div>
             </div>
           </div>
+        </div>
+        <div>
+            <CustomerReviews />
         </div>
       </div>
     </div>
