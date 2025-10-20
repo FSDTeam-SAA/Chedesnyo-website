@@ -19,22 +19,22 @@ function CourseAccount() {
     <div>
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
-        title="Assignments"
+        title="My Courses"
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Assignments", href: "/assignment" },
+          { label: "My Courses", href: "/course" },
         ]}
       />
       <div className="w-full px-6 container mx-auto py-[96px]">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Assignments</h1>
+          <h1 className="text-3xl font-bold text-gray-900">My Courses</h1>
         </div>
 
         <div className="mb-6 flex justify-end">
           <Link href="/post_an_assignment">
             <button className="flex items-center gap-2 bg-[#008000] text-white px-4 py-2 rounded-lg hover:bg-[#095509] transition-colors font-medium">
               <Plus size={20} />
-              Post An Assignment
+              Upload New Course
             </button>
           </Link>
         </div>
