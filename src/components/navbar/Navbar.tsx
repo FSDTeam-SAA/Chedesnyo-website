@@ -5,10 +5,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+
+  const session = useSession();
+  console.log(session);
 
   const navLinks = [
     { label: "Home", href: "/" },

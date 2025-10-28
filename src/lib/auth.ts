@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextAuthOptions } from "next-auth";
-import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { JWT } from "next-auth/jwt";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
-    maxAge: 7 * 24 * 60 * 60,
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
   cookies: {
     sessionToken: {
-      name: "next-auth.session-token-website", // 🔹 আলাদা কুকি নাম
+      name: "next-auth.session-token-website", // 🔹 unique cookie name
       options: {
         httpOnly: true,
         sameSite: "lax",
@@ -46,25 +46,24 @@ export const authOptions: NextAuthOptions = {
           );
 
           const response = await res.json();
-          console.log("🔎 API Response:", response);
-
           if (!res.ok || !response?.success) {
             throw new Error(response?.message || "Login failed");
           }
 
-          const { id, name, role, email, phonNumber } = response.data;
-          const accessToken = response.accessToken;
+          const user = response.data.user;
+          const accessToken = response.data.accessToken;
 
           return {
-            id,
-            name,
-            email,
-            role,
-            phoneNumber: phonNumber,
+            id: user._id,
+            name: user.firstName,
+            email: user.email,
+            role: user.role,
+            profileImage: user.profileImage,
+            location: user.location,
+            verified: user.verified,
             accessToken,
           };
         } catch (error) {
-          console.error("Authentication error:", error);
           const errorMessage =
             error instanceof Error
               ? error.message
@@ -82,20 +81,24 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.role = user.role;
-        token.phoneNumber = user.phoneNumber;
         token.accessToken = user.accessToken;
+        token.profileImage = user.profileImage;
+        token.location = user.location;
+        token.verified = user.verified;
       }
       return token;
     },
 
     async session({ session, token }: { session: any; token: JWT }) {
       session.user = {
-        id: token.id,
-        name: token.name,
-        email: token.email,
-        role: token.role,
-        phoneNumber: token.phoneNumber,
-        accessToken: token.accessToken,
+        id: token.id as string,
+        name: token.name as string | null,
+        email: token.email as string | null,
+        role: token.role as string,
+        accessToken: token.accessToken as string,
+        profileImage: (token.profileImage as string) || null,
+        location: (token.location as string) || null,
+        verified: token.verified as boolean | undefined,
       };
       return session;
     },
