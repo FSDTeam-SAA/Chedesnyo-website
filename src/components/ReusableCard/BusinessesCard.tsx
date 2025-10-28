@@ -25,7 +25,7 @@ export const BusinessesCard: React.FC<BusinessesCard> = ({
   bio,
 }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row h-full transition-transform hover:scale-[1.02] duration-300">
+    <div className="bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000040] overflow-hidden flex flex-col sm:flex-row h-full transition-transform hover:scale-[1.02] duration-300">
       {/* Image Section */}
       <div className="w-full sm:w-64 h-56 sm:h-auto flex-shrink-0">
         <Image
