@@ -5,33 +5,46 @@ import { useRouter } from "next/navigation";
 import BlogCard from "@/components/ReusableCard/BlogCard";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 type BlogPost = {
-  id: number;
-  image: string;
-  date: string;
+  _id: string;
   title: string;
+  description: string;
+  thumbnail: string;
+  createdAt: string;
 };
 
-const blogPosts: BlogPost[] = [
-  { id: 1, image: "/images/blogImage.jpg", date: "January 04, 2024", title: "Lorem ipsum dolor sit consectetur elit" },
-  { id: 2, image: "/images/blogImage.jpg", date: "January 03, 2024", title: "Ut enim ad minim veniam quis nostrud" },
-  { id: 3, image: "/images/blogImage.jpg", date: "January 02, 2024", title: "Duis aute irure dolor in reprehenderit" },
-  { id: 4, image: "/images/blogImage.jpg", date: "January 01, 2024", title: "Sed ut perspiciatis unde omnis iste" },
-  { id: 5, image: "/images/blogImage.jpg", date: "December 31, 2023", title: "Nemo enim ipsam voluptatem quia voluptas" },
-  { id: 6, image: "/images/blogImage.jpg", date: "December 30, 2023", title: "Neque porro quisquam est qui dolorem ipsum" },
-  { id: 7, image: "/images/blogImage.jpg", date: "December 29, 2023", title: "Another blog post title here" },
-  { id: 8, image: "/images/blogImage.jpg", date: "December 28, 2023", title: "More content for the blog post" },
-];
+type BlogApiResponse = {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  data: BlogPost[];
+};
 
 export default function BlogPage() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const totalPages = Math.ceil(blogPosts.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedPosts = blogPosts.slice(startIndex, startIndex + itemsPerPage);
+  // Fetch API data
+  const { data: blogData, error, isLoading } = useQuery<BlogApiResponse>({
+    queryKey: ["blogData", currentPage],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/blog?page=${currentPage}&limit=${itemsPerPage}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch blog data");
+      return res.json();
+    },
+  });
+
+  const totalPages = Math.ceil((blogData?.meta?.total || 0) / itemsPerPage);
 
   // Pagination numbers with ellipsis
   const getPageNumbers = () => {
@@ -56,9 +69,23 @@ export default function BlogPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleViewDetails = (postId: number) => {
-    router.push(`/blog/${postId}`);
+  const handleViewDetails = (postId: string) => {
+    router.push(`/blogs/${postId}`);
   };
+
+  if (isLoading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    );
+
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        Failed to load blogs
+      </div>
+    );
+
+  const paginatedPosts = blogData?.data || [];
 
   return (
     <div className="min-h-screen">
@@ -78,12 +105,16 @@ export default function BlogPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {paginatedPosts.map((post) => (
                 <BlogCard
-                  key={post.id}
-                  id={post.id} // fixed here
-                  image={post.image}
-                  date={post.date}
+                  key={post._id}
+                  id={post._id}
+                  image={post.thumbnail}
+                  date={new Date(post.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "2-digit",
+                  })}
                   title={post.title}
-                  onViewDetails={() => handleViewDetails(post.id)}
+                  onViewDetails={() => handleViewDetails(post._id)}
                 />
               ))}
             </div>
