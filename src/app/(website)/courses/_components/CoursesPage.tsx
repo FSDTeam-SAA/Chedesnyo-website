@@ -5,151 +5,69 @@ import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import CoursesCard from "@/components/ReusableCard/CoursesCard";
+import { useQuery } from "@tanstack/react-query";
 
-// ✅ Define TypeScript type
-type courses = {
-  image: string;
-  category: string;
+// ✅ TypeScript type for a single course
+type Course = {
+  _id: string;
   title: string;
-  type: string;
-  paymentType: string;
-  paymentAmount: string;
-  applications: number;
+  level: string;
+  description: string;
+  thumbnail: string;
+  duration: string;
+  targetAudience: string;
+  language: string;
+  modules: number;
+  price: number;
+  discount: number;
+  status: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  extraFile: string;
+  introductionVideo: string;
+  courseVideo: string;
 };
 
-// ✅ Sample assignments data
-const courses: courses[] = [
-  {
-    image: "/images/courseImage.jpg",
-    category: "Information Technology",
-    title: "Web application development",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 3,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Information Technology",
-    title: "Backend API Integration",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 5,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Information Technology",
-    title: "Frontend UI Design",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 4,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Finance",
-    title: "Profitability Ratios",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 6,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Finance",
-    title: "Financial Analysis",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 6,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Finance",
-    title: "Budget Planning",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 6,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Marketing",
-    title: "Social Media Campaign",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 2,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Marketing",
-    title: "Content Strategy",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 4,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Design",
-    title: "Graphic Design Project",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 3,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Design",
-    title: "UX Research",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 5,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Design",
-    title: "UX Research",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 5,
-  },
-  {
-    image: "/images/courseImage.jpg",
-    category: "Design",
-    title: "UX Research",
-    type: "Test Assignment",
-    paymentType: "Hourly",
-    paymentAmount: "$17.00",
-    applications: 5,
-  },
-];
+// ✅ TypeScript type for API response
+type CoursesApiResponse = {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  data: Course[];
+};
 
 function CoursesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // ✅ Filter assignments by title or category
-  const filteredAssignments = courses.filter(
-    (assignment) =>
-      assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      assignment.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // ✅ Fetch courses from API with search and pagination
+  const { data: courseData, error } = useQuery<CoursesApiResponse>({
+    queryKey: ["coursesData", searchTerm, currentPage],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course?search=${encodeURIComponent(
+          searchTerm
+        )}&page=${currentPage}&limit=${itemsPerPage}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      if (!res.ok) throw new Error("Failed to fetch courses");
+      return res.json();
+    },
+  });
 
-  // ✅ Calculate pagination
-  const totalPages = Math.ceil(filteredAssignments.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedAssignments = filteredAssignments.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const courses = courseData?.data || [];
+  const totalPages = Math.ceil((courseData?.meta?.total || 0) / itemsPerPage);
 
-  // ✅ Generate page numbers for pagination display
   const getPageNumbers = () => {
     const pages = [];
     const maxPagesToShow = 5;
@@ -160,10 +78,7 @@ function CoursesPage() {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
 
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
+    for (let i = startPage; i <= endPage; i++) pages.push(i);
     return pages;
   };
 
@@ -174,9 +89,17 @@ function CoursesPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+ 
+
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        Failed to load courses
+      </div>
+    );
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumb Header */}
       <BreadcrumbHeader
         title="Courses"
         breadcrumbs={[
@@ -192,10 +115,7 @@ function CoursesPage() {
             type="text"
             placeholder="Search here..."
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 h-[50px] shadow-[0px_4px_32px_0px_#00000040] bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400 text-gray-900"
           />
           <button className="absolute right-1 top-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white p-2.5 rounded-full transition-colors flex items-center justify-center">
@@ -204,20 +124,28 @@ function CoursesPage() {
         </div>
       </div>
 
-      {/* Assignment Cards Grid */}
+      {/* Courses Grid */}
       <div className="container mx-auto px-6 pb-16">
-        {paginatedAssignments.length > 0 ? (
+        {courses.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {paginatedAssignments.map((assignment, index) => (
-                <CoursesCard key={index} {...assignment} />
+              {courses.map((course) => (
+                <CoursesCard
+                  key={course._id}
+                  image={course.thumbnail}
+                  category={course.level}
+                  title={course.title}
+                  type={course.description}
+                  paymentType="Fixed Price"
+                  paymentAmount={`$${course.price}`}
+                  applications={course.modules}
+                />
               ))}
             </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="w-full flex items-center justify-between mt-12 pt-6">
-                {/* Previous Button */}
                 <button
                   onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
@@ -226,7 +154,6 @@ function CoursesPage() {
                   <ChevronLeft size={20} className="text-gray-600" />
                 </button>
 
-                {/* Page Numbers */}
                 <div className="flex items-center justify-center gap-2 flex-wrap">
                   {pageNumbers[0] > 1 && (
                     <>
@@ -271,7 +198,6 @@ function CoursesPage() {
                   )}
                 </div>
 
-                {/* Next Button */}
                 <button
                   onClick={() =>
                     handlePageChange(Math.min(totalPages, currentPage + 1))
@@ -286,7 +212,7 @@ function CoursesPage() {
           </>
         ) : (
           <p className="text-center text-gray-500 py-10">
-            No assignments found for {searchTerm}
+            No courses found for{searchTerm}
           </p>
         )}
       </div>
