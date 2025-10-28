@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,12 +19,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 // ✅ Zod validation schema
@@ -35,7 +33,9 @@ const formSchema = z.object({
 type SignInFormData = z.infer<typeof formSchema>;
 
 export default function SignInForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(formSchema),
@@ -46,13 +46,42 @@ export default function SignInForm() {
     },
   });
 
-  const onSubmit = (data: SignInFormData) => {
-    console.log(data);
+  // ✅ Submit function with toast fix
+  const onSubmit = async (data: SignInFormData) => {
+    try {
+      setIsLoading(true);
+
+      const res = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (!res) throw new Error("Login failed!");
+
+      if (res.error) {
+        throw new Error(res.error);
+      }
+
+      // Show toast before redirect
+      toast.success("Login Successful!");
+
+      // Short delay so toast is visible
+      setTimeout(() => {
+        router.push("/"); // redirect after toast
+      }, 500);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : String(err) || "Login failed!";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* ✅ Left Side - Image */}
+      {/* Left Side - Image */}
       <div className="hidden lg:block lg:w-1/2 h-screen relative">
         <Image
           src="/images/cheAuthImage.png"
@@ -64,19 +93,18 @@ export default function SignInForm() {
         />
       </div>
 
-      {/* ✅ Right Side - Form */}
-      <div className="flex w-full lg:w-1/2 items-center justify-center p-6 bg-gray-50">
-        <Card className="w-full max-w-lg p-7 shadow-2xl rounded-2xl">
+      {/* Right Side - Form */}
+      <div className="flex w-full lg:w-1/2 items-center justify-center bg-gray-50">
+        <Card className="w-full max-w-lg p-5 rounded-2xl shadow-[0px_0px_32px_0px_#00000014]">
           <CardHeader>
-            <div className="flex justify-center mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">✓</span>
-                </div>
-                <span className="text-sm font-semibold text-gray-800">
-                  DEAL CLOSED
-                </span>
-              </div>
+            <div className="flex justify-center mb-2">
+              <Image
+                src="/images/chedsnyoLogo.png"
+                alt="Chedesnyo Logo"
+                width={200}
+                height={200}
+                className="w-[113px] h-[108px]"
+              />
             </div>
             <CardTitle className="text-center text-2xl font-bold text-gray-900">
               Welcome Back!
@@ -102,9 +130,7 @@ export default function SignInForm() {
                         type="email"
                         className="placeholder-gray-400"
                       />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                     </Field>
                   )}
                 />
@@ -128,16 +154,10 @@ export default function SignInForm() {
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                         >
-                          {showPassword ? (
-                            <EyeOff size={18} />
-                          ) : (
-                            <Eye size={18} />
-                          )}
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                       </div>
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                     </Field>
                   )}
                 />
@@ -181,8 +201,9 @@ export default function SignInForm() {
               type="submit"
               form="signin-form"
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
+              disabled={isLoading}
             >
-              Sign In
+              {isLoading ? "Signing In..." : "Sign In"}
             </Button>
 
             <p className="text-sm text-gray-600 text-center">
