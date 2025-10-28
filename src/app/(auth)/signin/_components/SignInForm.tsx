@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 // ✅ Zod validation schema
 const formSchema = z.object({
@@ -183,12 +184,12 @@ export default function SignInForm() {
                           Remember Me
                         </label>
                       </div>
-                      <a
-                        href="#"
+                      <Link
+                        href="/forget-password"
                         className="text-sm text-red-600 hover:text-red-700 font-medium"
                       >
                         Forget Password?
-                      </a>
+                      </Link>
                     </div>
                   )}
                 />
@@ -208,12 +209,12 @@ export default function SignInForm() {
 
             <p className="text-sm text-gray-600 text-center">
               Don&apos;t have an account?{" "}
-              <a
-                href="#"
+              <Link
+                href="/signup"
                 className="text-green-600 hover:text-green-700 font-semibold"
               >
                 Sign Up
-              </a>
+              </Link>
             </p>
           </CardFooter>
         </Card>

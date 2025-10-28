@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import ResetPassword from './_components/ResetPassword'
 
 function page() {
   return (
-    <div>
-        <ResetPassword />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPassword />
+    </Suspense>
   )
 }
 

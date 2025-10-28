@@ -5,6 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,76 +28,88 @@ const formSchema = z.object({
 type VerifyOTPFormData = z.infer<typeof formSchema>;
 
 export default function VerifyOTPForm() {
+  const router = useRouter();
   const [otpValues, setOtpValues] = useState<string[]>(["", "", "", "", "", ""]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") || "";
 
   const form = useForm<VerifyOTPFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      otp: "",
+    defaultValues: { otp: "" },
+  });
+
+  // ✅ Mutation for OTP verification
+  const otpMutation = useMutation({
+    mutationFn: async (bodyData: { email: string; otp: string }) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/verify-email`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bodyData),
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData?.message || "OTP verification failed");
+      }
+
+      return res.json();
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "OTP verified successfully");
+      localStorage.setItem("refreshToken", data?.resetToken);
+      router.push(`/reset-password?email=${encodeURIComponent(email)}`);
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Invalid OTP, try again");
     },
   });
 
+  // ✅ Submit function
+  const onSubmit = (data: VerifyOTPFormData) => {
+    if (!email) {
+      toast.error("Email is missing, cannot verify OTP.");
+      return;
+    }
+    otpMutation.mutate({ email, otp: data.otp });
+  };
+
   // Handle OTP input change
   const handleOtpChange = (index: number, value: string) => {
-    // Only allow digits
     if (!/^\d*$/.test(value)) return;
 
     const newOtpValues = [...otpValues];
     newOtpValues[index] = value;
     setOtpValues(newOtpValues);
-
-    // Update form value
     form.setValue("otp", newOtpValues.join(""));
 
-    // Auto focus next input
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
+    if (value && index < 5) inputRefs.current[index + 1]?.focus();
   };
 
-  // Handle OTP input keydown (for backspace)
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Backspace" && !otpValues[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  // Handle paste event
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").slice(0, 6);
-    
     if (!/^\d+$/.test(pastedData)) return;
 
     const newOtpValues = pastedData.split("");
-    while (newOtpValues.length < 6) {
-      newOtpValues.push("");
-    }
-    
+    while (newOtpValues.length < 6) newOtpValues.push("");
     setOtpValues(newOtpValues);
     form.setValue("otp", newOtpValues.join(""));
-    
-    if (newOtpValues.length === 6) {
-      inputRefs.current[5]?.focus();
-    }
-  };
-
-  const onSubmit = async (data: VerifyOTPFormData) => {
-    setIsSubmitting(true);
-    console.log("OTP Submitted:", data.otp);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      alert("OTP Verified Successfully!");
-    }, 2000);
+    inputRefs.current[5]?.focus();
   };
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* ✅ Left Side - Image */}
+      {/* Left Side - Image */}
       <div className="hidden lg:block lg:w-1/2 h-screen relative">
         <Image
           src="/images/cheAuthImage.png"
@@ -106,41 +121,34 @@ export default function VerifyOTPForm() {
         />
       </div>
 
-      {/* ✅ Right Side - Form */}
+      {/* Right Side - Form */}
       <div className="flex w-full lg:w-1/2 items-center justify-center p-6 bg-gray-50">
         <Card className="w-full max-w-lg p-7 shadow-2xl rounded-2xl">
           <CardHeader>
-            {/* Logo */}
-            <div className="flex justify-center mb-6">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">✓</span>
-                </div>
-                <span className="text-sm font-semibold text-gray-800">
-                  DEAL CLOSED
-                </span>
-              </div>
+            <div className="flex justify-center mb-2">
+              <Image
+                src="/images/chedsnyoLogo.png"
+                alt="Chedesnyo Logo"
+                width={200}
+                height={200}
+                className="w-[113px] h-[108px]"
+              />
             </div>
-
-            {/* Title & Description */}
             <CardTitle className="text-center text-2xl font-bold text-gray-900">
               Enter OTP
             </CardTitle>
             <CardDescription className="text-center text-gray-600 text-sm leading-6">
-              An OTP has been sent to your email address please verify it below
+              An OTP has been sent to your email address. Please verify it below.
             </CardDescription>
           </CardHeader>
 
           <CardContent>
             <form id="verify-otp-form" onSubmit={form.handleSubmit(onSubmit)}>
-              {/* OTP Input Fields */}
               <div className="flex justify-center gap-3 mb-6">
                 {otpValues.map((value, index) => (
                   <input
                     key={index}
-                    ref={(el) => {
-                      inputRefs.current[index] = el;
-                    }}
+                    ref={(el) => { inputRefs.current[index] = el; }}
                     type="text"
                     maxLength={1}
                     value={value}
@@ -152,8 +160,6 @@ export default function VerifyOTPForm() {
                   />
                 ))}
               </div>
-
-              {/* Error Message */}
               {form.formState.errors.otp && (
                 <div className="text-center text-red-600 text-sm mb-4">
                   {form.formState.errors.otp.message}
@@ -163,17 +169,15 @@ export default function VerifyOTPForm() {
           </CardContent>
 
           <CardFooter className="flex flex-col gap-4 mt-3">
-            {/* Verify Button */}
             <Button
               type="submit"
               form="verify-otp-form"
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-200"
-              disabled={isSubmitting || otpValues.join("").length !== 6}
+              disabled={otpMutation.isPending || otpValues.join("").length !== 6}
             >
-              {isSubmitting ? "Verifying..." : "Verify"}
+              {otpMutation.isPending ? "Verifying..." : "Verify"}
             </Button>
 
-            {/* Resend OTP Link */}
             <div className="text-center text-sm">
               <span className="text-gray-600">Didn&apos;t Receive OTP? </span>
               <button

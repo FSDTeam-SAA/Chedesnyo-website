@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 // ✅ Industry types
 interface Industry {
@@ -42,6 +43,7 @@ type FormData = {
 
 export default function SignupSalesForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter()
 
   const form = useForm<FormData>({
     defaultValues: {
@@ -84,6 +86,7 @@ export default function SignupSalesForm() {
     onSuccess: (data) => {
       toast.success(data.message || "Registration successful! Please check your email.")
       form.reset()
+      router.push("/signin")
     },
     onError: (error) => {
       toast.error(`❌ Registration failed: ${error instanceof Error ? error.message : "Unknown error"}`)
