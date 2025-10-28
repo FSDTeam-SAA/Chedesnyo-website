@@ -26,7 +26,10 @@ export default function AssignmentCard({
   onTakeDeal = () => alert("Deal taken!"),
 }: DealCardProps) {
   return (
-    <div className="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-[#8E959F]">
+    <div
+      className="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden border border-[#8E959F]
+      transform transition duration-300 ease-in-out hover:scale-[1.03] hover:-translate-y-1 hover:shadow-xl"
+    >
       {/* Image Container */}
       <div className="relative w-full h-72 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
         <Image
@@ -34,7 +37,7 @@ export default function AssignmentCard({
           width={500}
           height={500}
           alt={title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"
         />
         {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
@@ -68,7 +71,7 @@ export default function AssignmentCard({
           {/* Payment Type and Amount */}
           <div className="flex items-center justify-between">
             <span className="text-gray-600">
-              <span className="font-bold">Payment Type:{" "}</span>
+              <span className="font-bold">Payment Type: </span>
               <span className="text-gray-900">
                 {paymentType} ({paymentAmount})
               </span>
@@ -91,7 +94,7 @@ export default function AssignmentCard({
           onClick={onTakeDeal}
           className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
         >
-          <Book  size={20} />
+          <Book size={20} />
           Take This Deal
         </button>
       </div>

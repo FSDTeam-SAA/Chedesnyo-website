@@ -1,37 +1,33 @@
+"use client";
+
 import React from "react";
-import { ChevronRight, Briefcase } from "lucide-react";
-import Image from "next/image";
+import { ChevronRight } from "lucide-react";
+import AssignmentCard from "@/components/ReusableCard/AssignmentCard";
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+
+type Assignment = {
+  _id: string;
+  banner: string;
+  title: string;
+  budget: string;
+  priceType: string;
+  paymentMethod: string;
+  status: string;
+};
 
 export default function LatestAssignments() {
-  const assignments = [
-    {
-      image: "/images/assignmentImage.png",
-      category: "Information Technology",
-      title: "Web Application Development",
-      type: "Test Assignment",
-      paymentType: "Hourly",
-      paymentAmount: "$17.00",
-      applications: 3,
+  // Fetch assignments from your API
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["assignments"],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`);
+      if (!res.ok) throw new Error("Failed to fetch assignments");
+      return res.json();
     },
-    {
-      image: "/images/assignmentImage.png",
-      category: "Information Technology",
-      title: "Backend API Integration",
-      type: "Test Assignment",
-      paymentType: "Hourly",
-      paymentAmount: "$17.00",
-      applications: 5,
-    },
-    {
-      image: "/images/assignmentImage.png",
-      category: "Information Technology",
-      title: "Frontend UI Design",
-      type: "Test Assignment",
-      paymentType: "Hourly",
-      paymentAmount: "$17.00",
-      applications: 4,
-    },
-  ];
+  });
+
+  const assignments: Assignment[] = data?.data || [];
 
   return (
     <section className="bg-gray-50 py-16">
@@ -46,70 +42,43 @@ export default function LatestAssignments() {
               Latest Assignments
             </h2>
           </div>
-          <a
-            href="#"
+          <Link
+            href="/assignments"
             className="text-green-600 font-semibold flex items-center gap-1 hover:text-green-700 transition-colors"
           >
             See All <ChevronRight size={20} />
-          </a>
+          </Link>
         </div>
+
+        {/* Loading State */}
+        {isLoading && (
+          <p className="text-center text-gray-500 text-lg">Loading assignments...</p>
+        )}
+
+        {/* Error State */}
+        {isError && (
+          <p className="text-center text-red-500 text-lg">
+            Failed to load assignments.
+          </p>
+        )}
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {assignments.map((assignment, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
-            >
-              {/* Image */}
-              <div className="relative h-48 bg-gray-200">
-                <Image
-                  src={assignment.image}
-                  alt={assignment.title}
-                  width={500}
-                  height={300}
-                  className="object-cover w-full h-full"
-                  priority
-                />
-              </div>
-
-              {/* Content */}
-              <div className="p-6">
-                {/* Category & Price */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
-                    {assignment.category}
-                  </span>
-                  <span className="text-sm font-medium text-gray-600">
-                    {assignment.paymentType} – {assignment.paymentAmount}
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {assignment.title}
-                </h3>
-
-                {/* Type */}
-                <p className="text-gray-600 text-sm mb-4">
-                  {assignment.type}
-                </p>
-
-                {/* Applications */}
-                <p className="text-gray-700 text-sm mb-6">
-                  <span className="font-semibold">Applications:</span>{" "}
-                  {assignment.applications}
-                </p>
-
-                {/* Button */}
-                <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full flex items-center justify-center gap-2 transition-all duration-300">
-                  <Briefcase size={18} />
-                  Take This Deal
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        {!isLoading && !isError && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {assignments.slice(0, 6).map((assignment) => (
+              <AssignmentCard
+                key={assignment._id}
+                image={assignment.banner}
+                category={assignment.paymentMethod.toUpperCase()}
+                title={assignment.title}
+                type={assignment.status}
+                paymentType={assignment.priceType}
+                paymentAmount={`$${assignment.budget}`}
+                applications={0}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
