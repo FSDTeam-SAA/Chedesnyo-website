@@ -5,18 +5,11 @@ import { FreelancerCard } from "@/components/ReusableCard/FreelancersCard";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 
-// ✅ Define the TypeScript type
+
 type Freelancer = {
-  id: string;
+  _id: string;
   firstName: string;
   profileImage: string;
   location: string;
@@ -27,18 +20,16 @@ type Freelancer = {
 export default function ExploreFreelancers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  // const [category, setCategory] = useState("");
-  // const [experience, setExperience] = useState("");
   const itemsPerPage = 6;
 
-  // ✅ Debounce search term
+ 
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearchTerm(searchTerm), 500);
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  // ✅ Fetch freelancers from API
+  
   const { data, isError, refetch } = useQuery({
     queryKey: ["freelancers", debouncedSearchTerm,currentPage],
     queryFn: async () => {
@@ -49,8 +40,7 @@ export default function ExploreFreelancers() {
       params.append("limit", itemsPerPage.toString());
 
       if (debouncedSearchTerm) params.append("searchTerm", debouncedSearchTerm);
-      // if (category) params.append("category", category);
-      // if (experience) params.append("experience", experience);
+     
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/all-user?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch freelancers");
@@ -77,6 +67,7 @@ export default function ExploreFreelancers() {
     }
     return pages;
   };
+
 
   const pageNumbers = getPageNumbers();
 
@@ -161,8 +152,8 @@ export default function ExploreFreelancers() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {freelancersData.map((freelancer) => (
             <FreelancerCard
-              key={freelancer.id}
-              id={freelancer.id}
+              key={freelancer._id}
+              id={freelancer._id}
               name={freelancer.firstName}
               image={freelancer.profileImage}
               bio={freelancer.location || ""}
