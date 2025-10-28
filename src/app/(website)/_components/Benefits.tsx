@@ -57,14 +57,14 @@ export default function Benefits() {
         {/* Top Benefits Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {/* Freelance Sales Agents Benefits */}
-          <div className="bg-white border-4 border-green-600 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white border-b-4 border-green-600 rounded-3xl p-8 shadow-[0px_8px_32px_0px_#00000029]">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-50 rounded-full flex items-center justify-center border-2 border-green-600">
                 <TrendingUp className="w-8 h-8 text-green-600" strokeWidth={2.5} />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-center text-gray-900 mb-6">Benefits for Freelance Sales Agents</h3>
-            
+
             <ul className="space-y-4">
               {freelanceBenefits.map((benefit, index) => (
                 <li key={index} className="flex gap-3">
@@ -79,14 +79,14 @@ export default function Benefits() {
           </div>
 
           {/* Business Benefits */}
-          <div className="bg-white border-4 border-green-600 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white border-b-4 border-green-600 rounded-3xl p-8 shadow-[0px_8px_32px_0px_#00000029]">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-50 rounded-full flex items-center justify-center border-2 border-green-600">
                 <Briefcase className="w-8 h-8 text-green-600" strokeWidth={2.5} />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-center text-gray-900 mb-6">Benefits for Business</h3>
-            
+
             <ul className="space-y-4">
               {businessBenefits.map((benefit, index) => (
                 <li key={index} className="flex gap-3">
@@ -121,14 +121,19 @@ export default function Benefits() {
           {whyChooseUs.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
-              <div key={index} className="bg-white border-4 border-green-600 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow h-full flex flex-col">
+              <div
+                key={index}
+                className="bg-white border-b-4 border-green-600 rounded-3xl p-8 shadow-[0px_8px_32px_0px_#00000029] h-full flex flex-col justify-center"
+              >
                 <div className="flex justify-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-50 rounded-full flex items-center justify-center border-2 border-green-600">
                     <IconComponent className="w-8 h-8 text-green-600" strokeWidth={2} />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-center text-gray-900 mb-4">{feature.title}</h3>
-                <p className="text-gray-700 text-center text-sm leading-relaxed flex-grow">
+                <h3 className="text-2xl font-bold text-center text-gray-900 mb-4">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-700 text-center text-sm leading-relaxed">
                   {feature.description}
                 </p>
               </div>

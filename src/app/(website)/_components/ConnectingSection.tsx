@@ -1,6 +1,7 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ConnectingSection() {
   return (
@@ -26,7 +27,7 @@ export default function ConnectingSection() {
             <div className="space-y-6">
               {/* Badge */}
               <div className="inline-block">
-                <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
+                <span className="bg-blue-100 text-[#0077B6] px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
                   <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
                   One Click Make Connection
                 </span>
@@ -34,9 +35,9 @@ export default function ConnectingSection() {
 
               {/* Main Heading */}
               <h2 className="text-3xl sm:text-4xl lg:text-4xl font-bold leading-[140%] text-gray-900">
-                Connecting <span className="text-blue-600">companies with</span>
+                Connecting <span className="text-[#0077B6]">companies with</span>
                 <br />
-                <span className="text-blue-600">freelance sales</span> agents
+                <span className="text-[#0077B6]">freelance sales</span> agents
                 who deliver.
               </h2>
 
@@ -55,10 +56,12 @@ export default function ConnectingSection() {
 
               {/* CTA Button */}
               <div className="pt-4">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
-                  Get Started
-                  <ChevronRight size={20} />
-                </button>
+                <Link href="/explore-freelancers">
+                  <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
+                    Get Started
+                    <ChevronRight size={20} />
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

@@ -15,10 +15,10 @@ export default function ConnectingSection() {
 
           {/* Main Heading */}
           <h2 className="text-4xl sm:text-5xl font-bold leading-snug">
-            <span className="text-green-600">Why We Do What We</span>
+            <span className="text-[#008000]">Why We Do What We</span>
             <span className="text-black"> Do uncovering</span>
             <br />
-            <span className="text-blue-600">purpose behind every action</span>
+            <span className="text-[#0077B6]">purpose behind every action</span>
           </h2>
 
           {/* Description */}
