@@ -48,12 +48,12 @@ export default function FindBusiness() {
     queryKey: ["businesses", debouncedSearchTerm, currentPage],
     queryFn: async () => {
       const params = new URLSearchParams();
+      if (debouncedSearchTerm) params.append("searchTerm", debouncedSearchTerm);
       params.append("role", "business");
       params.append("status", "approved");
       params.append("page", currentPage.toString());
       params.append("limit", itemsPerPage.toString());
-      if (debouncedSearchTerm) params.append("searchTerm", debouncedSearchTerm);
-
+      
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/all-user?${params.toString()}`
       );

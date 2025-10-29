@@ -154,6 +154,7 @@ export default function Assignments() {
                   className="transition-all duration-300 transform hover:scale-[1.02]"
                 >
                   <AssignmentCard
+                    id={assignment._id}
                     image={assignment.banner}
                     category={assignment.status}
                     title={assignment.title}

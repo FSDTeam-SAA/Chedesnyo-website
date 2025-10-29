@@ -1,6 +1,7 @@
 import React from "react";
 import { CheckCircle2, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ConnectingSection() {
   return (
@@ -72,10 +73,12 @@ export default function ConnectingSection() {
 
           {/* Read More Button */}
           <div className="pt-4">
-            <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
-              Read More
-              <ChevronRight size={20} />
-            </button>
+            <Link href="/blogs">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
+                Read More
+                <ChevronRight size={20} />
+              </button>
+            </Link>
           </div>
         </div>
 

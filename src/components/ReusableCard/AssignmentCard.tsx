@@ -2,6 +2,7 @@
 import React from "react";
 import { Book } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface DealCardProps {
   image?: string;
@@ -13,6 +14,7 @@ interface DealCardProps {
   applications: number;
   onTakeDeal?: () => void;
   price?: string;
+  id: string;
 }
 
 export default function AssignmentCard({
@@ -23,7 +25,7 @@ export default function AssignmentCard({
   paymentType = "Hourly",
   paymentAmount = "$17.00",
   applications = 3,
-  onTakeDeal = () => alert("Deal taken!"),
+  id, // ✅ FIXED: destructured id
 }: DealCardProps) {
   return (
     <div
@@ -90,13 +92,14 @@ export default function AssignmentCard({
         </div>
 
         {/* Take This Deal Button */}
-        <button
-          onClick={onTakeDeal}
-          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-        >
-          <Book size={20} />
-          Take This Deal
-        </button>
+        <Link href={`/assignments/${id}`}>
+          <button
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+          >
+            <Book size={20} />
+            View Details
+          </button>
+        </Link>
       </div>
     </div>
   );

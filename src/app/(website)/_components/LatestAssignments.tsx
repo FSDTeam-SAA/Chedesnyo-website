@@ -67,6 +67,7 @@ export default function LatestAssignments() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {assignments.slice(0, 6).map((assignment) => (
               <AssignmentCard
+                id={assignment._id}
                 key={assignment._id}
                 image={assignment.banner}
                 category={assignment.paymentMethod.toUpperCase()}

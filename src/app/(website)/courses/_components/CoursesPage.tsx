@@ -52,7 +52,7 @@ function CoursesPage() {
     queryKey: ["coursesData", searchTerm, currentPage],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course?search=${encodeURIComponent(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course?searchTerm=${encodeURIComponent(
           searchTerm
         )}&page=${currentPage}&limit=${itemsPerPage}`,
         {

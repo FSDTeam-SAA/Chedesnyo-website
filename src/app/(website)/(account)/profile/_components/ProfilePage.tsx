@@ -231,6 +231,7 @@ export default function ProfilePage() {
               Email
             </label>
             <input
+            readOnly
               type="email"
               name="email"
               value={formData.email}

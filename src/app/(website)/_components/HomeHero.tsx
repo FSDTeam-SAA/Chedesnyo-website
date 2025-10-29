@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export default function HomeHero() {
   return (
@@ -46,13 +47,17 @@ export default function HomeHero() {
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
+              <Link href="/courses">
               <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center justify-center gap-2 transition-colors">
                 Get Started
                 <ChevronRight size={18} />
               </button>
+              </Link>
+             <Link href="/inbox">
               <button className="border-2 border-[#008000] hover:border-white text-black px-8 py-3 rounded-full font-semibold transition-colors">
                 Contact With Us
               </button>
+             </Link>
             </div>
 
             {/* Stats */}

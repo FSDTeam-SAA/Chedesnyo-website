@@ -17,7 +17,12 @@ export default function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const user = session?.user;
-  console.log(session)
+  console.log(session);
+
+  const handleLogout = async () => {
+    setIsOpen(false);
+    await signOut({ callbackUrl: "/" });
+  };
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -54,10 +59,11 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-[18px] font-medium transition duration-200 ${isActive
+                  className={`text-[18px] font-medium transition duration-200 ${
+                    isActive
                       ? "text-green-600 border-b-2 border-green-600 pb-1"
                       : "text-gray-700 hover:text-green-600"
-                    }`}
+                  }`}
                 >
                   {link.label}
                 </Link>
@@ -81,10 +87,8 @@ export default function Navbar() {
                       />
                     ) : (
                       <User size={24} />
-
                     )}
                   </button>
-
                 </PopoverTrigger>
                 <PopoverContent className="p-0">
                   <Link
@@ -136,8 +140,9 @@ export default function Navbar() {
                     Referral Program Explanation
                   </Link>
 
+                  {/* ✅ Fixed Logout */}
                   <button
-                    onClick={() => signOut()}
+                    onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 border-t border-t-gray-600"
                   >
                     Logout
@@ -184,10 +189,11 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`text-sm font-medium py-2 transition duration-200 ${isActive
+                    className={`text-sm font-medium py-2 transition duration-200 ${
+                      isActive
                         ? "text-green-600 font-semibold"
                         : "text-gray-700 hover:text-green-600"
-                      }`}
+                    }`}
                     onClick={() => setIsOpen(false)}
                   >
                     {link.label}
@@ -223,7 +229,7 @@ export default function Navbar() {
                       Profile
                     </Link>
                     <button
-                      onClick={() => signOut()}
+                      onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                     >
                       Logout
