@@ -3,17 +3,49 @@ import React from "react";
 import { Edit2, Trash2, Plus } from "lucide-react";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+
+// ✅ Define TypeScript types based on your API response
+type Assignment = {
+  _id: string;
+  banner: string;
+  title: string;
+  description: string;
+  budget: string;
+  priceType: string;
+  paymentMethod: string;
+  deadLine: string;
+  user: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  uploadFile: string;
+  __v: number;
+};
+
+type AssignmentResponse = {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  data: Assignment[];
+};
 
 function CourseAccount() {
-  const assignments = [
-    { id: "01", title: "Web development", date: "25/10/2025" },
-    { id: "01", title: "Web development", date: "25/10/2025" },
-    { id: "01", title: "Web development", date: "25/10/2025" },
-    { id: "01", title: "Web development", date: "25/10/2025" },
-    { id: "01", title: "Web development", date: "25/10/2025" },
-    { id: "01", title: "Web development", date: "25/10/2025" },
-    { id: "01", title: "Web development", date: "25/10/2025" },
-  ];
+  const { data, isLoading, isError } = useQuery<AssignmentResponse>({
+    queryKey: ["assignments"],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`);
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return res.json() as Promise<AssignmentResponse>;
+    },
+  });
 
   return (
     <div>
@@ -25,6 +57,7 @@ function CourseAccount() {
           { label: "Assignments", href: "/assignment" },
         ]}
       />
+
       <div className="w-full px-6 container mx-auto py-[96px]">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Assignments</h1>
@@ -50,46 +83,76 @@ function CourseAccount() {
                   Assignment Title
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  Date
+                  Deadline
                 </th>
                 <th className="pr-10 py-4 text-end text-sm font-semibold text-gray-700">
                   Action
                 </th>
               </tr>
             </thead>
+
             <tbody>
-              {assignments.map((assignment, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {assignment.id}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {assignment.title}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {assignment.date}
-                  </td>
-                  <td className="px-6 py-4 text-sm flex items-end justify-end">
-                    <div className="flex items-center gap-3">
-                      <button
-                        className="p-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded transition-colors"
-                        title="Edit"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button
-                        className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="text-center py-6 text-gray-500 text-sm"
+                  >
+                    Loading assignments...
                   </td>
                 </tr>
-              ))}
+              ) : isError ? (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="text-center py-6 text-red-500 text-sm"
+                  >
+                    Failed to load assignments.
+                  </td>
+                </tr>
+              ) : data?.data?.length ? (
+                data.data.map((assignment, index) => (
+                  <tr
+                    key={assignment._id}
+                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {index + 1}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {assignment.title}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {new Date(assignment.deadLine).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm flex items-end justify-end">
+                      <div className="flex items-center gap-3">
+                        <button
+                          className="p-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded transition-colors"
+                          title="Edit"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button
+                          className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="text-center py-6 text-gray-500 text-sm"
+                  >
+                    No assignments found.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

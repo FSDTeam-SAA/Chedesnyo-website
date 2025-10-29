@@ -100,7 +100,7 @@ export default function Navbar() {
                     Inbox
                   </Link>
                   <Link
-                    href="/profile"
+                    href="/assignment"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                   >
                     Assignments

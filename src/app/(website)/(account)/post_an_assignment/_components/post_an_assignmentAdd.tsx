@@ -22,8 +22,11 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import { useMutation } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
-type FormData = {
+type FormDataType = {
   banner: File | null;
   title: string;
   description: string;
@@ -36,7 +39,7 @@ type FormData = {
 };
 
 function PostAnAssignmentAdd() {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<FormDataType>({
     banner: null,
     title: "",
     description: "",
@@ -48,6 +51,7 @@ function PostAnAssignmentAdd() {
     showToPublic: true,
   });
 
+  // ✅ Handle input change
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -58,6 +62,7 @@ function PostAnAssignmentAdd() {
     }));
   };
 
+  // ✅ Handle checkbox
   const handleCheckboxChange = (checked: boolean) => {
     setFormData((prev) => ({
       ...prev,
@@ -65,6 +70,7 @@ function PostAnAssignmentAdd() {
     }));
   };
 
+  // ✅ Handle file inputs
   const handleBannerUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setFormData((prev) => ({
@@ -81,6 +87,7 @@ function PostAnAssignmentAdd() {
     }));
   };
 
+  // ✅ Handle select values
   const handlePricingTypeChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -95,9 +102,66 @@ function PostAnAssignmentAdd() {
     }));
   };
 
+  const session = useSession();
+  const TOKEN = session.data?.user?.accessToken || "";
+
+  // ✅ Mutation for posting assignment
+  const postMutation = useMutation({
+    mutationFn: async (data: FormDataType) => {
+      const form = new FormData();
+      if (data.banner) form.append("banner", data.banner);
+      if (data.uploadFile) form.append("uploadFile", data.uploadFile);
+      form.append("title", data.title);
+      form.append("description", data.description);
+      form.append("budget", data.budget);
+      form.append("priceType", data.pricingType);
+      form.append("paymentMethod", data.paymentMethod);
+      form.append("deadLine", data.deadline);
+      form.append("showToPublic", data.showToPublic.toString());
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+          body: form,
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to post assignment");
+      }
+
+      return res.json();
+    },
+    onSuccess: (response) => {
+      console.log("✅ Assignment posted successfully:", response);
+    toast.success(response.message || "Assignment posted successfully!");
+      // optional: reset form
+      setFormData({
+        banner: null,
+        title: "",
+        description: "",
+        budget: "",
+        pricingType: "",
+        paymentMethod: "",
+        deadline: "",
+        uploadFile: null,
+        showToPublic: true,
+      });
+    },
+    onError: (error) => {
+      console.error("❌ Error posting assignment:", error);
+     toast.error((error as Error).message || "Error posting assignment");
+    },
+  });
+
+  // ✅ Handle form submit
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    postMutation.mutate(formData);
   };
 
   return (
@@ -126,7 +190,6 @@ function PostAnAssignmentAdd() {
             <label className="flex items-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors bg-white">
               <div className="flex items-center gap-3">
                 <span className="text-gray-700 font-medium">Choose File</span>
-                {/* Divider */}
                 <span className="h-5 w-px bg-gray-300"></span>
                 <span className="text-gray-500 text-sm truncate max-w-[200px]">
                   {formData.banner ? formData.banner.name : "No File Chosen"}
@@ -269,7 +332,7 @@ function PostAnAssignmentAdd() {
                     setFormData((prev) => ({
                       ...prev,
                       deadline: date
-                        ? date.toISOString().split("T")[0] // saves YYYY-MM-DD
+                        ? date.toISOString().split("T")[0]
                         : "",
                     }))
                   }
@@ -288,10 +351,7 @@ function PostAnAssignmentAdd() {
             <label className="flex items-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors bg-white">
               <div className="flex items-center gap-3">
                 <span className="text-gray-700 font-medium">Choose File</span>
-
-                {/* Divider */}
                 <span className="h-5 w-px bg-gray-300"></span>
-
                 <span className="text-gray-500 text-sm truncate max-w-[200px]">
                   {formData.uploadFile
                     ? formData.uploadFile.name
@@ -327,9 +387,10 @@ function PostAnAssignmentAdd() {
           {/* Submit Button */}
           <Button
             type="submit"
+            disabled={postMutation.isPending}
             className="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-full h-auto"
           >
-            Submit
+            {postMutation.isPending ? "Submitting..." : "Submit"}
           </Button>
         </form>
       </div>

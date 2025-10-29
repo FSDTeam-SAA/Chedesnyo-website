@@ -1,86 +1,174 @@
 "use client";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { Camera } from "lucide-react";
 import Image from "next/image";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"; // ✅ ShadCN import path
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  profileImage?: string;
+  location?: string;
+  occupation?: string;
+  bio?: string;
+}
+
+interface ApiResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: User;
+}
 
 export default function ProfilePage() {
-  const [formData, setFormData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    phone: "+1 (555) 123-4567",
-    occupation: "Product Manager",
-    location: "San Francisco, CA",
-    bio: "Passionate about creating amazing user experiences",
-    emailNotifications: "j@example.com",
-    goal: "Travel",
+  const { data: session } = useSession();
+  const TOKEN = session?.user?.accessToken as string | undefined;
+
+  // Fetch user profile
+  const { data: userData, isLoading } = useQuery<ApiResponse>({
+    queryKey: ["userProfile"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`,
+        { headers: { Authorization: `Bearer ${TOKEN}` } }
+      );
+      if (!res.ok) throw new Error("Failed to fetch user profile");
+      return res.json();
+    },
+    enabled: !!TOKEN,
   });
 
-  const [profileImage, setProfileImage] = useState<string>(
+  // Form state
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    occupation: "",
+    location: "",
+  });
+
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState(
     "/images/reviewImage.jpg"
   );
+
+  // Populate form once API data is loaded
+  useEffect(() => {
+    if (userData?.data) {
+      const user = userData.data;
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        occupation: user.occupation || "",
+        location: user.location || "",
+      });
+      setProfileImagePreview(user.profileImage || "/images/reviewImage.jpg");
+    }
+  }, [userData]);
 
   // Handle input change
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle image upload
+  // Handle image selection
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          setProfileImage(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    setProfileImageFile(file);
+
+    // Preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") setProfileImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
+  // Update mutation
+  const profileUpdateMutation = useMutation({
+    mutationFn: async () => {
+      const form = new FormData();
+      form.append("firstName", formData.firstName);
+      form.append("lastName", formData.lastName);
+      form.append("email", formData.email);
+      form.append("occupation", formData.occupation);
+      form.append("location", formData.location);
+      if (profileImageFile) {
+        form.append("profileImage", profileImageFile);
+      }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${TOKEN}` },
+          body: form,
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to update profile");
+      return res.json();
+    },
+    onSuccess: (data) => {
+      alert("Profile updated successfully!");
+      if (data?.data) {
+        const user = data.data;
+        setFormData({
+          firstName: user.firstName || "",
+          lastName: user.lastName || "",
+          email: user.email || "",
+          occupation: user.occupation || "",
+          location: user.location || "",
+        });
+        setProfileImagePreview(user.profileImage || "/images/reviewImage.jpg");
+      }
+      setProfileImageFile(null);
+    },
+    onError: () => alert("Error updating profile."),
+  });
+
   const handleSave = () => {
-    console.log("Profile saved:", formData);
-    alert("Profile information saved successfully!");
+    profileUpdateMutation.mutate();
   };
+
+  if (isLoading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
 
   return (
     <div className="min-h-screen">
-        {/* Breadcrumb Header */}
-              <BreadcrumbHeader
-                title="Profile"
-                breadcrumbs={[
-                  { label: "Home", href: "/" },
-                  { label: "Profile", href: "/profile" },
-                ]}
-              />
+      <BreadcrumbHeader
+        title="Profile"
+        breadcrumbs={[
+          { label: "Home", href: "/" },
+          { label: "Profile", href: "/profile" },
+        ]}
+      />
+
       <div className="container mx-auto flex py-[96px]">
+        {/* Left Column */}
         <div className="w-[30%]">
-          {/* Header Title */}
           <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
             Profile Settings
           </h1>
-
-          {/* Profile Image Section */}
           <div className="flex flex-col items-center mb-10">
             <div className="relative mb-4">
               <Image
-                src={profileImage}
+                src={profileImagePreview}
                 alt="Profile"
                 width={128}
                 height={128}
@@ -109,9 +197,8 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Form Section */}
+        {/* Right Column */}
         <div className="space-y-6 flex-1">
-          {/* Row 1: First Name and Last Name */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
@@ -139,35 +226,19 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Row 2: Email and Phone */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Phone
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
           </div>
 
-          {/* Row 3: Occupation and Location */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
@@ -195,61 +266,6 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Row 4: Bio */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Bio
-            </label>
-            <input
-              type="text"
-              name="bio"
-              value={formData.bio}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
-          </div>
-
-          {/* Row 5: Email Notifications and Goal */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Email Notification
-              </label>
-              <input
-                type="email"
-                name="emailNotifications"
-                value={formData.emailNotifications}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* ✅ ShadCN Select for Goal */}
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Goal
-              </label>
-              <Select
-                value={formData.goal}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, goal: value }))
-                }
-              >
-                <SelectTrigger className="w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                  <SelectValue placeholder="Select your goal" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Travel">Travel</SelectItem>
-                  <SelectItem value="Career">Career</SelectItem>
-                  <SelectItem value="Learning">Learning</SelectItem>
-                  <SelectItem value="Health">Health</SelectItem>
-                  <SelectItem value="Finance">Finance</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Save Button */}
           <button
             onClick={handleSave}
             className="w-full bg-green-600 text-white font-semibold py-3 rounded-full hover:bg-green-700 transition-colors mt-8"
