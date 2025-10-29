@@ -13,6 +13,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
+import { useMutation } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 function UploadNewCourse() {
   const [formData, setFormData] = useState({
@@ -32,7 +35,9 @@ function UploadNewCourse() {
     licenseRights: false,
   });
 
-  // Handle text input / textarea
+  const session = useSession();
+  const TOKEN = session.data?.user?.accessToken || "";
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -40,7 +45,6 @@ function UploadNewCourse() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle file input
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     fileType: string
@@ -49,12 +53,10 @@ function UploadNewCourse() {
     setFormData((prev) => ({ ...prev, [fileType]: file }));
   };
 
-  // Handle checkbox
   const handleCheckboxChange = (value: boolean | "indeterminate") => {
     setFormData((prev) => ({ ...prev, licenseRights: value === true }));
   };
 
-  // Handle select
   const handleCourseLevelChange = (value: string) => {
     setFormData((prev) => ({ ...prev, courseLevel: value }));
   };
@@ -63,16 +65,79 @@ function UploadNewCourse() {
     setFormData((prev) => ({ ...prev, discount: value }));
   };
 
-  // Handle form submission
+  const createCourseMutation = useMutation({
+    mutationFn: async () => {
+      const data = new FormData();
+      data.append("title", formData.courseTitle);
+      data.append("level", formData.courseLevel);
+      data.append("description", formData.description);
+      data.append("duration", formData.totalDuration);
+      data.append("targetAudience", formData.targetAudience);
+      data.append("language", formData.language);
+      data.append("modules", formData.numberOfModules);
+      data.append("price", formData.price);
+      data.append("discount", formData.discount);
+
+      // Files
+      if (formData.courseThumbnail) {
+        data.append("thumbnail", formData.courseThumbnail);
+      }
+      if (formData.uploadExtraFiles) {
+        data.append("extraFile", formData.uploadExtraFiles);
+      }
+
+      // Videos
+      if (formData.introductionVideo) {
+        data.append("introductionVideo", formData.introductionVideo);
+      }
+      if (formData.fullCourseVideo) {
+        data.append("courseVideo", formData.fullCourseVideo); // match schema
+      }
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${TOKEN}` }, // FormData handles content-type
+        body: data,
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create course");
+      }
+      return res.json();
+    },
+    onSuccess: (data) => {
+      console.log("Course created successfully:", data);
+      toast.success("Course uploaded successfully!");
+      setFormData({
+        courseTitle: "",
+        courseLevel: "Beginner",
+        description: "",
+        courseThumbnail: null,
+        introductionVideo: "",
+        fullCourseVideo: "",
+        totalDuration: "",
+        targetAudience: "",
+        language: "",
+        numberOfModules: "",
+        uploadExtraFiles: null,
+        price: "",
+        discount: "",
+        licenseRights: false,
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to create course");
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Add API call here
+    createCourseMutation.mutate();
   };
 
   return (
     <div className="min-h-screen">
-      {/* Breadcrumb Header */}
       <BreadcrumbHeader
         title="Upload New Course"
         breadcrumbs={[
@@ -283,7 +348,7 @@ function UploadNewCourse() {
 
           {/* Submit Button */}
           <Button type="submit" className="w-full mt-6">
-            Submit Course
+            {createCourseMutation.isPending ? "Uploading..." : "Submit Course"}
           </Button>
         </form>
       </div>

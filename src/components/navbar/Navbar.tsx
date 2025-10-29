@@ -106,13 +106,13 @@ export default function Navbar() {
                     Assignments
                   </Link>
                   <Link
-                    href="/profile"
+                    href="/my-orders"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                   >
                     My Orders
                   </Link>
                   <Link
-                    href="/profile"
+                    href="/courese"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                   >
                     My Courses

@@ -3,119 +3,41 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 function MyOrders() {
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const session  = useSession();
+  const TOKEN = session.data?.user?.accessToken || "";
 
-  const orders = [
-    {
-      id: 1,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Approved",
-      statusColor: "green",
+  // Fetch orders from API
+  const { data: ordersData, isLoading } = useQuery({
+    queryKey: ["my-orders"],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
+      if (!res.ok) throw new Error("Network response was not ok");
+      return res.json() as Promise<any>;
     },
-    {
-      id: 2,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Processing",
-      statusColor: "purple",
-    },
-    {
-      id: 3,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Processing",
-      statusColor: "purple",
-    },
-    {
-      id: 4,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Processing",
-      statusColor: "purple",
-    },
-    {
-      id: 5,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Cancelled",
-      statusColor: "red",
-    },
-    {
-      id: 6,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Cancelled",
-      statusColor: "red",
-    },
-    {
-      id: 7,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Cancelled",
-      statusColor: "red",
-    },
-    {
-      id: 8,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Approved",
-      statusColor: "green",
-    },
-    {
-      id: 9,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Processing",
-      statusColor: "purple",
-    },
-    {
-      id: 10,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Cancelled",
-      statusColor: "red",
-    },
-    {
-      id: 11,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Approved",
-      statusColor: "green",
-    },
-    {
-      id: 12,
-      name: "Web Development",
-      price: "$200.00",
-      date: "04/21/2025",
-      status: "Processing",
-      statusColor: "purple",
-    },
-  ];
+  });
 
+  // Filter orders based on tab
   const filterOrders = () => {
+    if (!ordersData?.data) return [];
+    const orders = ordersData.data;
     if (activeTab === "all") return orders;
     if (activeTab === "in-progress")
-      return orders.filter((order) => order.status === "Processing");
+      return orders.filter((order: any) => order.status === "pending" || order.status === "processing");
     if (activeTab === "completed")
-      return orders.filter((order) => order.status === "Approved");
+      return orders.filter((order: any) => order.status === "approved");
     if (activeTab === "cancelled")
-      return orders.filter((order) => order.status === "Cancelled");
+      return orders.filter((order: any) => order.status === "refunded" || order.status === "cancelled");
     return orders;
   };
 
@@ -127,20 +49,22 @@ function MyOrders() {
     startIndex + itemsPerPage
   );
 
-  const getStatusStyle = (color: any) => {
-    switch (color) {
-      case "green":
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "approved":
         return "bg-green-100 text-green-700 rounded-full px-3 py-1 text-xs font-medium";
-      case "purple":
+      case "pending":
+      case "processing":
         return "bg-purple-100 text-purple-700 rounded-full px-3 py-1 text-xs font-medium";
-      case "red":
+      case "refunded":
+      case "cancelled":
         return "bg-red-100 text-red-700 rounded-full px-3 py-1 text-xs font-medium";
       default:
         return "bg-gray-100 text-gray-700 rounded-full px-3 py-1 text-xs font-medium";
     }
   };
 
-  const handlePageChange = (page: any) => {
+  const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {
       setCurrentPage(page);
     }
@@ -210,10 +134,10 @@ function MyOrders() {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-300">
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Name
+                  Assignment
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Price
+                  Amount
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
                   Date
@@ -224,34 +148,47 @@ function MyOrders() {
               </tr>
             </thead>
 
-            
             <tbody>
-              {displayedOrders.map((order) => (
-                <tr
-                  key={order.id}
-                  className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {order.name}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {order.price}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {order.date}
-                  </td>
-                  <td className="px-6 py-4 text-sm flex justify-end">
-                    <div className="flex items-center gap-2">
-                      <span className={getStatusStyle(order.statusColor)}>
-                        {order.status}
-                      </span>
-                      <button className="p-1 hover:bg-gray-200 rounded transition-colors">
-                        <ChevronDown size={16} className="text-gray-600" />
-                      </button>
-                    </div>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">
+                    Loading...
                   </td>
                 </tr>
-              ))}
+              ) : displayedOrders.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">
+                    No orders found.
+                  </td>
+                </tr>
+              ) : (
+                displayedOrders.map((order: any) => (
+                  <tr
+                    key={order._id}
+                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {order.assigment?.title}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {order.currency.toUpperCase()} {order.amount}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm flex justify-end">
+                      <div className="flex items-center gap-2">
+                        <span className={getStatusStyle(order.status)}>
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </span>
+                        <button className="p-1 hover:bg-gray-200 rounded transition-colors">
+                          <ChevronDown size={16} className="text-gray-600" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
