@@ -6,45 +6,54 @@ import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
-function MyOrders() {
+function SelesAssignment() {
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const session  = useSession();
-  const TOKEN = session.data?.user?.accessToken || "";
+  const { data: session } = useSession();
+  const TOKEN = session?.user?.accessToken || "";
 
-  // Fetch orders from API
-  const { data: ordersData, isLoading } = useQuery({
-    queryKey: ["my-orders"],
+  // ✅ Fetch assignments (filtered from payment API)
+  const { data: assignmentsData, isLoading } = useQuery({
+    queryKey: ["seles-assignments"],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`, { 
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my/all`,
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
+      );
       if (!res.ok) throw new Error("Network response was not ok");
       return res.json() as Promise<any>;
     },
+    enabled: !!TOKEN,
   });
 
-  // Filter orders based on tab
-  const filterOrders = () => {
-    if (!ordersData?.data) return [];
-    const orders = ordersData.data;
-    if (activeTab === "all") return orders;
+  // ✅ Extract only assignment list safely
+  const assignments = assignmentsData?.data?.map((item: any) => item.assigment) || [];
+
+  // ✅ Filter logic based on tab
+  const filterAssignments = () => {
+    if (activeTab === "all") return assignments;
     if (activeTab === "in-progress")
-      return orders.filter((order: any) => order.status === "pending" || order.status === "processing");
+      return assignments.filter(
+        (a: any) => a?.status === "pending" || a?.status === "processing"
+      );
     if (activeTab === "completed")
-      return orders.filter((order: any) => order.status === "approved");
+      return assignments.filter((a: any) => a?.status === "approved");
     if (activeTab === "cancelled")
-      return orders.filter((order: any) => order.status === "refunded" || order.status === "cancelled");
-    return orders;
+      return assignments.filter(
+        (a: any) => a?.status === "refunded" || a?.status === "cancelled"
+      );
+    return assignments;
   };
 
-  const filteredOrders = filterOrders();
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const filteredAssignments = filterAssignments();
+  const totalPages = Math.ceil(filteredAssignments.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const displayedOrders = filteredOrders.slice(
+  const displayedAssignments = filteredAssignments.slice(
     startIndex,
     startIndex + itemsPerPage
   );
@@ -65,27 +74,25 @@ function MyOrders() {
   };
 
   const handlePageChange = (page: number) => {
-    if (page > 0 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+    if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
 
   return (
     <div className="w-full">
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
-        title="My Orders History"
+        title="My Assignments"
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "My Orders History", href: "/my-orders" },
+          { label: "My Assignments", href: "/my-assignments" },
         ]}
       />
-      <div className="max-w-6xl mx-auto py-[96px]">
+      <div className="container px-10 mx-auto py-[96px]">
         <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-          My Orders History
+          My Assignments
         </h1>
 
-        {/* Tab Buttons */}
+        {/* Tabs */}
         <div className="flex gap-3 mb-6">
           <button
             onClick={() => {
@@ -134,16 +141,16 @@ function MyOrders() {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-300">
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Assignment
+                  Title
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Amount
+                  Budget
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Date
+                  Posted By
                 </th>
                 <th className="py-3 pr-16 text-sm font-medium text-gray-900 text-end">
-                  Action
+                  Status
                 </th>
               </tr>
             </thead>
@@ -155,31 +162,36 @@ function MyOrders() {
                     Loading...
                   </td>
                 </tr>
-              ) : displayedOrders.length === 0 ? (
+              ) : displayedAssignments.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="text-center py-8 text-gray-500">
-                    No orders found.
+                    No assignments found.
                   </td>
                 </tr>
               ) : (
-                displayedOrders.map((order: any) => (
+                displayedAssignments.map((assignment: any) => (
                   <tr
-                    key={order._id}
+                    key={assignment._id}
                     className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {order.assigment?.title}
+                      {assignment?.title || "Untitled"}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {order.currency.toUpperCase()} {order.amount}
+                      ${assignment?.budget || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      {assignment?.user
+                        ? `${assignment.user.firstName} ${assignment.user.lastName}`
+                        : "Unknown"}
                     </td>
                     <td className="px-6 py-4 text-sm flex justify-end">
                       <div className="flex items-center gap-2">
-                        <span className={getStatusStyle(order.status)}>
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        <span className={getStatusStyle(assignment.status)}>
+                          {assignment.status
+                            ? assignment.status.charAt(0).toUpperCase() +
+                              assignment.status.slice(1)
+                            : "N/A"}
                         </span>
                         <button className="p-1 hover:bg-gray-200 rounded transition-colors">
                           <ChevronDown size={16} className="text-gray-600" />
@@ -197,8 +209,8 @@ function MyOrders() {
         <div className="flex items-center justify-between">
           <p className="text-xs text-gray-600">
             Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + itemsPerPage, filteredOrders.length)} of{" "}
-            {filteredOrders.length} results
+            {Math.min(startIndex + itemsPerPage, filteredAssignments.length)} of{" "}
+            {filteredAssignments.length} results
           </p>
 
           <div className="flex items-center gap-1">
@@ -238,4 +250,4 @@ function MyOrders() {
   );
 }
 
-export default MyOrders;
+export default SelesAssignment;
