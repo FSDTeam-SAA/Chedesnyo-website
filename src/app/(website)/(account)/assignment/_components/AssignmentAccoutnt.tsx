@@ -1,11 +1,14 @@
 "use client";
-import React from "react";
-import { Edit2, Trash2, Plus } from "lucide-react";
+import React, { useState } from "react";
+import { Trash2, Plus } from "lucide-react";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { EditAssignmentModal } from "@/components/Dialog/EditAssignmentModal";
+import { DeleteModal } from "@/components/Dialog/DeleteModal";
+import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
-// ✅ Define TypeScript types based on your API response
 type Assignment = {
   _id: string;
   banner: string;
@@ -36,20 +39,59 @@ type AssignmentResponse = {
 };
 
 function CourseAccount() {
+  const [deleteId, setDeleteId] = useState<string | null>(null); // ✅ selected assignment id
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const session = useSession();
+  const TOKEN = session.data?.user?.accessToken || "";
+
   const { data, isLoading, isError } = useQuery<AssignmentResponse>({
     queryKey: ["assignments"],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`);
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`
+      );
+      if (!res.ok) throw new Error("Network response was not ok");
       return res.json() as Promise<AssignmentResponse>;
     },
   });
 
+  // ✅ Delete Mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
+      );
+      if (!res.ok) throw new Error("Failed to delete assignment");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success("Assignment deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["assignments"] }); // ✅ refresh assignments list
+      setDeleteModalOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error?.message || "Failed to delete assignment");
+    },
+  });
+
+  const handleDeleteClick = (id: string) => {
+    setDeleteId(id);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteId) deleteMutation.mutate(deleteId);
+  };
+
   return (
     <div>
-      {/* Breadcrumb Header */}
       <BreadcrumbHeader
         title="Assignments"
         breadcrumbs={[
@@ -127,15 +169,11 @@ function CourseAccount() {
                     </td>
                     <td className="px-6 py-4 text-sm flex items-end justify-end">
                       <div className="flex items-center gap-3">
-                        <button
-                          className="p-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded transition-colors"
-                          title="Edit"
-                        >
-                          <Edit2 size={18} />
-                        </button>
+                        <EditAssignmentModal assignmentId={assignment._id} />
                         <button
                           className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded transition-colors"
                           title="Delete"
+                          onClick={() => handleDeleteClick(assignment._id)}
                         >
                           <Trash2 size={18} />
                         </button>
@@ -157,6 +195,13 @@ function CourseAccount() {
           </table>
         </div>
       </div>
+
+      {/* ✅ Delete Modal */}
+      <DeleteModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }
