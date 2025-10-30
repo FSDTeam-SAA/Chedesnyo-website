@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -13,12 +13,12 @@ function SelesAssignment() {
   const { data: session } = useSession();
   const TOKEN = session?.user?.accessToken || "";
 
-  // ✅ Fetch assignments (filtered from payment API)
-  const { data: assignmentsData, isLoading } = useQuery({
+  // ✅ Fetch payments
+  const { data: paymentsData, isLoading } = useQuery({
     queryKey: ["seles-assignments"],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my/all`,
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`,
         {
           headers: {
             Authorization: `Bearer ${TOKEN}`,
@@ -31,21 +31,22 @@ function SelesAssignment() {
     enabled: !!TOKEN,
   });
 
-  // ✅ Extract only assignment list safely
-  const assignments = assignmentsData?.data?.map((item: any) => item.assigment) || [];
+  // ✅ Extract ONLY assignment payments
+  const assignments = paymentsData?.data.filter((p: any) => p.assigment) || [];
 
-  // ✅ Filter logic based on tab
+  // ✅ Filter logic based on tab using payment status
   const filterAssignments = () => {
     if (activeTab === "all") return assignments;
     if (activeTab === "in-progress")
       return assignments.filter(
-        (a: any) => a?.status === "pending" || a?.status === "processing"
+        (a: any) => a.status === "pending" || a.status === "processing"
       );
     if (activeTab === "completed")
-      return assignments.filter((a: any) => a?.status === "approved");
+      return assignments.filter((a: any) => a.status === "approved");
     if (activeTab === "cancelled")
       return assignments.filter(
-        (a: any) => a?.status === "refunded" || a?.status === "cancelled"
+        (a: any) =>
+          a.status === "refunded" || a.status === "rejected" || a.status === "cancelled"
       );
     return assignments;
   };
@@ -66,6 +67,7 @@ function SelesAssignment() {
       case "processing":
         return "bg-purple-100 text-purple-700 rounded-full px-3 py-1 text-xs font-medium";
       case "refunded":
+      case "rejected":
       case "cancelled":
         return "bg-red-100 text-red-700 rounded-full px-3 py-1 text-xs font-medium";
       default:
@@ -175,27 +177,21 @@ function SelesAssignment() {
                     className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {assignment?.title || "Untitled"}
+                      {assignment?.assigment?.title || "Untitled"}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      ${assignment?.budget || "N/A"}
+                      ${assignment?.assigment?.budget || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {assignment?.user
-                        ? `${assignment.user.firstName} ${assignment.user.lastName}`
+                      {assignment?.assigment?.user
+                        ? assignment.assigment.user.firstName
                         : "Unknown"}
                     </td>
                     <td className="px-6 py-4 text-sm flex justify-end">
                       <div className="flex items-center gap-2">
                         <span className={getStatusStyle(assignment.status)}>
-                          {assignment.status
-                            ? assignment.status.charAt(0).toUpperCase() +
-                              assignment.status.slice(1)
-                            : "N/A"}
+                          {assignment.status?.toUpperCase() || "N/A"}
                         </span>
-                        <button className="p-1 hover:bg-gray-200 rounded transition-colors">
-                          <ChevronDown size={16} className="text-gray-600" />
-                        </button>
                       </div>
                     </td>
                   </tr>

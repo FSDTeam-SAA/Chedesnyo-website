@@ -1,5 +1,5 @@
 import React from 'react'
-import MyOrders from './_components/MyOrders'
+import MyOrders from './_components/MyOrdersForAssignment'
 
 function page() {
   return (

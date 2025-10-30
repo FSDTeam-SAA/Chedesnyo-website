@@ -1,50 +1,60 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
-function MyOrders() {
+function SelesPurchaseCourse() {
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const session  = useSession();
-  const TOKEN = session.data?.user?.accessToken || "";
+  const { data: session } = useSession();
+  const TOKEN = session?.user?.accessToken || "";
 
-  // Fetch orders from API
-  const { data: ordersData, isLoading } = useQuery({
-    queryKey: ["my-orders"],
+  // Fetch payments
+  const { data: paymentsData, isLoading } = useQuery({
+    queryKey: ["seles-courses"],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`, { 
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`,
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
+      );
       if (!res.ok) throw new Error("Network response was not ok");
       return res.json() as Promise<any>;
     },
+    enabled: !!TOKEN,
   });
 
-  // Filter orders based on tab
-  const filterOrders = () => {
-    if (!ordersData?.data) return [];
-    const orders = ordersData.data;
-    if (activeTab === "all") return orders;
+  // ✅ Extract ONLY course payments
+  const courses = paymentsData?.data.filter((p: any) => p.course) || [];
+
+  // Filter logic based on tab using payment status
+  const filterCourses = () => {
+    if (activeTab === "all") return courses;
     if (activeTab === "in-progress")
-      return orders.filter((order: any) => order.status === "pending" || order.status === "processing");
+      return courses.filter(
+        (c: any) => c.status === "pending" || c.status === "processing"
+      );
     if (activeTab === "completed")
-      return orders.filter((order: any) => order.status === "approved");
+      return courses.filter((c: any) => c.status === "approved");
     if (activeTab === "cancelled")
-      return orders.filter((order: any) => order.status === "refunded" || order.status === "cancelled");
-    return orders;
+      return courses.filter(
+        (c: any) =>
+          c.status === "refunded" || c.status === "rejected" || c.status === "cancelled"
+      );
+    return courses;
   };
 
-  const filteredOrders = filterOrders();
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const filteredCourses = filterCourses();
+  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const displayedOrders = filteredOrders.slice(
+  const displayedCourses = filteredCourses.slice(
     startIndex,
     startIndex + itemsPerPage
   );
@@ -57,6 +67,7 @@ function MyOrders() {
       case "processing":
         return "bg-purple-100 text-purple-700 rounded-full px-3 py-1 text-xs font-medium";
       case "refunded":
+      case "rejected":
       case "cancelled":
         return "bg-red-100 text-red-700 rounded-full px-3 py-1 text-xs font-medium";
       default:
@@ -65,33 +76,29 @@ function MyOrders() {
   };
 
   const handlePageChange = (page: number) => {
-    if (page > 0 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+    if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
 
   return (
     <div className="w-full">
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
-        title="My Orders History"
+        title="My Courses"
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "My Orders History", href: "/my-orders" },
+          { label: "My Courses", href: "/my-courses" },
         ]}
       />
-      <div className="max-w-6xl mx-auto py-[96px]">
+
+      <div className="container px-10 mx-auto py-[96px]">
         <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-          My Orders History
+          My Courses
         </h1>
 
-        {/* Tab Buttons */}
+        {/* Tabs */}
         <div className="flex gap-3 mb-6">
           <button
-            onClick={() => {
-              setActiveTab("in-progress");
-              setCurrentPage(1);
-            }}
+            onClick={() => { setActiveTab("in-progress"); setCurrentPage(1); }}
             className={`px-4 py-2 text-sm font-medium rounded border ${
               activeTab === "in-progress"
                 ? "bg-green-50 border-green-600 text-green-600"
@@ -101,10 +108,7 @@ function MyOrders() {
             In Progress
           </button>
           <button
-            onClick={() => {
-              setActiveTab("completed");
-              setCurrentPage(1);
-            }}
+            onClick={() => { setActiveTab("completed"); setCurrentPage(1); }}
             className={`px-4 py-2 text-sm font-medium rounded border ${
               activeTab === "completed"
                 ? "bg-green-50 border-green-600 text-green-600"
@@ -114,10 +118,7 @@ function MyOrders() {
             Completed
           </button>
           <button
-            onClick={() => {
-              setActiveTab("cancelled");
-              setCurrentPage(1);
-            }}
+            onClick={() => { setActiveTab("cancelled"); setCurrentPage(1); }}
             className={`px-4 py-2 text-sm font-medium rounded border ${
               activeTab === "cancelled"
                 ? "bg-green-50 border-green-600 text-green-600"
@@ -134,16 +135,13 @@ function MyOrders() {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-300">
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Assignment
+                  Title
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Amount
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Date
+                  Price
                 </th>
                 <th className="py-3 pr-16 text-sm font-medium text-gray-900 text-end">
-                  Action
+                  Status
                 </th>
               </tr>
             </thead>
@@ -151,40 +149,32 @@ function MyOrders() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">
+                  <td colSpan={3} className="text-center py-8 text-gray-500">
                     Loading...
                   </td>
                 </tr>
-              ) : displayedOrders.length === 0 ? (
+              ) : displayedCourses.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">
-                    No orders found.
+                  <td colSpan={3} className="text-center py-8 text-gray-500">
+                    No courses found.
                   </td>
                 </tr>
               ) : (
-                displayedOrders.map((order: any) => (
+                displayedCourses.map((course: any) => (
                   <tr
-                    key={order._id}
+                    key={course._id}
                     className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {order.assigment?.title}
+                      {course?.course?.title || "Untitled"}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {order.currency.toUpperCase()} {order.amount}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      ${course?.course?.price || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-sm flex justify-end">
-                      <div className="flex items-center gap-2">
-                        <span className={getStatusStyle(order.status)}>
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                        </span>
-                        <button className="p-1 hover:bg-gray-200 rounded transition-colors">
-                          <ChevronDown size={16} className="text-gray-600" />
-                        </button>
-                      </div>
+                      <span className={getStatusStyle(course.status)}>
+                        {course.status?.toUpperCase() || "N/A"}
+                      </span>
                     </td>
                   </tr>
                 ))
@@ -197,8 +187,8 @@ function MyOrders() {
         <div className="flex items-center justify-between">
           <p className="text-xs text-gray-600">
             Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + itemsPerPage, filteredOrders.length)} of{" "}
-            {filteredOrders.length} results
+            {Math.min(startIndex + itemsPerPage, filteredCourses.length)} of{" "}
+            {filteredCourses.length} results
           </p>
 
           <div className="flex items-center gap-1">
@@ -238,4 +228,4 @@ function MyOrders() {
   );
 }
 
-export default MyOrders;
+export default SelesPurchaseCourse;

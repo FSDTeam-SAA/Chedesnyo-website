@@ -131,6 +131,7 @@ function CoursesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {courses.map((course) => (
                 <CoursesCard
+                id={course._id}
                   key={course._id}
                   image={course.thumbnail}
                   category={course.level}

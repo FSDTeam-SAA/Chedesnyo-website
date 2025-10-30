@@ -12,7 +12,6 @@ interface DealCardProps {
   paymentType: string;
   paymentAmount: string;
   applications: number;
-  onTakeDeal?: () => void;
   price?: string;
   id: string;
 }

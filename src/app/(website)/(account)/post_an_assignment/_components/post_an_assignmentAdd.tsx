@@ -22,7 +22,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
@@ -39,6 +39,26 @@ type FormDataType = {
 };
 
 function PostAnAssignmentAdd() {
+  const session = useSession();
+  const TOKEN = session.data?.user?.accessToken || "";
+
+  // ✅ Fetch user profile
+  const { data: useData, isLoading: userLoading } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
+      );
+      if (!res.ok) throw new Error("Failed to fetch user profile");
+      return res.json();
+    },
+  });
+
   const [formData, setFormData] = useState<FormDataType>({
     banner: null,
     title: "",
@@ -51,59 +71,35 @@ function PostAnAssignmentAdd() {
     showToPublic: true,
   });
 
-  // ✅ Handle input change
+  // ✅ Input Handlers
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Handle checkbox
   const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      showToPublic: checked,
-    }));
+    setFormData((prev) => ({ ...prev, showToPublic: checked }));
   };
 
-  // ✅ Handle file inputs
   const handleBannerUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
-    setFormData((prev) => ({
-      ...prev,
-      banner: file,
-    }));
+    setFormData((prev) => ({ ...prev, banner: file }));
   };
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
-    setFormData((prev) => ({
-      ...prev,
-      uploadFile: file,
-    }));
+    setFormData((prev) => ({ ...prev, uploadFile: file }));
   };
 
-  // ✅ Handle select values
   const handlePricingTypeChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      pricingType: value,
-    }));
+    setFormData((prev) => ({ ...prev, pricingType: value }));
   };
 
   const handlePaymentMethodChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      paymentMethod: value,
-    }));
+    setFormData((prev) => ({ ...prev, paymentMethod: value }));
   };
-
-  const session = useSession();
-  const TOKEN = session.data?.user?.accessToken || "";
 
   // ✅ Mutation for posting assignment
   const postMutation = useMutation({
@@ -119,16 +115,13 @@ function PostAnAssignmentAdd() {
       form.append("deadLine", data.deadline);
       form.append("showToPublic", data.showToPublic.toString());
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-          body: form,
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+        body: form,
+      });
 
       if (!res.ok) {
         throw new Error("Failed to post assignment");
@@ -138,8 +131,7 @@ function PostAnAssignmentAdd() {
     },
     onSuccess: (response) => {
       console.log("✅ Assignment posted successfully:", response);
-    toast.success(response.message || "Assignment posted successfully!");
-      // optional: reset form
+      toast.success(response.message || "Assignment posted successfully!");
       setFormData({
         banner: null,
         title: "",
@@ -154,19 +146,32 @@ function PostAnAssignmentAdd() {
     },
     onError: (error) => {
       console.error("❌ Error posting assignment:", error);
-     toast.error((error as Error).message || "Error posting assignment");
+      toast.error((error as Error).message || "Error posting assignment");
     },
   });
 
-  // ✅ Handle form submit
+  // ✅ Handle form submit with Stripe account check
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
+    if (userLoading) {
+      toast.error("Loading user data. Please wait...");
+      return;
+    }
+
+    const stripeAccountId = useData?.data?.stripeAccountId;
+    if (!stripeAccountId) {
+      toast.error(
+        "You need to add a Stripe account before creating an assignment."
+      );
+      return;
+    }
+
     postMutation.mutate(formData);
   };
 
   return (
     <div className="min-h-screen">
-      {/* Breadcrumb Header */}
       <BreadcrumbHeader
         title="Post An Assignment"
         breadcrumbs={[
@@ -186,7 +191,6 @@ function PostAnAssignmentAdd() {
             <Label className="text-sm font-medium text-gray-700 mb-2 block">
               Banner
             </Label>
-
             <label className="flex items-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors bg-white">
               <div className="flex items-center gap-3">
                 <span className="text-gray-700 font-medium">Choose File</span>
@@ -195,21 +199,13 @@ function PostAnAssignmentAdd() {
                   {formData.banner ? formData.banner.name : "No File Chosen"}
                 </span>
               </div>
-
-              <input
-                type="file"
-                className="hidden"
-                onChange={handleBannerUpload}
-              />
+              <input type="file" className="hidden" onChange={handleBannerUpload} />
             </label>
           </div>
 
           {/* Assignment Title */}
           <div>
-            <Label
-              htmlFor="title"
-              className="text-sm font-medium text-gray-700 mb-2 block"
-            >
+            <Label htmlFor="title" className="text-sm font-medium text-gray-700 mb-2 block">
               Assignment Title
             </Label>
             <Input
@@ -225,10 +221,7 @@ function PostAnAssignmentAdd() {
 
           {/* Description */}
           <div>
-            <Label
-              htmlFor="description"
-              className="text-sm font-medium text-gray-700 mb-2 block"
-            >
+            <Label htmlFor="description" className="text-sm font-medium text-gray-700 mb-2 block">
               Description
             </Label>
             <Textarea
@@ -243,10 +236,7 @@ function PostAnAssignmentAdd() {
 
           {/* Budget */}
           <div>
-            <Label
-              htmlFor="budget"
-              className="text-sm font-medium text-gray-700 mb-2 block"
-            >
+            <Label htmlFor="budget" className="text-sm font-medium text-gray-700 mb-2 block">
               Budget
             </Label>
             <Input
@@ -265,10 +255,7 @@ function PostAnAssignmentAdd() {
             <Label className="text-sm font-medium text-gray-700 mb-2 block">
               Choose Your Pricing Type
             </Label>
-            <Select
-              value={formData.pricingType}
-              onValueChange={handlePricingTypeChange}
-            >
+            <Select value={formData.pricingType} onValueChange={handlePricingTypeChange}>
               <SelectTrigger className="h-[50px]">
                 <SelectValue placeholder="Select Pricing Type" />
               </SelectTrigger>
@@ -285,10 +272,7 @@ function PostAnAssignmentAdd() {
             <Label className="text-sm font-medium text-gray-700 mb-2 block">
               Select Payment Method
             </Label>
-            <Select
-              value={formData.paymentMethod}
-              onValueChange={handlePaymentMethodChange}
-            >
+            <Select value={formData.paymentMethod} onValueChange={handlePaymentMethodChange}>
               <SelectTrigger className="h-[50px]">
                 <SelectValue placeholder="Select Payment Method" />
               </SelectTrigger>
@@ -302,10 +286,7 @@ function PostAnAssignmentAdd() {
 
           {/* Deadline */}
           <div>
-            <Label
-              htmlFor="deadline"
-              className="text-sm font-medium text-gray-700 mb-2 block"
-            >
+            <Label htmlFor="deadline" className="text-sm font-medium text-gray-700 mb-2 block">
               Deadline
             </Label>
             <Popover>
@@ -325,15 +306,11 @@ function PostAnAssignmentAdd() {
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={
-                    formData.deadline ? new Date(formData.deadline) : undefined
-                  }
+                  selected={formData.deadline ? new Date(formData.deadline) : undefined}
                   onSelect={(date) =>
                     setFormData((prev) => ({
                       ...prev,
-                      deadline: date
-                        ? date.toISOString().split("T")[0]
-                        : "",
+                      deadline: date ? date.toISOString().split("T")[0] : "",
                     }))
                   }
                   initialFocus
@@ -347,23 +324,15 @@ function PostAnAssignmentAdd() {
             <Label className="text-sm font-medium text-gray-700 mb-2 block">
               Upload File (Optional)
             </Label>
-
             <label className="flex items-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors bg-white">
               <div className="flex items-center gap-3">
                 <span className="text-gray-700 font-medium">Choose File</span>
                 <span className="h-5 w-px bg-gray-300"></span>
                 <span className="text-gray-500 text-sm truncate max-w-[200px]">
-                  {formData.uploadFile
-                    ? formData.uploadFile.name
-                    : "No File Chosen"}
+                  {formData.uploadFile ? formData.uploadFile.name : "No File Chosen"}
                 </span>
               </div>
-
-              <input
-                type="file"
-                className="hidden"
-                onChange={handleFileUpload}
-              />
+              <input type="file" className="hidden" onChange={handleFileUpload} />
             </label>
           </div>
 
@@ -376,10 +345,7 @@ function PostAnAssignmentAdd() {
                 handleCheckboxChange(checked as boolean)
               }
             />
-            <Label
-              htmlFor="showToPublic"
-              className="text-sm font-medium text-gray-700 cursor-pointer"
-            >
+            <Label htmlFor="showToPublic" className="text-sm font-medium text-gray-700 cursor-pointer">
               Show to Public (Visitors)
             </Label>
           </div>

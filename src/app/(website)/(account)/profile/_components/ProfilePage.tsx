@@ -1,280 +1,368 @@
 "use client";
 
-import React, { useState, ChangeEvent, useEffect } from "react";
-import { Camera } from "lucide-react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import Image from "next/image";
+import { Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
 
-interface User {
-  _id: string;
-  firstName: string;
-  lastName: string;
+interface ProfileData {
+  referralCode?: string;
+  fullName: string;
+  industry?: string; // store industry _id
   email: string;
-  profileImage?: string;
+  kvkVatNumber?: string;
   location?: string;
-  occupation?: string;
-  bio?: string;
+  overviewExperience?: string;
+  specialties?: string;
+  achievements?: string;
+  portfolio?: string;
+  profileImage?: File | null;
 }
 
-interface ApiResponse {
+interface Industry {
+  _id: string;
+  name: string;
+}
+
+interface IndustryResponse {
   statusCode: number;
   success: boolean;
   message: string;
-  data: User;
+  meta: { total: number; page: number; limit: number };
+  data: Industry[];
 }
 
-export default function ProfilePage() {
-  const { data: session } = useSession();
-  const TOKEN = session?.user?.accessToken as string | undefined;
+function SalesProfile() {
+  const session = useSession();
+  const TOKEN = session.data?.user?.accessToken || "";
+
+  const [profileData, setProfileData] = useState<ProfileData>({
+    referralCode: "",
+    fullName: "",
+    industry: "",
+    email: "",
+    kvkVatNumber: "",
+    location: "",
+    overviewExperience: "",
+    specialties: "",
+    achievements: "",
+    portfolio: "",
+    profileImage: null,
+  });
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // Fetch user profile
-  const { data: userData, isLoading } = useQuery<ApiResponse>({
-    queryKey: ["userProfile"],
-    queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`,
-        { headers: { Authorization: `Bearer ${TOKEN}` } }
-      );
-      if (!res.ok) throw new Error("Failed to fetch user profile");
-      return res.json();
-    },
-    enabled: !!TOKEN,
-  });
-
-  // Form state
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    occupation: "",
-    location: "",
-  });
-
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-  const [profileImagePreview, setProfileImagePreview] = useState(
-    "/images/reviewImage.jpg"
-  );
-
-  // Populate form once API data is loaded
   useEffect(() => {
-    if (userData?.data) {
-      const user = userData.data;
-      setFormData({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        email: user.email || "",
-        occupation: user.occupation || "",
-        location: user.location || "",
-      });
-      setProfileImagePreview(user.profileImage || "/images/reviewImage.jpg");
+    async function fetchProfile() {
+      if (!TOKEN) return;
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`,
+          { headers: { Authorization: `Bearer ${TOKEN}` } }
+        );
+        if (!res.ok) throw new Error("Failed to fetch profile");
+        const data = await res.json();
+        const user = data.data;
+        setProfileData({
+          referralCode: "", // if API returns referralCode, fill here
+          fullName: user.firstName || "",
+          industry: user.industry || "",
+          email: user.email || "",
+          kvkVatNumber: user.kvkVatNumber || "",
+          location: user.location || "",
+          overviewExperience: user.overviewExperience || "",
+          specialties: user.specialties || "",
+          achievements: user.achievements || "",
+          portfolio: user.portfolio || "",
+          profileImage: null,
+        });
+        if (user.profileImage) setImagePreview(user.profileImage);
+      } catch (err) {
+        console.error(err);
+      }
     }
-  }, [userData]);
+    fetchProfile();
+  }, [TOKEN]);
 
-  // Handle input change
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle image selection
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    setProfileImageFile(file);
-
-    // Preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") setProfileImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
+    if (file) {
+      setProfileData((prev) => ({ ...prev, profileImage: file }));
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
   };
 
-  // Update mutation
-  const profileUpdateMutation = useMutation({
-    mutationFn: async () => {
+  // Upload image immediately when button clicked
+  const handleUploadImageClick = async () => {
+    if (!profileData.profileImage)
+      return alert("Select an image first");
+
+    const formData = new FormData();
+    formData.append("profileImage", profileData.profileImage);
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`,
+        {
+          method: "PUT", // adjust if your API uses PUT
+          body: formData,
+          headers: { Authorization: `Bearer ${TOKEN}` },
+        }
+      );
+      if (!res.ok) throw new Error("Failed to upload image");
+      const data = await res.json();
+      toast.success("Image uploaded successfully!");
+      if (data.profileImage) setImagePreview(data.profileImage);
+      setProfileData((prev) => ({ ...prev, profileImage: null }));
+    } catch (err: unknown) {
+      toast.error((err as Error).message || "Error uploading image");
+    }
+  };
+
+  // Fetch industries
+  const { data: industryData } = useQuery<IndustryResponse>({
+    queryKey: ["industries"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/industry`
+      );
+      if (!res.ok) throw new Error("Failed to fetch industries");
+      return res.json();
+    },
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: ProfileData) => {
       const form = new FormData();
-      form.append("firstName", formData.firstName);
-      form.append("lastName", formData.lastName);
-      form.append("email", formData.email);
-      form.append("occupation", formData.occupation);
-      form.append("location", formData.location);
-      if (profileImageFile) {
-        form.append("profileImage", profileImageFile);
-      }
+      form.append("firstName", data.fullName);
+      if (data.industry) form.append("industry", data.industry);
+      form.append("email", data.email);
+      if (data.kvkVatNumber) form.append("kvkVatNumber", data.kvkVatNumber);
+      if (data.location) form.append("location", data.location);
+      if (data.overviewExperience)
+        form.append("overviewExperience", data.overviewExperience);
+      if (data.specialties) form.append("specialties", data.specialties);
+      if (data.achievements) form.append("achievements", data.achievements);
+      if (data.portfolio) form.append("portfolio", data.portfolio);
+      if (data.profileImage) form.append("profileImage", data.profileImage);
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`,
         {
           method: "PUT",
-          headers: { Authorization: `Bearer ${TOKEN}` },
           body: form,
+          headers: { Authorization: `Bearer ${TOKEN}` },
         }
       );
-
       if (!res.ok) throw new Error("Failed to update profile");
       return res.json();
     },
-    onSuccess: (data) => {
-      alert("Profile updated successfully!");
-      if (data?.data) {
-        const user = data.data;
-        setFormData({
-          firstName: user.firstName || "",
-          lastName: user.lastName || "",
-          email: user.email || "",
-          occupation: user.occupation || "",
-          location: user.location || "",
-        });
-        setProfileImagePreview(user.profileImage || "/images/reviewImage.jpg");
-      }
-      setProfileImageFile(null);
+    onSuccess: () => {
+      toast.success("Profile updated successfully!");
     },
-    onError: () => alert("Error updating profile."),
+    onError: (err) => {
+      toast.error(err.message || "Error updating profile");
+    },
   });
 
-  const handleSave = () => {
-    profileUpdateMutation.mutate();
+  const handleSaveProfile = (e: FormEvent) => {
+    e.preventDefault();
+    updateProfileMutation.mutate(profileData);
   };
 
-  if (isLoading)
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
-      </div>
-    );
-
   return (
-    <div className="min-h-screen">
+    <div>
       <BreadcrumbHeader
         title="Profile"
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Profile", href: "/profile" },
+          { label: "Profile", href: "/sales-profile" },
         ]}
       />
 
-      <div className="container mx-auto flex py-[96px]">
-        {/* Left Column */}
-        <div className="w-[30%]">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Profile Settings
-          </h1>
-          <div className="flex flex-col items-center mb-10">
-            <div className="relative mb-4">
-              <Image
-                src={profileImagePreview}
-                alt="Profile"
-                width={128}
-                height={128}
-                className="w-[256px] h-[256px] rounded-full object-cover border-4 border-gray-200"
-              />
-              <label
-                htmlFor="image-upload"
-                className="absolute bottom-0 right-8 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-50 transition-colors"
-              >
-                <Camera size={20} className="text-gray-600" />
+      <div className="container mx-auto px-10 py-[96px]">
+        <div className="flex flex-col md:flex-row gap-10">
+          {/* Left Side */}
+          <div className="md:w-[40%] flex flex-col items-center">
+            <div className="relative">
+              <div className="w-40 h-40 rounded-full bg-gray-200 overflow-hidden border-4 border-gray-300 flex items-center justify-center">
+                {imagePreview ? (
+                  <Image
+                    width={160}
+                    height={160}
+                    src={imagePreview}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-gray-400 text-center text-5xl">👤</div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-4 w-full flex flex-col gap-2">
+              <label className="cursor-pointer flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm w-full">
+                <Upload size={16} />
+                Select Image
                 <input
-                  id="image-upload"
                   type="file"
-                  accept="image/*"
                   className="hidden"
                   onChange={handleImageUpload}
+                  accept="image/*"
                 />
               </label>
-            </div>
-            <button
-              onClick={() => document.getElementById("image-upload")?.click()}
-              className="border-2 border-green-600 text-green-600 px-6 py-1 rounded-md font-medium text-sm hover:bg-green-50 transition-colors"
-            >
-              Upload Image
-            </button>
-          </div>
-        </div>
 
-        {/* Right Column */}
-        <div className="space-y-6 flex-1">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
+              <Button
+                onClick={handleUploadImageClick}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg"
+              >
+                Upload Image
+              </Button>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
+
+            <div className="w-full border-t border-gray-300 mt-6"></div>
+            <h1 className="text-2xl font-bold text-gray-900 mt-6 text-center">
+              Profile Setting
+            </h1>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Email
-            </label>
-            <input
-            readOnly
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
-          </div>
+          {/* Right Side */}
+          <div className="flex-1">
+            <form onSubmit={handleSaveProfile} className="space-y-6">
+              {/* Full Name */}
+              <div>
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  value={profileData.fullName}
+                  onChange={handleInputChange}
+                  placeholder="Enter full name"
+                  className="w-full"
+                />
+              </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Occupation
-              </label>
-              <input
-                type="text"
-                name="occupation"
-                value={formData.occupation}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Location
-              </label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
-          </div>
+              {/* Industry Select & Email */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="industry">Industry</Label>
+                  <Select
+                    value={profileData.industry}
+                    onValueChange={(value) =>
+                      setProfileData((prev) => ({ ...prev, industry: value }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Industry" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {industryData?.data.map((ind) => (
+                        <SelectItem key={ind._id} value={ind._id}>
+                          {ind.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-          <button
-            onClick={handleSave}
-            className="w-full bg-green-600 text-white font-semibold py-3 rounded-full hover:bg-green-700 transition-colors mt-8"
-          >
-            Save
-          </button>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                  readOnly
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={profileData.email}
+                    onChange={handleInputChange}
+                    placeholder="example@gmail.com"
+                  />
+                </div>
+              </div>
+
+              {/* KVK/VAT & Location */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="kvkVatNumber">KVK/VAT Number</Label>
+                  <Input
+                    id="kvkVatNumber"
+                    name="kvkVatNumber"
+                    type="text"
+                    value={profileData.kvkVatNumber}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="location">Location</Label>
+                  <Input
+                    id="location"
+                    name="location"
+                    type="text"
+                    value={profileData.location}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+
+              {/* Textareas */}
+              {[
+                "overviewExperience",
+                "specialties",
+                "achievements",
+                "portfolio",
+              ].map((field) => (
+                <div key={field}>
+                  <Label htmlFor={field} className="capitalize">
+                    {field}
+                  </Label>
+                  <Textarea
+                    id={field}
+                    name={field}
+                    value={profileData[field as keyof ProfileData] as string}
+                    onChange={handleInputChange}
+                    rows={5}
+                    className="resize-none"
+                  />
+                </div>
+              ))}
+
+              {/* Save Button */}
+              <Button
+                type="submit"
+                className="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-full"
+              >
+                {updateProfileMutation.isPending ? "Saving..." : "Save Profile"}
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+export default SalesProfile;
