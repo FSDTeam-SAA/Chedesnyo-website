@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { MessageCircle, Phone, MapPin } from "lucide-react";
 import Image from "next/image";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
@@ -25,9 +25,13 @@ type FreelancerUser = {
   status?: string;
   createdAt?: string;
   updatedAt?: string;
+  achievements?: string;
+  overviewExperience?: string;
+  portfolio?: string;
+  specialties?: string;
+  stripeAccountId?: string;
 };
 
-// ✅ API Response type
 type ApiResponse = {
   statusCode: number;
   success: boolean;
@@ -42,6 +46,7 @@ type ApiResponse = {
 function FindBusinessDetails() {
   const params = useParams();
   const freelancerId = params?.id;
+  const [copied, setCopied] = useState(false);
 
   const { data, isLoading, error } = useQuery<ApiResponse>({
     queryKey: ["businessDetails", freelancerId],
@@ -112,6 +117,13 @@ function FindBusinessDetails() {
     ),
   ];
 
+  // Copy email to clipboard
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(user.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); // reset after 2s
+  };
+
   return (
     <div className="min-h-screen">
       {/* Breadcrumb Header */}
@@ -125,7 +137,6 @@ function FindBusinessDetails() {
 
       <div className="bg-gray-50">
         <div className="container mx-auto px-6 py-[96px]">
-          {/* Main Container */}
           <div className="overflow-hidden">
             <div className="flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left Section - Image */}
@@ -151,7 +162,7 @@ function FindBusinessDetails() {
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
                       <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                      {user.role}
+                      {user.role} {user.verified ? "(Verified)" : ""}
                     </span>
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
                       <span className="w-2 h-2 bg-green-500 rounded-full"></span>
@@ -159,12 +170,15 @@ function FindBusinessDetails() {
                     </span>
                   </div>
 
-                  {/* Rating and Location */}
+                  {/* Location */}
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <MapPin size={16} />
                       <span className="text-sm">{user.location || "N/A"}</span>
                     </div>
+                    {user.kvkVatNumber && (
+                      <p className="text-gray-600 text-sm">KVK/VAT: {user.kvkVatNumber}</p>
+                    )}
                   </div>
                 </div>
 
@@ -174,28 +188,51 @@ function FindBusinessDetails() {
                     <MessageCircle size={18} />
                     Chat
                   </button>
-                  <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-full transition-colors flex items-center justify-center gap-2">
+
+                  <button
+                    onClick={handleCopyEmail}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-full transition-colors flex items-center justify-center gap-2"
+                  >
                     <Phone size={18} />
-                    Contact
+                    {copied ? "Copied!" : user.email}
                   </button>
                 </div>
 
-                {/* Overview */}
+                {/* Overview / Details */}
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">Overview:</h3>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                      {user.businessName
-                        ? `${user.businessName} is a verified business located in ${user.location || "N/A"}.`
-                        : `Freelancer ${user.firstName} ${user.lastName || ""} is a verified professional.`}
+                      {user.overviewExperience || "No overview available."}
                     </p>
                   </div>
+
+                  {user.achievements && (
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Achievements:</h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">{user.achievements}</p>
+                    </div>
+                  )}
+
+                  {user.specialties && (
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Specialties:</h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">{user.specialties}</p>
+                    </div>
+                  )}
+
+                  {user.portfolio && (
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Portfolio:</h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">{user.portfolio}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Single Reviews Carousel */}
+          {/* Reviews Carousel */}
           <div className="mt-16">
             {allReviews.length > 0 ? (
               <ReviewsCarousel

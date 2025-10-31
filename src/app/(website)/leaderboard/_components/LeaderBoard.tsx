@@ -11,8 +11,11 @@ type LeaderboardItem = {
   totalSales: number;
   avgRating: number;
   user: {
-    name?: string;
-    department?: string;
+    firstName?: string;
+    email?: string;
+    profileImage?: string;
+    industry?: string;
+    lastName?: string;
   } | null;
 };
 
@@ -139,13 +142,16 @@ function LeaderBoard() {
                 <div
                   className={`w-12 h-12 rounded-full ${getAvatarColor(index)} flex items-center justify-center text-white font-bold text-lg flex-shrink-0`}
                 >
-                  {getInitial(professional.user?.name || "U")}
+                  {getInitial(professional.user?.firstName || "U")}
                 </div>
 
-                {/* Name and Department */}
+                {/* Name and Email */}
                 <div>
-                  <p className="text-white font-semibold">{professional.user?.name || "Unknown User"}</p>
-                  <p className="text-gray-400 text-sm">{professional.user?.department || "N/A"}</p>
+                  <p className="text-white font-semibold">
+                    {professional.user?.firstName || "Unknown User"}{" "}
+                    {professional.user?.lastName || ""}
+                  </p>
+                  <p className="text-gray-400 text-sm">{professional.user?.email || "N/A"}</p>
                 </div>
               </div>
 
