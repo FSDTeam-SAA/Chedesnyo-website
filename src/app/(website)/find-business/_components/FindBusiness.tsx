@@ -55,7 +55,7 @@ export default function FindBusiness() {
       params.append("limit", itemsPerPage.toString());
       
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/all-user?${params.toString()}`
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/all-user/?${params.toString()}`
       );
       if (!res.ok) throw new Error("Failed to fetch businesses");
       return res.json();
