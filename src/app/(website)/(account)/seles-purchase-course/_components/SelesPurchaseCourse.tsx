@@ -13,16 +13,13 @@ function SelesPurchaseCourse() {
   const { data: session } = useSession();
   const TOKEN = session?.user?.accessToken || "";
 
-  // Fetch payments
   const { data: paymentsData, isLoading } = useQuery({
     queryKey: ["seles-courses"],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`,
         {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
+          headers: { Authorization: `Bearer ${TOKEN}` },
         }
       );
       if (!res.ok) throw new Error("Network response was not ok");
@@ -31,33 +28,27 @@ function SelesPurchaseCourse() {
     enabled: !!TOKEN,
   });
 
-  // ✅ Extract ONLY course payments
   const courses = paymentsData?.data.filter((p: any) => p.course) || [];
 
-  // Filter logic based on tab using payment status
   const filterCourses = () => {
-    if (activeTab === "all") return courses;
     if (activeTab === "in-progress")
-      return courses.filter(
-        (c: any) => c.status === "pending" || c.status === "processing"
-      );
+      return courses.filter((c: any) => c.status === "pending" || c.status === "processing");
+
     if (activeTab === "completed")
       return courses.filter((c: any) => c.status === "approved");
+
     if (activeTab === "cancelled")
-      return courses.filter(
-        (c: any) =>
-          c.status === "refunded" || c.status === "rejected" || c.status === "cancelled"
+      return courses.filter((c: any) => 
+        c.status === "refunded" || c.status === "rejected" || c.status === "cancelled"
       );
+
     return courses;
   };
 
   const filteredCourses = filterCourses();
   const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const displayedCourses = filteredCourses.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const displayedCourses = filteredCourses.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusStyle = (status: string) => {
     switch (status) {
@@ -79,9 +70,16 @@ function SelesPurchaseCourse() {
     if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
 
+  // ✅ Open video in new tab if approved
+  const handleOpenVideo = (course: any) => {
+    if (course.status === "approved" && course.course?.courseVideo) {
+      window.open(course.course.courseVideo, "_blank");
+    }
+  };
+
   return (
     <div className="w-full">
-      {/* Breadcrumb Header */}
+
       <BreadcrumbHeader
         title="My Courses"
         breadcrumbs={[
@@ -91,11 +89,8 @@ function SelesPurchaseCourse() {
       />
 
       <div className="container px-10 mx-auto py-[96px]">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-          My Courses
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">My Courses</h1>
 
-        {/* Tabs */}
         <div className="flex gap-3 mb-6">
           <button
             onClick={() => { setActiveTab("in-progress"); setCurrentPage(1); }}
@@ -107,6 +102,7 @@ function SelesPurchaseCourse() {
           >
             In Progress
           </button>
+
           <button
             onClick={() => { setActiveTab("completed"); setCurrentPage(1); }}
             className={`px-4 py-2 text-sm font-medium rounded border ${
@@ -117,6 +113,7 @@ function SelesPurchaseCourse() {
           >
             Completed
           </button>
+
           <button
             onClick={() => { setActiveTab("cancelled"); setCurrentPage(1); }}
             className={`px-4 py-2 text-sm font-medium rounded border ${
@@ -129,7 +126,6 @@ function SelesPurchaseCourse() {
           </button>
         </div>
 
-        {/* Table */}
         <div className="border border-gray-300 rounded-lg overflow-hidden mb-6">
           <table className="w-full">
             <thead>
@@ -161,16 +157,22 @@ function SelesPurchaseCourse() {
                 </tr>
               ) : (
                 displayedCourses.map((course: any) => (
-                  <tr
-                    key={course._id}
+                  <tr key={course._id}
                     className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                   >
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td
+                      className={`px-6 py-4 text-sm text-gray-900 ${
+                        course.status === "approved" ? "cursor-pointer text-green-600 font-medium" : ""
+                      }`}
+                      onClick={() => handleOpenVideo(course)}
+                    >
                       {course?.course?.title || "Untitled"}
                     </td>
+
                     <td className="px-6 py-4 text-sm text-gray-900">
                       ${course?.course?.price || "N/A"}
                     </td>
+
                     <td className="px-6 py-4 text-sm flex justify-end">
                       <span className={getStatusStyle(course.status)}>
                         {course.status?.toUpperCase() || "N/A"}
@@ -183,12 +185,9 @@ function SelesPurchaseCourse() {
           </table>
         </div>
 
-        {/* Pagination */}
         <div className="flex items-center justify-between">
           <p className="text-xs text-gray-600">
-            Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + itemsPerPage, filteredCourses.length)} of{" "}
-            {filteredCourses.length} results
+            Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredCourses.length)} of {filteredCourses.length} results
           </p>
 
           <div className="flex items-center gap-1">
@@ -223,6 +222,7 @@ function SelesPurchaseCourse() {
             </button>
           </div>
         </div>
+
       </div>
     </div>
   );

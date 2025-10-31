@@ -9,7 +9,7 @@ import React from "react";
 type User = {
   _id: string;
   firstName: string;
-  lastName: string;
+  lastName?: string;
   email: string;
   profileImage: string;
 };
@@ -22,10 +22,18 @@ type Course = {
   status: string;
 };
 
+type Assignment = {
+  _id: string;
+  title: string;
+  budget: string;
+  status: string;
+};
+
 type Earning = {
   _id: string;
   user: User;
-  course: Course;
+  course?: Course;
+  assigment?: Assignment;
   amount: number;
   currency: string;
   paymentMethod: string;
@@ -49,19 +57,21 @@ type ApiResponse = {
 
 function Earnings() {
   const { data: session } = useSession();
-    const TOKEN = session?.user?.accessToken || "";
-  
-  // ✅ Fetch data with proper return and type
+  const TOKEN = session?.user?.accessToken || "";
+
   const { data: earningsData, isLoading, isError } = useQuery<ApiResponse>({
     queryKey: ["earnings"],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/seller/payments`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/seller/payments`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to fetch earnings data");
@@ -69,7 +79,13 @@ function Earnings() {
 
       return res.json();
     },
+    enabled: !!TOKEN,
   });
+
+  // ✅ Filter only approved earnings
+  const approvedEarnings = earningsData?.data.filter(
+    (item) => item.status === "approved"
+  );
 
   return (
     <div>
@@ -100,7 +116,10 @@ function Earnings() {
                     Referred Freelancer
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Platform Profit
+                  Amount
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
+                    Admin Fee
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
                     Your Earning
@@ -129,8 +148,8 @@ function Earnings() {
                       Failed to load data.
                     </td>
                   </tr>
-                ) : earningsData?.data && earningsData.data.length > 0 ? (
-                  earningsData.data.map((item) => (
+                ) : approvedEarnings && approvedEarnings.length > 0 ? (
+                  approvedEarnings.map((item) => (
                     <tr
                       key={item._id}
                       className="border-b border-gray-100 hover:bg-gray-50"
@@ -145,12 +164,15 @@ function Earnings() {
                         />
                         <div>
                           <div className="font-medium">
-                            {item.user.firstName} {item.user.lastName}
+                            {item.user.firstName} {item.user.lastName || ""}
                           </div>
                           <div className="text-xs text-gray-500">
                             {item.user.email}
                           </div>
                         </div>
+                      </td>
+                       <td className="px-4 py-3 text-sm text-gray-700">
+                        ${item.amount.toFixed(2)}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700">
                         ${item.adminFree.toFixed(2)}
@@ -169,7 +191,7 @@ function Earnings() {
                       colSpan={4}
                       className="px-4 py-8 text-center text-sm text-gray-500"
                     >
-                      No earnings from referred freelancers.
+                      No approved earnings available.
                     </td>
                   </tr>
                 )}

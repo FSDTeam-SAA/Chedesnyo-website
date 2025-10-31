@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -14,12 +15,15 @@ import {
 } from "lucide-react";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { useSession } from "next-auth/react";
+import { ReviewsCarousel } from "@/components/ReusableCard/CustomerReviewsCard";
+import AssignmentReviewForm from "@/components/share/AssignmentReviewForm";
 
 export default function AssignmentDetails() {
   const params = useParams();
   const assignmentId = params?.id as string;
   const session = useSession();
-    const TOKEN = session.data?.user?.accessToken || "";
+  const TOKEN = session.data?.user?.accessToken || "";
+  const loggedUserId = session.data?.user?.id;
 
   // ✅ Fetch assignment details
   const { data, isLoading, isError } = useQuery({
@@ -36,6 +40,7 @@ export default function AssignmentDetails() {
   });
 
   const assignment = data?.data;
+  const assignmentOwnerId = assignment?.user?._id;
 
   // ✅ Payment Mutation
   const paymentMutation = useMutation({
@@ -56,23 +61,23 @@ export default function AssignmentDetails() {
     onSuccess: (data) => {
       const url = data?.data?.url;
       if (url) {
-        // Redirect to payment URL
         window.location.href = url;
       } else {
         alert("Payment URL not found!");
       }
     },
-    onError: (error) => {
-      console.error("Payment error:", error);
+    onError: () => {
       alert("Payment initiation failed. Please try again.");
     },
   });
 
-  // ✅ Handle button click
+  // ✅ Handle Take Deal
   const handleTakeDeal = () => {
     if (!assignmentId) return;
     paymentMutation.mutate();
   };
+
+  const isCreator = loggedUserId === assignmentOwnerId;
 
   if (isLoading)
     return (
@@ -96,128 +101,156 @@ export default function AssignmentDetails() {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-[96px]">
-      <div className="pb-[96px]">
-        <BreadcrumbHeader
-          title="Assignment Details"
-          breadcrumbs={[
-            { label: "Home", href: "/" },
-            { label: "Assignment Details", href: "/assignments" },
-          ]}
-        />
-      </div>
-      <div className="container mx-auto bg-white rounded-2xl border border-gray-200">
-        {/* Banner Image */}
-        <div className="relative h-[400px] w-full">
-          <Image
-            src={assignment.banner}
-            alt={assignment.title}
-            fill
-            className="object-cover"
+    <div>
+      <div className="min-h-screen bg-gray-50">
+        <div className="pb-[96px]">
+          <BreadcrumbHeader
+            title="Assignment Details"
+            breadcrumbs={[
+              { label: "Home", href: "/" },
+              { label: "Assignments", href: "/assignments" },
+            ]}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-            <h1 className="text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">
-              {assignment.title}
-            </h1>
-          </div>
         </div>
 
-        {/* Content Section */}
-        <div className="p-8 space-y-6">
-          {/* Basic Info */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-gray-700">
-            <div className="flex items-center gap-2">
-              <DollarSign className="text-green-600" size={20} />
-              <p>
-                <span className="font-semibold">Budget:</span> $
-                {assignment.budget}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Briefcase className="text-blue-600" size={20} />
-              <p>
-                <span className="font-semibold">Price Type:</span>{" "}
-                {assignment.priceType}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Globe className="text-purple-600" size={20} />
-              <p>
-                <span className="font-semibold">Payment:</span>{" "}
-                {assignment.paymentMethod}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="text-orange-600" size={20} />
-              <p>
-                <span className="font-semibold">Deadline:</span>{" "}
-                {new Date(assignment.deadLine).toLocaleDateString()}
-              </p>
+        <div className="container mx-auto bg-white rounded-2xl border border-gray-200">
+          <div className="relative h-[400px] w-full">
+            <Image
+              src={assignment.banner}
+              alt={assignment.title}
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+              <h1 className="text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">
+                {assignment.title}
+              </h1>
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="h-px bg-gray-200" />
+          <div className="p-8 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-gray-700">
+              <div className="flex items-center gap-2">
+                <DollarSign className="text-green-600" size={20} />
+                <p>
+                  <span className="font-semibold">Budget:</span> ${assignment.budget}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Briefcase className="text-blue-600" size={20} />
+                <p>
+                  <span className="font-semibold">Price Type:</span> {assignment.priceType}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="text-purple-600" size={20} />
+                <p>
+                  <span className="font-semibold">Payment:</span> {assignment.paymentMethod}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="text-orange-600" size={20} />
+                <p>
+                  <span className="font-semibold">Deadline:</span>{" "}
+                  {new Date(assignment.deadLine).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
 
-          {/* Description */}
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">
-              Description
-            </h2>
-            <p className="text-gray-700 leading-relaxed">
-              {assignment.description}
-            </p>
-          </div>
+            <div className="h-px bg-gray-200" />
 
-          {/* Upload File */}
-          {assignment.uploadFile && (
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-3">
-                Attached File
+                Description
               </h2>
-              <a
-                href={assignment.uploadFile}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-green-600 hover:underline font-medium"
-              >
-                View Uploaded File →
-              </a>
+              <p className="text-gray-700 leading-relaxed">{assignment.description}</p>
             </div>
-          )}
 
-          {/* Status + Take Deal Button */}
-          <div className="pt-6">
-            <span
-              className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
-                assignment.status === "approved"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-yellow-100 text-yellow-700"
-              }`}
-            >
-              {assignment.status.toUpperCase()}
-            </span>
+            {assignment.uploadFile && (
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                  Attached File
+                </h2>
+                <a
+                  href={assignment.uploadFile}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-green-600 hover:underline font-medium"
+                >
+                  View Uploaded File →
+                </a>
+              </div>
+            )}
 
-            {/* ✅ Take This Deal Button */}
-            <div className="mt-4">
-              <button
-                onClick={handleTakeDeal}
-                disabled={paymentMutation.isPending}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-70 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+            <div className="pt-6">
+              <span
+                className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
+                  assignment.status === "approved"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-yellow-100 text-yellow-700"
+                }`}
               >
-                {paymentMutation.isPending ? (
-                  <>
-                    <Loader2 className="animate-spin" size={20} /> Processing...
-                  </>
-                ) : (
-                  <>
-                    <Book size={20} />
-                    Take This Deal
-                  </>
-                )}
-              </button>
+                {assignment.status.toUpperCase()}
+              </span>
+
+              <div className="mt-4">
+                <button
+                  onClick={isCreator ? undefined : handleTakeDeal}
+                  disabled={isCreator || paymentMutation.isPending}
+                  className={`w-full font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md 
+                    ${
+                      isCreator
+                        ? "bg-gray-400 cursor-not-allowed text-white"
+                        : "bg-green-600 hover:bg-green-700 text-white"
+                    }
+                  `}
+                >
+                  {isCreator ? (
+                    "You created this assignment"
+                  ) : paymentMutation.isPending ? (
+                    <>
+                      <Loader2 className="animate-spin" size={20} /> Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Book size={20} /> Take This Deal
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ✅ Reviews Section */}
+      <div className="bg-gray-50">
+        <div className="container mx-auto">
+          <AssignmentReviewForm assignmentId={assignmentId} />
+        </div>
+
+        <div className="container mx-auto py-10">
+          {assignment.review && assignment.review.length > 0 ? (
+            <ReviewsCarousel
+              reviews={assignment.review.map((r: any) => ({
+                id: r._id,
+                name: r.user?.firstName || "Anonymous",
+                avatar: r.user?.profileImage || "/images/reviewImage.jpg",
+                rating: r.rating,
+                date: new Date(r.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }),
+                text: r.comment,
+              }))}
+              itemsPerView={3}
+              showHeader={true}
+              title="Assignment Reviews"
+            />
+          ) : (
+            <p className="text-center text-gray-500">No reviews yet.</p>
+          )}
         </div>
       </div>
     </div>

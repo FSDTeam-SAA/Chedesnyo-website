@@ -1,57 +1,45 @@
+
 "use client";
 
 import React from "react";
-import { ReviewsCarousel, Review } from "../ReusableCard/CustomerReviewsCard"; // ✅ import Review type
-
-// ✅ Sample Data
-const reviewsData: Review[] = [
-  {
-    id: 1,
-    name: "Maya Russo",
-    avatar: "/images/reviewImage.jpg",
-    rating: 5,
-    date: "February 13, 2025",
-    text: "They didn't just design a beautiful space—they really understood what I wanted and brought it to life. The attention to detail is incredible. Everything feels both modern but cozy.",
-  },
-  {
-    id: 2,
-    name: "John Smith",
-    avatar: "/images/reviewImage.jpg",
-    rating: 4,
-    date: "February 10, 2025",
-    text: "Excellent service and very professional team. They delivered exactly what was promised on time and within budget. Highly recommended!",
-  },
-  {
-    id: 3,
-    name: "Sarah Johnson",
-    avatar: "/images/reviewImage.jpg",
-    rating: 5,
-    date: "February 08, 2025",
-    text: "Amazing experience from start to finish. The team was responsive and made sure every detail was perfect. Will definitely work with them again!",
-  },
-  {
-    id: 4,
-    name: "David Lee",
-    avatar: "/images/reviewImage.jpg",
-    rating: 4,
-    date: "February 05, 2025",
-    text: "Great communication throughout the entire process. The final product exceeded my expectations. Would hire again!",
-  },
-  {
-    id: 5,
-    name: "Emma Brown",
-    avatar: "/images/reviewImage.jpg",
-    rating: 5,
-    date: "February 02, 2025",
-    text: "Superb quality and attention to detail. They truly care about customer satisfaction. Highly recommend their services!",
-  },
-];
+import { ReviewsCarousel, Review } from "../ReusableCard/CustomerReviewsCard"; 
+import { useQuery } from "@tanstack/react-query";
 
 // ✅ Main Review Page
 export default function CustomerReviews() {
+  const { data: reviewData, isLoading, isError } = useQuery({
+    queryKey: ["customerReviews"],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/review`, {
+        method: "GET",
+      });
+      if (!res.ok) throw new Error("Failed to fetch reviews");
+      return res.json();
+    },
+  });
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+
+  // Map API response to Review type
+  const reviews: Review[] =
+    reviewData?.data?.data?.map((item: any) => ({
+      id: item._id,
+      name: item.user?.firstName || "Anonymous",
+      avatar: item.user?.profileImage || "/images/reviewImage.jpg",
+      rating: item.rating,
+      date: new Date(item.createdAt).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
+      text: item.comment,
+    })) || [];
+
+  if (isLoading) return <p className="text-center py-10">Loading reviews...</p>;
+  if (isError) return <p className="text-center py-10 text-red-500">Failed to load reviews.</p>;
+
   return (
     <ReviewsCarousel
-      reviews={reviewsData}
+      reviews={reviews}
       itemsPerView={3}
       showHeader={true}
       title="Customer Reviews"

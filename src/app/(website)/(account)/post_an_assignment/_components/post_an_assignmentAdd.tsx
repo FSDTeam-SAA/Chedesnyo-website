@@ -241,7 +241,7 @@ function PostAnAssignmentAdd() {
             </Label>
             <Input
               id="budget"
-              type="text"
+              type="number"
               name="budget"
               value={formData.budget}
               onChange={handleInputChange}

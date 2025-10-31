@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -8,6 +9,7 @@ import CoursesCard from "@/components/ReusableCard/CoursesCard";
 import { useQuery } from "@tanstack/react-query";
 
 // ✅ TypeScript type for a single course
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type Course = {
   _id: string;
   title: string;
@@ -27,6 +29,7 @@ type Course = {
   extraFile: string;
   introductionVideo: string;
   courseVideo: string;
+  application: any[];
 };
 
 // ✅ TypeScript type for API response
@@ -52,9 +55,9 @@ function CoursesPage() {
     queryKey: ["coursesData", searchTerm, currentPage],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course?searchTerm=${encodeURIComponent(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course/?searchTerm=${encodeURIComponent(
           searchTerm
-        )}&page=${currentPage}&limit=${itemsPerPage}`,
+        )}&status=approved&page=${currentPage}&limit=${itemsPerPage}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -139,7 +142,7 @@ function CoursesPage() {
                   type={course.description}
                   paymentType="Fixed Price"
                   paymentAmount={`$${course.price}`}
-                  applications={course.modules}
+                  applications={course.application.length || 0}
                 />
               ))}
             </div>

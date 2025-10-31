@@ -21,7 +21,7 @@ export default function LatestAssignments() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["assignments"],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment/?status=approved`);
       if (!res.ok) throw new Error("Failed to fetch assignments");
       return res.json();
     },

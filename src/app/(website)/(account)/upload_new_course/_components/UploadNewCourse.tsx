@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
@@ -37,6 +37,26 @@ function UploadNewCourse() {
 
   const session = useSession();
   const TOKEN = session.data?.user?.accessToken || "";
+
+
+   // ✅ Fetch user profile
+  const { data: useData } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
+      );
+      if (!res.ok) throw new Error("Failed to fetch user profile");
+      return res.json();
+    },
+  });
+
+  
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -133,6 +153,13 @@ function UploadNewCourse() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+     const stripeAccountId = useData?.data?.stripeAccountId;
+        if (!stripeAccountId) {
+          toast.error(
+            "You need to add a Stripe account before creating an assignment."
+          );
+          return;
+        }
     createCourseMutation.mutate();
   };
 

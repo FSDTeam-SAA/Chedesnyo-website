@@ -88,13 +88,13 @@ export default function CoursesCard({
         </div>
 
         {/* Take This Deal Button */}
-        <div>
+        <div className="pt-4">
          <Link href={`/courses/${id}`}>
           <button
           className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
         >
           <Book  size={20} />
-          Take This Deal
+          Course Details
         </button>
          </Link>
         </div>

@@ -50,7 +50,7 @@ export default function Navbar() {
     onSuccess: (data) => {
       const url = data?.data?.url;
       if (url) {
-        window.location.href = url; // redirect to Stripe onboarding
+        window.location.href = url;
       } else {
         alert("Stripe onboarding URL not found!");
       }
@@ -77,7 +77,7 @@ export default function Navbar() {
     onSuccess: (data) => {
       const url = data?.data?.url;
       if (url) {
-        window.location.href = url; // redirect to Stripe dashboard
+        window.location.href = url;
       } else {
         alert("Stripe dashboard URL not found!");
       }
@@ -96,7 +96,7 @@ export default function Navbar() {
 
   const navLinks = [
     { label: "Home", href: "/" },
-   { label: "Assignments", href: "/assignments" },
+    { label: "Assignments", href: "/assignments" },
     { label: "Explore Freelancers", href: "/explore-freelancers" },
     { label: "Find Businesses", href: "/find-business" },
     { label: "Courses", href: "/courses" },
@@ -174,29 +174,31 @@ export default function Navbar() {
 
                   {/* Links */}
                   <div className="flex flex-col">
-                    {[
-                      { label: "My Profile", href: "/profile" },
+                    {[{ label: "My Profile", href: "/profile" },
                       { label: "Inbox", href: "/inbox" },
+                      ...(user?.role === "business" ? [{ label: "My Assignments", href: "/assignment" }] : []),
+                       { label: "My Courses", href: "/courese" },
+                      ...(user?.role === "seles" ? [{ label: "My Purchase Assignments", href: "/seles-assignment" }] : []),
                       ...(user?.role === "business"
-                        ? [{ label: "Assignments", href: "/assignment" }]
-                        : user?.role === "seles"
-                        ? [{ label: "My Assignments", href: "/seles-assignment" }]
-                        : []),
-
-
-                         ...(user?.role === "business"
-                        ? [{ label: "My Orders Assignment", href: "/my-orders-for-assignment" },
-                       { label: "My Orders Course", href: "/my-orders-for-course" },]
+                        ? [
+                            { label: "My Orders Assignment", href: "/my-orders-for-assignment" },
+                            { label: "My Orders Course", href: "/my-orders-for-course" },
+                          ]
                         : user?.role === "seles"
                         ? [{ label: "My Orders Course", href: "/my-orders-for-course" }]
                         : []),
-
-
- { label: "My Purchase Courses", href: "/seles-purchase-course" },
-                        { label: "My Purchase Assignment", href: "/seles-assignment" },
-                      { label: "My Courses", href: "/courese" },
-                      { label: "Withdrawal", href: "/withdrawal" },
-                      { label: "Referral Program", href: "/referral" },
+                      // ✅ Purchase Links based on role
+                      ...(user?.role === "business"
+                        ? [
+                            { label: "My Purchase Courses", href: "/seles-purchase-course" },
+                            { label: "My Purchase Assignment", href: "/seles-assignment" },
+                          ]
+                        : user?.role === "seles"
+                        ? [{ label: "My Purchase Courses", href: "/seles-purchase-course" }]
+                        : []),
+                     
+                      { label: "My Earning History", href: "/earnings" },
+                      // { label: "Referral Program", href: "/referral" },
                     ].map((link) => {
                       const isActive = pathname === link.href;
                       return (
@@ -322,6 +324,7 @@ export default function Navbar() {
                       {user.role && <p className="text-xs text-gray-500 mt-1 text-center">{user.role}</p>}
                     </div>
 
+                    {/* Mobile Links */}
                     <Link
                       href="/profile"
                       className="block px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
@@ -330,7 +333,36 @@ export default function Navbar() {
                       Profile
                     </Link>
 
-                    {/* Mobile Stripe Section */}
+                    {/* Mobile Purchase Links based on role */}
+                    {user?.role === "business" && (
+                      <>
+                        <Link
+                          href="/seles-purchase-course"
+                          onClick={() => setIsPopoverOpen(false)}
+                          className="block px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
+                        >
+                          My Purchase Courses
+                        </Link>
+                        <Link
+                          href="/seles-assignment"
+                          onClick={() => setIsPopoverOpen(false)}
+                          className="block px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
+                        >
+                          My Purchase Assignment
+                        </Link>
+                      </>
+                    )}
+                    {user?.role === "seles" && (
+                      <Link
+                        href="/seles-purchase-course"
+                        onClick={() => setIsPopoverOpen(false)}
+                        className="block px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
+                      >
+                        My Purchase Courses
+                      </Link>
+                    )}
+
+                    {/* Stripe Section */}
                     {useData?.data?.stripeAccountId ? (
                       <button
                         onClick={() => {

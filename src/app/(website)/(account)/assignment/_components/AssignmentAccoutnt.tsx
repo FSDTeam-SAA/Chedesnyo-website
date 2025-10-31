@@ -39,7 +39,7 @@ type AssignmentResponse = {
 };
 
 function CourseAccount() {
-  const [deleteId, setDeleteId] = useState<string | null>(null); // ✅ selected assignment id
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const session = useSession();
@@ -49,7 +49,12 @@ function CourseAccount() {
     queryKey: ["assignments"],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment/my-assigments`,
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
       );
       if (!res.ok) throw new Error("Network response was not ok");
       return res.json() as Promise<AssignmentResponse>;
@@ -73,7 +78,7 @@ function CourseAccount() {
     },
     onSuccess: () => {
       toast.success("Assignment deleted successfully!");
-      queryClient.invalidateQueries({ queryKey: ["assignments"] }); // ✅ refresh assignments list
+      queryClient.invalidateQueries({ queryKey: ["assignments"] });
       setDeleteModalOpen(false);
     },
     onError: (error) => {
@@ -118,58 +123,62 @@ function CourseAccount() {
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  No
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  Assignment Title
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  Deadline
-                </th>
-                <th className="pr-10 py-4 text-end text-sm font-semibold text-gray-700">
-                  Action
-                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">No</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Assignment Title</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Deadline</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                <th className="pr-10 py-4 text-end text-sm font-semibold text-gray-700">Action</th>
               </tr>
             </thead>
 
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="text-center py-6 text-gray-500 text-sm"
-                  >
-                    Loading assignments...
-                  </td>
+                  <td colSpan={4} className="text-center py-6 text-gray-500 text-sm">Loading assignments...</td>
                 </tr>
               ) : isError ? (
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="text-center py-6 text-red-500 text-sm"
-                  >
-                    Failed to load assignments.
-                  </td>
+                  <td colSpan={4} className="text-center py-6 text-red-500 text-sm">Failed to load assignments.</td>
                 </tr>
               ) : data?.data?.length ? (
                 data.data.map((assignment, index) => (
-                  <tr
-                    key={assignment._id}
-                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {index + 1}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {assignment.title}
-                    </td>
+                  <tr key={assignment._id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
+
+                    <td className="px-6 py-4 text-sm text-gray-900">{assignment.title}</td>
+
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {new Date(assignment.deadLine).toLocaleDateString()}
                     </td>
+
+                    {/* ✅ Status Badge */}
+                    <td className="px-6 py-4 text-sm">
+                      <span
+                        className={`
+                          px-3 py-1 rounded-full text-xs font-semibold
+                          ${
+                            assignment.status === "approved"
+                              ? "bg-green-100 text-green-700"
+                              : assignment.status === "pending"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : assignment.status === "completed" || assignment.status === "delivered"
+                              ? "bg-blue-100 text-blue-700"
+                              : assignment.status === "rejected" ||
+                                assignment.status === "cancelled" ||
+                                assignment.status === "failed"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-gray-100 text-gray-700"
+                          }
+                        `}
+                      >
+                        {assignment.status.toUpperCase()}
+                      </span>
+                    </td>
+
                     <td className="px-6 py-4 text-sm flex items-end justify-end">
                       <div className="flex items-center gap-3">
                         <EditAssignmentModal assignmentId={assignment._id} />
+
                         <button
                           className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded transition-colors"
                           title="Delete"
@@ -183,12 +192,7 @@ function CourseAccount() {
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="text-center py-6 text-gray-500 text-sm"
-                  >
-                    No assignments found.
-                  </td>
+                  <td colSpan={4} className="text-center py-6 text-gray-500 text-sm">No assignments found.</td>
                 </tr>
               )}
             </tbody>

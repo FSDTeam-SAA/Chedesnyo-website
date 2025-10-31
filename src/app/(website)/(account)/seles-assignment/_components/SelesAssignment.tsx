@@ -157,6 +157,7 @@ function SelesAssignment() {
               </tr>
             </thead>
 
+            {/* ✅ Table Body with file link for approved */}
             <tbody>
               {isLoading ? (
                 <tr>
@@ -176,17 +177,33 @@ function SelesAssignment() {
                     key={assignment._id}
                     className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                   >
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-gray-900 flex flex-col gap-2">
                       {assignment?.assigment?.title || "Untitled"}
+
+                      {/* ✅ Show file link ONLY if approved */}
+                      {assignment.status === "approved" &&
+                        assignment?.assigment?.uploadFile && (
+                          <a
+                            href={assignment.assigment.uploadFile}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline text-xs hover:text-blue-800"
+                          >
+                            View Uploaded File
+                          </a>
+                        )}
                     </td>
+
                     <td className="px-6 py-4 text-sm text-gray-900">
                       ${assignment?.assigment?.budget || "N/A"}
                     </td>
+
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {assignment?.assigment?.user
                         ? assignment.assigment.user.firstName
                         : "Unknown"}
                     </td>
+
                     <td className="px-6 py-4 text-sm flex justify-end">
                       <div className="flex items-center gap-2">
                         <span className={getStatusStyle(assignment.status)}>

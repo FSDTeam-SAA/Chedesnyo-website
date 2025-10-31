@@ -5,9 +5,9 @@ import React from "react";
 import { MessageCircle, Phone, MapPin } from "lucide-react";
 import Image from "next/image";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
-import CustomerReviews from "@/components/share/CustomerReviews";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { ReviewsCarousel } from "@/components/ReusableCard/CustomerReviewsCard";
 
 // ✅ Type for API User
 type FreelancerUser = {
@@ -56,9 +56,15 @@ function FindBusinessDetails() {
   });
 
   const user = data?.data.user;
+  const assignments = data?.data.assigments || [];
+  const courses = data?.data.courses || [];
 
   if (isLoading)
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
 
   if (error)
     return (
@@ -74,6 +80,38 @@ function FindBusinessDetails() {
       </div>
     );
 
+  // Merge assignment and course reviews
+  const allReviews = [
+    ...assignments.flatMap((a: any) =>
+      (a.review || []).map((r: any) => ({
+        id: r._id,
+        name: r.user?.firstName || "Anonymous",
+        avatar: r.user?.profileImage || "/images/reviewImage.jpg",
+        rating: r.rating,
+        date: new Date(r.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        text: r.comment,
+      }))
+    ),
+    ...courses.flatMap((c: any) =>
+      (c.review || []).map((r: any) => ({
+        id: r._id,
+        name: r.user?.firstName || "Anonymous",
+        avatar: r.user?.profileImage || "/images/reviewImage.jpg",
+        rating: r.rating,
+        date: new Date(r.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        text: r.comment,
+      }))
+    ),
+  ];
+
   return (
     <div className="min-h-screen">
       {/* Breadcrumb Header */}
@@ -85,7 +123,7 @@ function FindBusinessDetails() {
         ]}
       />
 
-      <div className="bg-[#FEFAEF]">
+      <div className="bg-gray-50">
         <div className="container mx-auto px-6 py-[96px]">
           {/* Main Container */}
           <div className="overflow-hidden">
@@ -156,9 +194,20 @@ function FindBusinessDetails() {
               </div>
             </div>
           </div>
-        </div>
-        <div>
-          <CustomerReviews />
+
+          {/* Single Reviews Carousel */}
+          <div className="mt-16">
+            {allReviews.length > 0 ? (
+              <ReviewsCarousel
+                reviews={allReviews}
+                itemsPerView={3}
+                showHeader={true}
+                title="All Reviews"
+              />
+            ) : (
+              <p className="text-center text-gray-500">No reviews yet.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

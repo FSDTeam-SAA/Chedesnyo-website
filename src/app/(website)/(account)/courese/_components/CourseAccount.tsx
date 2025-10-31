@@ -51,9 +51,12 @@ function CourseAccount() {
   const { data: coursesData, isLoading, isError } = useQuery<CoursesApiResponse>({
     queryKey: ["coursesData"],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course/my-course`, {
-        headers: { Authorization: `Bearer ${TOKEN}` },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course/my-course`,
+        {
+          headers: { Authorization: `Bearer ${TOKEN}` },
+        }
+      );
       if (!res.ok) throw new Error("Network response was not ok");
       return res.json();
     },
@@ -61,21 +64,40 @@ function CourseAccount() {
 
   const courses = coursesData?.data || [];
 
+  // ✅ Status Color Function
+  const getStatusStyle = (status: string) => {
+    const lower = status.toLowerCase();
+
+    if (["approved", "active", "published"].includes(lower)) {
+      return "bg-green-100 text-green-700";
+    }
+    if (["pending", "review"].includes(lower)) {
+      return "bg-yellow-100 text-yellow-700";
+    }
+    if (["rejected", "blocked", "suspended"].includes(lower)) {
+      return "bg-red-100 text-red-700";
+    }
+    return "bg-gray-100 text-gray-700";
+  };
+
   // ------------------ DELETE ------------------
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
   const deleteMutation = useMutation({
     mutationFn: async (courseId: string) => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course/${courseId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${TOKEN}` },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course/${courseId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${TOKEN}` },
+        }
+      );
       if (!res.ok) throw new Error("Failed to delete course");
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["coursesData"]});
+      queryClient.invalidateQueries({ queryKey: ["coursesData"] });
       setDeleteModalOpen(false);
       setSelectedCourseId(null);
       toast.success("Course deleted successfully!");
@@ -122,48 +144,99 @@ function CourseAccount() {
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">No</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Course Title</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Date</th>
-                <th className="pr-10 py-4 text-end text-sm font-semibold text-gray-700">Action</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  No
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Course Title
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Date
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Status
+                </th>
+                <th className="pr-10 py-4 text-end text-sm font-semibold text-gray-700">
+                  Action
+                </th>
               </tr>
             </thead>
+
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={4} className="text-center py-4 text-gray-500">Loading courses...</td>
+                  <td
+                    colSpan={5}
+                    className="text-center py-4 text-gray-500"
+                  >
+                    Loading courses...
+                  </td>
                 </tr>
               )}
 
               {isError && (
                 <tr>
-                  <td colSpan={4} className="text-center py-4 text-red-500">Failed to load courses.</td>
+                  <td
+                    colSpan={5}
+                    className="text-center py-4 text-red-500"
+                  >
+                    Failed to load courses.
+                  </td>
                 </tr>
               )}
 
-              {!isLoading && !isError && courses.map((course, index) => (
-                <tr key={course._id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{course.title}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{new Date(course.createdAt).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 text-sm flex items-end justify-end">
-                    <div className="flex items-center gap-3">
-                      <EditCourseModal courseId={course._id} />
-                      <button
-                        className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded transition-colors"
-                        title="Delete"
-                        onClick={() => handleDeleteClick(course._id)}
+              {!isLoading &&
+                !isError &&
+                courses.map((course, index) => (
+                  <tr
+                    key={course._id}
+                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {index + 1}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {course.title}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {new Date(course.createdAt).toLocaleDateString()}
+                    </td>
+
+                    {/* ✅ Status Badge */}
+                    <td className="px-6 py-4 text-sm">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
+                          course.status
+                        )}`}
                       >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {course.status}
+                      </span>
+                    </td>
+
+                    <td className="px-6 py-4 flex items-end justify-end">
+                      <div className="flex items-center gap-3">
+                        <EditCourseModal courseId={course._id} />
+
+                        <button
+                          className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded transition-colors"
+                          title="Delete"
+                          onClick={() => handleDeleteClick(course._id)}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
 
               {!isLoading && !isError && courses.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="text-center py-4 text-gray-500">No courses found.</td>
+                  <td
+                    colSpan={5}
+                    className="text-center py-4 text-gray-500"
+                  >
+                    No courses found.
+                  </td>
                 </tr>
               )}
             </tbody>

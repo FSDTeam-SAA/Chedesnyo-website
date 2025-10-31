@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
@@ -19,6 +20,7 @@ type Assignment = {
   deadLine: string;
   status: string;
   uploadFile?: string;
+  application: Array<any>;
 };
 
 // ✅ Debounce hook
@@ -36,10 +38,10 @@ const useDebounce = (value: string, delay: number) => {
 // ✅ Fetch Assignments function
 const fetchAssignments = async (searchTerm: string) => {
   const url = searchTerm
-    ? `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment?searchTerm=${encodeURIComponent(
+    ? `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment/?searchTerm=${encodeURIComponent(
         searchTerm
-      )}`
-    : `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment`;
+      )}&status=approved`
+    : `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment/?status=approved`;
 
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to fetch assignments");
@@ -161,7 +163,7 @@ export default function Assignments() {
                     type={assignment.priceType}
                     paymentType={assignment.paymentMethod}
                     paymentAmount={`$${assignment.budget}`}
-                    applications={0}
+                    applications={assignment.application.length || 0}
                   />
                 </div>
               ))}
