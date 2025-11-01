@@ -112,7 +112,7 @@ function CoursesPage() {
       />
 
       {/* Search Input */}
-      <div className="max-w-5xl mx-auto px-6 py-[96px] flex items-center justify-center">
+      <div className="max-w-5xl mx-auto px-6 lg:py-[96px] py-10 flex items-center justify-center">
         <div className="relative w-full">
           <Input
             type="text"
@@ -128,10 +128,10 @@ function CoursesPage() {
       </div>
 
       {/* Courses Grid */}
-      <div className="container mx-auto px-6 pb-16">
+      <div className="container mx-auto lg:px-6 px-3 pb-16">
         {courses.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
               {courses.map((course) => (
                 <CoursesCard
                 id={course._id}

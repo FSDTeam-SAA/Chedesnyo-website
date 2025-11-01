@@ -98,7 +98,7 @@ export default function BlogPage() {
         ]}
       />
 
-      <div className="container mx-auto py-[96px] px-6">
+      <div className="container mx-auto lg:py-[96px] px-6 py-10">
         {paginatedPosts.length > 0 ? (
           <>
             {/* Blog Grid */}

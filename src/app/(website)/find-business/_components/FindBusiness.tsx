@@ -86,7 +86,7 @@ export default function FindBusiness() {
   };
 
   return (
-    <div className="min-h-screen mb-[96px]">
+    <div className="min-h-screen lg:mb-[96px] mb-10">
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
         title="Find Business"
@@ -96,9 +96,9 @@ export default function FindBusiness() {
         ]}
       />
 
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto lg:px-6 px-3">
         {/* Search Bar */}
-        <div className="max-w-5xl mx-auto px-6  pb-6 flex items-center justify-center py-[96px]">
+        <div className="lg:max-w-5xl mx-auto lg:px-6 lg:pb-6 flex items-center justify-center lg:py-[96px] my-10 lg:my-0 lg:mt-0">
           <div className="relative w-full">
             <Input
               type="text"
@@ -128,7 +128,7 @@ export default function FindBusiness() {
             No businesses found.
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-[96px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:pt-[96px]">
             {businessesData.map((business: BusinessUser) => (
               <BusinessesCard
                 key={business._id}
@@ -149,7 +149,7 @@ export default function FindBusiness() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="w-full flex items-center justify-between mt-12 pt-6">
+          <div className="w-full flex items-center justify-between mt-12 lg:pt-6">
             {/* Previous */}
             <button
               onClick={() => handlePageChange(Math.max(1, currentPage - 1))}

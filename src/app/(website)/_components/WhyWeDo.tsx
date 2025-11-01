@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function ConnectingSection() {
   return (
-    <section className="bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-4 py-20">
+    <section className="bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-4 lg:py-20 py-10 ">
       <div className="container w-full flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
         {/* Left Section - Content (60%) */}
         <div className="w-full lg:w-3/5 flex flex-col justify-center h-full space-y-6 text-center lg:text-left">
@@ -72,14 +72,14 @@ export default function ConnectingSection() {
           </div>
 
           {/* Read More Button */}
-          <div className="pt-4">
-            <Link href="/blogs">
-              <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
-                Read More
-                <ChevronRight size={20} />
-              </button>
-            </Link>
-          </div>
+          <div className="pt-4 flex justify-center lg:block">
+  <Link href="/blogs">
+    <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
+      Read More
+      <ChevronRight size={20} />
+    </button>
+  </Link>
+</div>
         </div>
 
         {/* Right Section - Image (40%) */}

@@ -31,24 +31,25 @@ export default function LatestAssignments() {
 
   return (
     <section className="bg-gray-50 py-16">
-      <div className="container mx-auto px-6">
+      <div className="lg:container w-full mx-auto lg:px-6 px-3">
         {/* Header */}
-        <div className="flex justify-between items-center mb-12">
-          <div>
-            <p className="text-gray-500 text-sm font-semibold mb-2">
-              ASSIGNMENTS
-            </p>
-            <h2 className="text-4xl font-bold text-gray-900">
-              Latest Assignments
-            </h2>
-          </div>
-          <Link
-            href="/assignments"
-            className="text-green-600 font-semibold flex items-center gap-1 hover:text-green-700 transition-colors"
-          >
-            See All <ChevronRight size={20} />
-          </Link>
-        </div>
+       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-4">
+  <div>
+    <p className="text-gray-500 text-sm font-semibold mb-2">
+      ASSIGNMENTS
+    </p>
+    <h2 className="text-4xl font-bold text-gray-900">
+      Latest Assignments
+    </h2>
+  </div>
+  <Link
+    href="/assignments"
+    className="text-green-600 font-semibold flex items-center gap-1 hover:text-green-700 transition-colors"
+  >
+    See All <ChevronRight size={20} />
+  </Link>
+</div>
+
 
         {/* Loading State */}
         {isLoading && (
@@ -64,8 +65,8 @@ export default function LatestAssignments() {
 
         {/* Cards Grid */}
         {!isLoading && !isError && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {assignments.slice(0, 6).map((assignment) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {assignments.slice(0, 4).map((assignment) => (
               <AssignmentCard
                 id={assignment._id}
                 key={assignment._id}

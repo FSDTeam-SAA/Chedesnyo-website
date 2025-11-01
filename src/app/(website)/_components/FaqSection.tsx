@@ -38,8 +38,8 @@ function FaqSection() {
   };
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-5xl mx-auto px-6">
+    <section className="lg:py-20 py-10 bg-white">
+      <div className="max-w-5xl mx-auto lg:px-6 px-3">
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold">

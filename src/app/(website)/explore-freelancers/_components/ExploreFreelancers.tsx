@@ -95,10 +95,10 @@ export default function ExploreFreelancers() {
         ]}
       />
 
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto lg:px-6 px-3">
         {/* ✅ Search Bar */}
-        <div className="max-w-5xl mx-auto px-6 pb-6 flex items-center justify-center">
-          <div className="relative w-full py-[96px]">
+        <div className="max-w-5xl mx-auto px-6 lg:pb-6 flex items-center justify-center">
+          <div className="relative w-full lg:py-[96px] py-14">
             <Input
               type="text"
               placeholder="Search here..."

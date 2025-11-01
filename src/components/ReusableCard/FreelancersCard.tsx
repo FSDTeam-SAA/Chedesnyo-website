@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import Image from "next/image";
 import { Star } from "lucide-react";
@@ -20,25 +19,26 @@ type FreelancerCardProps = Freelancer;
 
 // ✅ Reusable FreelancerCard Component
 export const FreelancerCard: React.FC<FreelancerCardProps> = ({
-  id, // ✅ fixed
+  id,
   name,
   image,
   bio,
   rating,
   reviewCount,
 }) => {
-
   return (
-    <div className="bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000040] overflow-hidden flex flex-col sm:flex-row h-full transition-transform hover:scale-[1.02] duration-300">
-      {/* Image Section */}
-      <div className="w-full sm:w-64 h-56 sm:h-auto flex-shrink-0">
+    <div className="bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000010] overflow-hidden flex flex-col sm:flex-row h-full transition-transform hover:scale-[1.02] duration-300">
+      {/* Image Section with styled background */}
+      <div className="w-full sm:w-64 h-56 sm:h-auto flex-shrink-0 bg-green-50 flex items-center justify-center overflow-hidden relative rounded-t-2xl sm:rounded-l-2xl">
         <Image
           width={400}
           height={400}
           src={image}
           alt={name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"
         />
+        {/* Optional overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-green-100/50 to-transparent"></div>
       </div>
 
       {/* Content Section */}
@@ -49,7 +49,7 @@ export const FreelancerCard: React.FC<FreelancerCardProps> = ({
             {name}
           </h3>
           <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-            {bio}
+            {bio.length > 120 ? `${bio.slice(0, 120)}...` : bio}
           </p>
         </div>
 
@@ -59,16 +59,14 @@ export const FreelancerCard: React.FC<FreelancerCardProps> = ({
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               <Star size={20} className="fill-yellow-400 text-yellow-400" />
-              <span className="font-bold text-gray-900">
-                {rating.toFixed(1)}
-              </span>
+              <span className="font-bold text-gray-900">{rating.toFixed(1)}</span>
             </div>
             <span className="text-gray-500 text-sm">({reviewCount})</span>
           </div>
 
           {/* View Profile Button */}
           <Link href={`/explore-freelancers/${id}`}>
-            <button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-8 rounded-full transition-colors flex items-center justify-center gap-2">
+            <button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-8 rounded-full transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
               <svg
                 width="18"
                 height="18"

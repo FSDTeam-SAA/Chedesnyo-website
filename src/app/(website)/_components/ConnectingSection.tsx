@@ -5,9 +5,9 @@ import Link from "next/link";
 
 export default function ConnectingSection() {
   return (
-    <section className="bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-4 py-20">
+    <section className="bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-4 lg:py-20">
       <div className="container w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[100px] items-start lg:items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-[100px] gap-12 items-start lg:items-stretch">
           {/* Left Section - Image */}
           <div className="flex justify-center lg:justify-start">
             <div className="relative w-full h-full">
@@ -55,14 +55,15 @@ export default function ConnectingSection() {
               </p>
 
               {/* CTA Button */}
-              <div className="pt-4">
-                <Link href="/explore-freelancers">
-                  <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
-                    Get Started
-                    <ChevronRight size={20} />
-                  </button>
-                </Link>
-              </div>
+              <div className="pt-4 flex justify-center items-center lg:block">
+  <Link href="/explore-freelancers">
+    <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
+      Get Started
+      <ChevronRight size={20} />
+    </button>
+  </Link>
+</div>
+
             </div>
           </div>
         </div>

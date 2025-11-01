@@ -24,19 +24,16 @@ export default function AssignmentCard({
   paymentType = "Hourly",
   paymentAmount = "$17.00",
   applications = 3,
-  id, // ✅ FIXED: destructured id
+  id,
 }: DealCardProps) {
   return (
-    <div
-      className="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden border border-[#8E959F]
-      transform transition duration-300 ease-in-out hover:scale-[1.03] hover:-translate-y-1 hover:shadow-xl"
-    >
+    <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden transform transition duration-300 ease-in-out hover:scale-[1.03] hover:-translate-y-1 hover:shadow-xl flex flex-col h-[420px]">
       {/* Image Container */}
-      <div className="relative w-full h-72 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
+      <div className="relative w-full h-48 overflow-hidden bg-gray-200">
         <Image
           src={image}
           width={500}
-          height={500}
+          height={300}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"
         />
@@ -45,56 +42,45 @@ export default function AssignmentCard({
       </div>
 
       {/* Content Container */}
-      <div className="p-4 space-y-2">
-        {/* Category Badge */}
-        <div className="inline-block">
-          <span className="bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-semibold border border-green-200 flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-600 rounded-full"></span>
-            {category}
-          </span>
-        </div>
-
-        {/* Title */}
-        <h3 className="text-2xl font-bold text-gray-900 leading-tight">
-          {title.slice(0, 20)}...
-        </h3>
-
-        {/* Divider */}
-        <div className="h-px bg-gray-200"></div>
-
-        {/* Details */}
-        <div className="space-y-2">
-          {/* Type */}
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600 font-medium">{type}</span>
-          </div>
-
-          {/* Payment Type and Amount */}
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600">
-              <span className="font-bold">Payment Type: </span>
-              <span className="text-gray-900">
-                {paymentType} ({paymentAmount})
-              </span>
+      <div className="p-4 flex flex-col flex-1 justify-between">
+        <div className="space-y-3">
+          {/* Category Badge */}
+          <div className="inline-block">
+            <span className="bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-semibold border border-green-200 flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-600 rounded-full"></span>
+              {category}
             </span>
           </div>
 
-          {/* Applications */}
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600">
-              Applications:{" "}
-              <span className="font-semibold text-gray-900">
-                {applications}
+          {/* Title */}
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
+            {title.length > 50 ? `${title.slice(0, 50)}...` : title}
+          </h3>
+
+          {/* Divider */}
+          <div className="h-px bg-gray-200"></div>
+
+          {/* Details */}
+          <div className="space-y-1 text-gray-700 text-sm">
+            <div className="flex justify-between">
+              <span>{type}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>
+                <span className="font-semibold">Payment:</span> {paymentType} ({paymentAmount})
               </span>
-            </span>
+            </div>
+            <div className="flex justify-between">
+              <span>
+                Applications: <span className="font-semibold">{applications}</span>
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Take This Deal Button */}
+        {/* View Details Button */}
         <Link href={`/assignments/${id}`}>
-          <button
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-          >
+          <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full flex items-center justify-center gap-2 shadow-md hover:shadow-lg mt-4 transition-all duration-300">
             <Book size={20} />
             View Details
           </button>

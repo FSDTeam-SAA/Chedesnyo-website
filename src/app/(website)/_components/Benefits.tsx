@@ -52,12 +52,12 @@ export default function Benefits() {
   ];
 
   return (
-    <section className="px-4 py-20">
+    <section className="px-4 lg:py-20">
       <div className="container mx-auto">
         {/* Top Benefits Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {/* Freelance Sales Agents Benefits */}
-          <div className="bg-white border-b-4 border-green-600 rounded-3xl p-8 shadow-[0px_8px_32px_0px_#00000029]">
+          <div className="bg-white border-b-4 border-green-600 rounded-3xl p-8 lg:shadow-[0px_8px_32px_0px_#00000029]">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-50 rounded-full flex items-center justify-center border-2 border-green-600">
                 <TrendingUp className="w-8 h-8 text-green-600" strokeWidth={2.5} />
@@ -79,7 +79,7 @@ export default function Benefits() {
           </div>
 
           {/* Business Benefits */}
-          <div className="bg-white border-b-4 border-green-600 rounded-3xl p-8 shadow-[0px_8px_32px_0px_#00000029]">
+          <div className="bg-white border-b-4 border-green-600 rounded-3xl p-8 lg:shadow-[0px_8px_32px_0px_#00000029]">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-50 rounded-full flex items-center justify-center border-2 border-green-600">
                 <Briefcase className="w-8 h-8 text-green-600" strokeWidth={2.5} />
@@ -104,7 +104,7 @@ export default function Benefits() {
         {/* Why Choose Us Section */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
           {/* Left - Why Choose Us Card */}
-          <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-8 text-white shadow-xl lg:row-span-1 flex flex-col justify-between h-full">
+          <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-8 text-white lg:shadow-xl lg:row-span-1 flex flex-col justify-between h-full">
             <div>
               <h2 className="text-4xl font-bold mb-6">Why Choose Us?</h2>
               <p className="text-green-100 leading-relaxed mb-8">
@@ -123,7 +123,7 @@ export default function Benefits() {
             return (
               <div
                 key={index}
-                className="bg-white border-b-4 border-green-600 rounded-3xl p-8 shadow-[0px_8px_32px_0px_#00000029] h-full flex flex-col justify-center"
+                className="bg-white border-b-4 border-green-600 rounded-3xl p-8 lg:shadow-[0px_8px_32px_0px_#00000029] h-full flex flex-col justify-center"
               >
                 <div className="flex justify-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-50 rounded-full flex items-center justify-center border-2 border-green-600">

@@ -51,7 +51,7 @@ const fetchAssignments = async (searchTerm: string) => {
 export default function Assignments() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 8;
 
   // ✅ Debounced search term
   const debouncedSearch = useDebounce(searchTerm, 400);
@@ -116,7 +116,7 @@ export default function Assignments() {
       />
 
       {/* Search Input */}
-      <div className="max-w-5xl mx-auto px-6 py-[96px] flex items-center justify-center">
+      <div className="max-w-5xl mx-auto px-6 lg:py-[96px] py-10 flex items-center justify-center">
         <div className="relative w-full">
           <Input
             type="text"
@@ -140,11 +140,11 @@ export default function Assignments() {
       </div>
 
       {/* Assignment Cards */}
-      <div className="container mx-auto px-6 pb-16">
+      <div className="container mx-auto lg:px-6 px-3 lg:pb-16">
         {paginatedAssignments.length > 0 ? (
           <>
             <div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 transition-all duration-300"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 transition-all duration-300"
               style={{
                 opacity: isFetching ? 0.7 : 1,
                 transition: "opacity 0.3s ease-in-out",
