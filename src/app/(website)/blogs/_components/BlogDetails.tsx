@@ -55,7 +55,7 @@ function BlogDetailPage() {
         ]}
       />
 
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-6 lg:py-12">
         {/* Featured Image */}
         <div className="mb-8 rounded-lg overflow-hidden">
           <Image

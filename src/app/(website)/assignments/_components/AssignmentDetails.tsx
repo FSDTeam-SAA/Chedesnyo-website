@@ -103,7 +103,7 @@ export default function AssignmentDetails() {
   return (
     <div>
       <div className="min-h-screen bg-gray-50">
-        <div className="pb-[96px]">
+        <div className="lg:pb-[96px] pb-10">
           <BreadcrumbHeader
             title="Assignment Details"
             breadcrumbs={[
