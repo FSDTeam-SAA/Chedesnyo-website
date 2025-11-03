@@ -3,6 +3,13 @@ import localFont from "next/font/local";
 import "./globals.css";
 import AppProvider from "@/provider/AppProvider";
 import AuthProvider from "@/provider/AuthProvider";
+import Script from "next/script";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+
+// ✅ CLIENT ONLY IMPORT (IMPORTANT)
+const LangConfig = dynamic(() => import("./lang-config"), { ssr: false });
+const TranslateProvider = dynamic(() => import("@/provider/TranslateProvider"), { ssr: false });
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -22,17 +29,38 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
-          <AppProvider >
+          <AppProvider>
+            {/* ✅ Google translate container */}
+            <div id="google_translate_element"></div>
+
+            {/* ✅ Loaded only on client */}
+            <Suspense fallback={null}>
+              <LangConfig />
+            </Suspense>
+            <Suspense fallback={null}>
+              <TranslateProvider />
+            </Suspense>
+
+            {/* Load Google Translate script after components are ready */}
+            <Script
+              src="//translate.google.com/translate_a/element.js?cb=TranslateInit"
+              strategy="lazyOnload"
+            />
+
             {children}
+
+            {/* ✅ Load google script after client ready */}
+            <Script
+              src="//translate.google.com/translate_a/element.js?cb=TranslateInit"
+              strategy="afterInteractive"
+            />
           </AppProvider>
         </AuthProvider>
       </body>

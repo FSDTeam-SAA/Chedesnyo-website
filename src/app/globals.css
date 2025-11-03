@@ -80,3 +80,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+.goog-te-banner-frame { display: none !important; }
+.goog-te-gadget { font-size: 0 !important; }
+.skiptranslate {
+    display: none !important;
+}

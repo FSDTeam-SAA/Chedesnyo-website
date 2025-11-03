@@ -16,7 +16,7 @@ export function BreadcrumbHeader({ title, breadcrumbs = [] }: BreadcrumbHeaderPr
     <div className="bg-[#008000] text-white">
       {/* Main Title Section */}
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <h1 className="text-4xl font-bold text-center">{title}</h1>
+        <h1 className="lg:text-4xl text-2xl font-bold text-center">{title}</h1>
       </div>
 
       {/* Breadcrumb Section */}

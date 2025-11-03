@@ -6,91 +6,57 @@ import Image from "next/image";
 import { Menu, X, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
   const pathname = usePathname();
   const { data: session } = useSession();
   const user = session?.user;
   const TOKEN = session?.user?.accessToken || "";
 
-  // Fetch user profile to get stripeAccountId
-  const { data: useData } = useQuery({
+  // Fetch user profile
+  const { data: userData } = useQuery({
     queryKey: ["userProfile"],
     queryFn: async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
+        headers: { Authorization: `Bearer ${TOKEN}` },
       });
-      if (!res.ok) throw new Error("Failed to fetch user profile");
+      if (!res.ok) throw new Error("Failed to fetch user");
       return res.json();
     },
+    enabled: !!TOKEN,
   });
 
-  // Stripe account creation mutation
-  const createStripDashboard = useMutation({
+  // Stripe mutations
+  const createStripe = useMutation({
     mutationFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/create-stripe-account`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
-      );
-      if (!res.ok) throw new Error("Stripe account creation failed");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/create-stripe-account`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
+      });
+      if (!res.ok) throw new Error("Stripe creation failed");
       return res.json();
     },
-    onSuccess: (data) => {
-      const url = data?.data?.url;
-      if (url) {
-        window.location.href = url;
-      } else {
-        alert("Stripe onboarding URL not found!");
-      }
-    },
-    onError: (error) => {
-      console.error("Stripe error:", error);
-      alert("Stripe onboarding failed. Please try again.");
-    },
+    onSuccess: (d) => d?.data?.url && (window.location.href = d.data.url),
   });
 
-  // Stripe dashboard fetch mutation
-  const fetchStripeDashboardLink = useMutation({
+  const openDashboard = useMutation({
     mutationFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/dashboard-link`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${TOKEN}` },
-        }
-      );
-      if (!res.ok) throw new Error("Failed to fetch Stripe dashboard link");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/dashboard-link`, {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+      });
+      if (!res.ok) throw new Error("Dashboard link failed");
       return res.json();
     },
-    onSuccess: (data) => {
-      const url = data?.data?.url;
-      if (url) {
-        window.location.href = url;
-      } else {
-        alert("Stripe dashboard URL not found!");
-      }
-    },
-    onError: (error) => {
-      console.error("Stripe dashboard error:", error);
-      alert("Failed to fetch Stripe dashboard. Please try again.");
-    },
+    onSuccess: (d) => d?.data?.url && (window.location.href = d.data.url),
   });
 
   const handleLogout = async () => {
-    setIsPopoverOpen(false);
-    setIsOpen(false);
+    setMobileOpen(false);
+    setProfileOpen(false);
     await signOut({ callbackUrl: "/" });
   };
 
@@ -105,316 +71,177 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-20 h-16 relative">
-              <Image
-                src="/images/chedsnyoLogo.png"
-                alt="Deal Closed Logo"
-                width={400}
-                height={400}
-                className="object-cover"
-              />
-            </div>
-          </Link>
+    <nav className="sticky top-0 w-full bg-white border-b border-gray-200 z-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-[18px] font-medium transition duration-200 ${
-                    isActive
-                      ? "text-green-600 border-b-2 border-green-600 pb-1"
-                      : "text-gray-700 hover:text-green-600"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+        {/* Logo */}
+        <Link href="/" className="flex items-center">
+          <div className="w-16 h-16 relative">
+            <Image
+              src="/images/chedsnyoLogo.png"
+              alt="Logo"
+              fill
+              className="object-contain"
+            />
           </div>
+        </Link>
 
-          {/* Desktop Auth / User */}
-          <div className="hidden md:flex items-center gap-4">
-            {user ? (
-              <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                <PopoverTrigger asChild>
-                  <button className="w-[48px] h-[48px] rounded-full bg-green-600 text-white flex items-center justify-center hover:bg-green-700 transition duration-200 overflow-hidden">
-                    {user.profileImage ? (
-                      <Image
-                        src={user.profileImage}
-                        alt="User Profile"
-                        width={48}
-                        height={48}
-                        className="rounded-full object-cover w-full h-full"
-                      />
-                    ) : (
-                      <User size={24} />
-                    )}
-                  </button>
-                </PopoverTrigger>
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center space-x-8">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-base font-medium transition-colors pb-1 border-b-2 ${
+                  isActive
+                    ? "text-green-600 border-green-600"
+                    : "text-gray-700 border-transparent hover:text-green-600"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
 
-                <PopoverContent className="p-0 w-[300px] shadow-lg border border-gray-200 overflow-hidden">
-                  {/* Email & Role */}
-                  <div className="px-4 py-3 bg-green-50 border-b border-gray-200">
-                    <p className="text-sm font-semibold text-gray-700 truncate text-center">
-                      {user.email}
-                    </p>
-                    {user.role && (
-                      <p className="text-xs text-gray-500 mt-1 text-center">{user.role}</p>
-                    )}
+        {/* Desktop Auth */}
+        <div className="hidden md:flex items-center space-x-3">
+          {user ? (
+            <div className="relative">
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center overflow-hidden hover:bg-green-700 transition"
+              >
+                {user.profileImage ? (
+                  <Image
+                    src={user.profileImage}
+                    alt="Profile"
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <User size={24} />
+                )}
+              </button>
+
+              {/* Dropdown */}
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  <div className="px-4 py-3 bg-green-50 border-b text-center">
+                    <p className="text-sm font-semibold text-gray-800 truncate">{user.email}</p>
+                    {user.role && <p className="text-xs text-gray-600">{user.role}</p>}
                   </div>
 
-                  {/* Links */}
-                  <div className="flex flex-col">
-                    {[{ label: "My Profile", href: "/profile" },
-                      { label: "Inbox", href: "/inbox" },
-                      ...(user?.role === "business" ? [{ label: "My Assignments", href: "/assignment" }] : []),
-                       { label: "My Courses", href: "/courese" },
-                      ...(user?.role === "seles" ? [{ label: "My Purchase Assignments", href: "/seles-assignment" }] : []),
-                      ...(user?.role === "business"
-                        ? [
-                            { label: "My Orders Assignment", href: "/my-orders-for-assignment" },
-                            { label: "My Orders Course", href: "/my-orders-for-course" },
-                          ]
-                        : user?.role === "seles"
-                        ? [{ label: "My Orders Course", href: "/my-orders-for-course" }]
-                        : []),
-                      // ✅ Purchase Links based on role
-                      ...(user?.role === "business"
-                        ? [
-                            { label: "My Purchase Courses", href: "/seles-purchase-course" },
-                            { label: "My Purchase Assignment", href: "/seles-assignment" },
-                          ]
-                        : user?.role === "seles"
-                        ? [{ label: "My Purchase Courses", href: "/seles-purchase-course" }]
-                        : []),
-                     
-                      { label: "My Earning History", href: "/earnings" },
-                      // { label: "Referral Program", href: "/referral" },
-                    ].map((link) => {
-                      const isActive = pathname === link.href;
-                      return (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          onClick={() => setIsPopoverOpen(false)}
-                          className={`block px-4 py-2 text-gray-700 text-sm transition duration-200 hover:bg-gray-100 ${
-                            isActive ? "bg-green-100 text-green-700 font-semibold" : ""
-                          }`}
-                        >
-                          {link.label}
-                        </Link>
-                      );
-                    })}
+                  <Link
+                    href="/profile"
+                    onClick={() => setProfileOpen(false)}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Profile
+                  </Link>
 
-                    {/* Stripe Section */}
-                    {useData?.data?.stripeAccountId ? (
-                      <button
-                        onClick={() => {
-                          fetchStripeDashboardLink.mutate();
-                          setIsPopoverOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
-                      >
-                        Stripe Dashboard
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          createStripDashboard.mutate();
-                          setIsPopoverOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
-                      >
-                        Add Stripe Account
-                      </button>
-                    )}
-                  </div>
+                  {userData?.data?.stripeAccountId ? (
+                    <button
+                      onClick={() => {
+                        openDashboard.mutate();
+                        setProfileOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Stripe Dashboard
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        createStripe.mutate();
+                        setProfileOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Add Stripe Account
+                    </button>
+                  )}
 
-                  {/* Logout */}
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 border-t border-gray-200"
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t"
                   >
                     Logout
                   </button>
-                </PopoverContent>
-              </Popover>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="w-[139px] h-[48px] flex items-center justify-center text-[16px] font-semibold text-green-600 border-2 border-green-600 rounded-full hover:bg-green-50 transition duration-200"
-                >
-                  Login
-                </Link>
-
-                <div className="w-[3px] h-[32px] bg-[#0A192F]"></div>
-
-                <Link
-                  href="/signup"
-                  className="w-[139px] h-[48px] flex items-center justify-center text-[16px] font-semibold text-white bg-green-600 rounded-full hover:bg-green-700 transition duration-200"
-                >
-                  Get Started
-                </Link>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-gray-600 hover:text-gray-900"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="px-6 h-11 flex items-center justify-center text-green-600 border-2 border-green-600 rounded-full text-sm font-medium hover:bg-green-50 transition"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="px-6 h-11 flex items-center justify-center text-white bg-green-600 rounded-full text-sm font-medium hover:bg-green-700 transition"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-gray-200">
-            <div className="flex flex-col gap-3 mt-4">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`text-sm font-medium py-2 transition duration-200 ${
-                      isActive ? "text-green-600 font-semibold" : "text-gray-700 hover:text-green-600"
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-            </div>
+        {/* Mobile Toggle */}
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="md:hidden p-2 text-gray-700"
+        >
+          {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
+      </div>
 
-            {/* Mobile Auth / User */}
-            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-200">
+      {/* Mobile Menu */}
+      {mobileOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="px-6 py-4 space-y-3">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className={`block text-base font-medium py-2 ${
+                  pathname === link.href ? "text-green-600" : "text-gray-700 hover:text-green-600"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            <div className="pt-4 border-t flex flex-col gap-3">
               {user ? (
-                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <button className="flex items-center justify-center w-12 h-12 rounded-full bg-green-600 text-white hover:bg-green-700 transition duration-200 overflow-hidden">
-                      {user.profileImage ? (
-                        <Image
-                          src={user.profileImage}
-                          alt="User Profile"
-                          width={48}
-                          height={48}
-                          className="rounded-full object-cover w-full h-full"
-                        />
-                      ) : (
-                        <User size={24} />
-                      )}
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-48 p-0 shadow-lg border border-gray-200 rounded-xl overflow-hidden">
-                    <div className="px-4 py-3 bg-green-50 border-b border-gray-200">
-                      <p className="text-sm font-semibold text-gray-700 truncate text-center">{user.email}</p>
-                      {user.role && <p className="text-xs text-gray-500 mt-1 text-center">{user.role}</p>}
-                    </div>
-
-                    {/* Mobile Links */}
-                    <Link
-                      href="/profile"
-                      className="block px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
-                      onClick={() => setIsPopoverOpen(false)}
-                    >
-                      Profile
-                    </Link>
-
-                    {/* Mobile Purchase Links based on role */}
-                    {user?.role === "business" && (
-                      <>
-                        <Link
-                          href="/seles-purchase-course"
-                          onClick={() => setIsPopoverOpen(false)}
-                          className="block px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
-                        >
-                          My Purchase Courses
-                        </Link>
-                        <Link
-                          href="/seles-assignment"
-                          onClick={() => setIsPopoverOpen(false)}
-                          className="block px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
-                        >
-                          My Purchase Assignment
-                        </Link>
-                      </>
-                    )}
-                    {user?.role === "seles" && (
-                      <Link
-                        href="/seles-purchase-course"
-                        onClick={() => setIsPopoverOpen(false)}
-                        className="block px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
-                      >
-                        My Purchase Courses
-                      </Link>
-                    )}
-
-                    {/* Stripe Section */}
-                    {useData?.data?.stripeAccountId ? (
-                      <button
-                        onClick={() => {
-                          fetchStripeDashboardLink.mutate();
-                          setIsPopoverOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
-                      >
-                        Stripe Dashboard
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          createStripDashboard.mutate();
-                          setIsPopoverOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
-                      >
-                        Add Stripe Account
-                      </button>
-                    )}
-
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 border-t border-gray-200"
-                    >
-                      Logout
-                    </button>
-                  </PopoverContent>
-                </Popover>
+                <>
+                  <Link href="/profile" onClick={() => setMobileOpen(false)} className="text-sm text-gray-700">
+                    Profile
+                  </Link>
+                  <button onClick={handleLogout} className="text-left text-sm text-red-600">
+                    Logout
+                  </button>
+                </>
               ) : (
                 <>
-                  <Link
-                    href="/login"
-                    className="flex-1 px-4 py-2 text-sm font-semibold text-green-600 border-2 border-green-600 rounded-full hover:bg-green-50 transition duration-200 text-center"
-                    onClick={() => setIsOpen(false)}
-                  >
+                  <Link href="/login" onClick={() => setMobileOpen(false)} className="text-sm text-green-600">
                     Login
                   </Link>
-                  <Link
-                    href="/signup"
-                    className="flex-1 px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-full hover:bg-green-700 transition duration-200 text-center"
-                    onClick={() => setIsOpen(false)}
-                  >
+                  <Link href="/signup" onClick={() => setMobileOpen(false)} className="text-sm text-green-600 font-medium">
                     Get Started
                   </Link>
                 </>
               )}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 }

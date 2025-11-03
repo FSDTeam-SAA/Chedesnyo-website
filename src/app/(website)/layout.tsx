@@ -1,15 +1,18 @@
+"use client";
+
 import Footer from "@/components/Footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
+import PageLayout from "@/components/page-layout/PageLayout";
 import React from "react";
 
-function layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
-      <Navbar />
-      <div className="">{children}</div>
-      <Footer />
-    </div>
+    <PageLayout>
+      <div>
+        <Navbar />
+        <div>{children}</div>
+        <Footer />
+      </div>
+    </PageLayout>
   );
 }
-
-export default layout;
