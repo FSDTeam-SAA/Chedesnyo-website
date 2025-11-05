@@ -192,7 +192,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
                     {[{ label: "My Profile", href: "/profile" },
                       { label: "Inbox", href: "/inbox" },
                       ...(user?.role === "business" ? [{ label: "My Assignments", href: "/assignment" }] : []),
-                      { label: "My Courses", href: "/courses" },
+                      { label: "My Courses", href: "/courese" },
                       ...(user?.role === "seles" ? [{ label: "My Purchase Assignments", href: "/seles-assignment" }] : []),
                       ...(user?.role === "business"
                         ? [

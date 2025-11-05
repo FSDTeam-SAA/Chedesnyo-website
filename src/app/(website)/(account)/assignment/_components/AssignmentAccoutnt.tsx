@@ -61,7 +61,6 @@ function CourseAccount() {
     },
   });
 
-  // ✅ Delete Mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(
@@ -105,12 +104,12 @@ function CourseAccount() {
         ]}
       />
 
-      <div className="w-full px-6 container mx-auto py-[96px]">
+      <div className="w-full lg:px-6 px-2 container mx-auto py-[96px]">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Assignments</h1>
         </div>
 
-        <div className="mb-6 flex justify-end">
+        <div className="mb-6 flex justify-start lg:justify-end">
           <Link href="/post_an_assignment">
             <button className="flex items-center gap-2 bg-[#008000] text-white px-4 py-2 rounded-lg hover:bg-[#095509] transition-colors font-medium">
               <Plus size={20} />
@@ -119,15 +118,16 @@ function CourseAccount() {
           </Link>
         </div>
 
-        <div className="overflow-x-auto border border-gray-200 rounded-lg">
-          <table className="w-full">
+        {/* ✅ Responsive Table Wrapper */}
+        <div className="w-full overflow-x-auto border border-gray-200 rounded-lg">
+          <table className="w-full min-w-[700px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">No</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Assignment Title</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Deadline</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="pr-10 py-4 text-end text-sm font-semibold text-gray-700">Action</th>
+                <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">No</th>
+                <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">Assignment Title</th>
+                <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">Deadline</th>
+                <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                <th className="pr-3 md:pr-10 py-3 md:py-4 text-end text-sm font-semibold text-gray-700">Action</th>
               </tr>
             </thead>
 
@@ -143,16 +143,13 @@ function CourseAccount() {
               ) : data?.data?.length ? (
                 data.data.map((assignment, index) => (
                   <tr key={assignment._id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
-
-                    <td className="px-6 py-4 text-sm text-gray-900">{assignment.title}</td>
-
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-3 md:px-6 py-3 md:py-4 text-sm text-gray-900">{index + 1}</td>
+                    <td className="px-3 md:px-6 py-3 md:py-4 text-sm text-gray-900 break-words">{assignment.title}</td>
+                    <td className="px-3 md:px-6 py-3 md:py-4 text-sm text-gray-900">
                       {new Date(assignment.deadLine).toLocaleDateString()}
                     </td>
 
-                    {/* ✅ Status Badge */}
-                    <td className="px-6 py-4 text-sm">
+                    <td className="px-3 md:px-6 py-3 md:py-4 text-sm">
                       <span
                         className={`
                           px-3 py-1 rounded-full text-xs font-semibold
@@ -175,7 +172,7 @@ function CourseAccount() {
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 text-sm flex items-end justify-end">
+                    <td className="px-3 md:px-6 py-3 md:py-4 text-sm flex items-end justify-end">
                       <div className="flex items-center gap-3">
                         <EditAssignmentModal assignmentId={assignment._id} />
 
@@ -200,7 +197,6 @@ function CourseAccount() {
         </div>
       </div>
 
-      {/* ✅ Delete Modal */}
       <DeleteModal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

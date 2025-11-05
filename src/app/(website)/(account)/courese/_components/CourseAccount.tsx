@@ -64,7 +64,6 @@ function CourseAccount() {
 
   const courses = coursesData?.data || [];
 
-  // ✅ Status Color Function
   const getStatusStyle = (status: string) => {
     const lower = status.toLowerCase();
 
@@ -80,7 +79,6 @@ function CourseAccount() {
     return "bg-gray-100 text-gray-700";
   };
 
-  // ------------------ DELETE ------------------
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
@@ -126,12 +124,13 @@ function CourseAccount() {
         ]}
       />
 
-      <div className="w-full px-6 container mx-auto py-[96px]">
+      <div className="w-full lg:px-6 px-2 container mx-auto py-[96px]">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">My Courses</h1>
         </div>
 
-        <div className="mb-6 flex justify-end">
+        {/* ✅ ONLY CHANGE HERE */}
+        <div className="mb-6 flex justify-start lg:justify-end">
           <Link href="/upload_new_course">
             <button className="flex items-center gap-2 bg-[#008000] text-white px-4 py-2 rounded-lg hover:bg-[#095509] transition-colors font-medium">
               <Plus size={20} />
@@ -148,7 +147,7 @@ function CourseAccount() {
                   No
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  Course Title
+                  Title
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                   Date
@@ -165,10 +164,7 @@ function CourseAccount() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="text-center py-4 text-gray-500"
-                  >
+                  <td colSpan={5} className="text-center py-4 text-gray-500">
                     Loading courses...
                   </td>
                 </tr>
@@ -176,10 +172,7 @@ function CourseAccount() {
 
               {isError && (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="text-center py-4 text-red-500"
-                  >
+                  <td colSpan={5} className="text-center py-4 text-red-500">
                     Failed to load courses.
                   </td>
                 </tr>
@@ -202,7 +195,6 @@ function CourseAccount() {
                       {new Date(course.createdAt).toLocaleDateString()}
                     </td>
 
-                    {/* ✅ Status Badge */}
                     <td className="px-6 py-4 text-sm">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
@@ -216,7 +208,6 @@ function CourseAccount() {
                     <td className="px-6 py-4 flex items-end justify-end">
                       <div className="flex items-center gap-3">
                         <EditCourseModal courseId={course._id} />
-
                         <button
                           className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded transition-colors"
                           title="Delete"
@@ -231,10 +222,7 @@ function CourseAccount() {
 
               {!isLoading && !isError && courses.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="text-center py-4 text-gray-500"
-                  >
+                  <td colSpan={5} className="text-center py-4 text-gray-500">
                     No courses found.
                   </td>
                 </tr>
@@ -244,7 +232,6 @@ function CourseAccount() {
         </div>
       </div>
 
-      {/* Delete Modal */}
       <DeleteModal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
