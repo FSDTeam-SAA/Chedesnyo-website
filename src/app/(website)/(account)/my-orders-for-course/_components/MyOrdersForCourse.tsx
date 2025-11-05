@@ -21,9 +21,7 @@ function MyOrders() {
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my/all`,
-        {
-          headers: { Authorization: `Bearer ${TOKEN}` },
-        }
+        { headers: { Authorization: `Bearer ${TOKEN}` } }
       );
       if (!res.ok) throw new Error("Network response was not ok");
       return res.json() as Promise<any>;
@@ -32,21 +30,12 @@ function MyOrders() {
 
   // ✅ Mutate Status: Approve / Reject Course Payments
   const { mutate: updateStatus } = useMutation({
-    mutationFn: async ({
-      orderId,
-      newStatus,
-    }: {
-      orderId: string;
-      newStatus: string;
-    }) => {
+    mutationFn: async ({ orderId, newStatus }: { orderId: string; newStatus: string }) => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/course/approve/${orderId}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${TOKEN}`,
-          },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` },
           body: JSON.stringify({ status: newStatus }),
         }
       );
@@ -57,32 +46,20 @@ function MyOrders() {
       toast.success("Order status updated!");
       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
     },
-    onError: () => {
-      toast.error("Failed to update status");
-    },
+    onError: () => toast.error("Failed to update status"),
   });
 
   // ✅ Filter ONLY course orders
   const filterOrders = () => {
     if (!ordersData?.data) return [];
-
-    // ✅ Only orders that contain course data
     const orders = ordersData.data.filter((order: any) => order.course);
 
     if (activeTab === "in-progress")
-      return orders.filter(
-        (order: any) =>
-          order.status === "pending" || order.status === "processing"
-      );
-
+      return orders.filter((order: any) => order.status === "pending" || order.status === "processing");
     if (activeTab === "completed")
       return orders.filter((order: any) => order.status === "approved");
-
     if (activeTab === "cancelled")
-      return orders.filter(
-        (order: any) =>
-          order.status === "refunded" || order.status === "cancelled"
-      );
+      return orders.filter((order: any) => order.status === "refunded" || order.status === "cancelled");
 
     return orders;
   };
@@ -90,10 +67,7 @@ function MyOrders() {
   const filteredOrders = filterOrders();
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const displayedOrders = filteredOrders.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const displayedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusStyle = (status: string) => {
     switch (status) {
@@ -111,9 +85,7 @@ function MyOrders() {
   };
 
   const handlePageChange = (page: number) => {
-    if (page > 0 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+    if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
@@ -130,13 +102,13 @@ function MyOrders() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto py-[96px]">
+      <div className="container lg:px-6 px-3 mx-auto py-[96px]">
         <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">
           My Course Orders
         </h1>
 
         {/* 🔥 Tabs */}
-        <div className="flex gap-3 mb-6">
+        <div className="flex gap-3 mb-6 overflow-x-auto">
           {[
             { key: "in-progress", label: "In Progress" },
             { key: "completed", label: "Completed" },
@@ -144,11 +116,8 @@ function MyOrders() {
           ].map((tab) => (
             <button
               key={tab.key}
-              onClick={() => {
-                setActiveTab(tab.key);
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 text-sm font-medium rounded border ${
+              onClick={() => { setActiveTab(tab.key); setCurrentPage(1); }}
+              className={`px-4 py-2 text-sm font-medium rounded border flex-shrink-0 ${
                 activeTab === tab.key
                   ? "bg-green-50 border-green-600 text-green-600"
                   : "bg-white border-green-600 text-green-600 hover:bg-green-50"
@@ -160,76 +129,44 @@ function MyOrders() {
         </div>
 
         {/* ✅ Orders Table */}
-        <div className="border border-gray-300 rounded-lg overflow-hidden mb-6">
-          <table className="w-full">
+        <div className="border border-gray-300 rounded-lg overflow-x-auto mb-6">
+          <table className="w-full min-w-[600px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-300">
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Course
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Price
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Date
-                </th>
-                <th className="py-3 pr-16 text-sm font-medium text-gray-900 text-end">
-                  Action
-                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Course</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Price</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Date</th>
+                <th className="px-6 py-3 text-sm font-medium text-gray-900 text-end">Action</th>
               </tr>
             </thead>
-
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">
-                    Loading...
-                  </td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">Loading...</td>
                 </tr>
               ) : displayedOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">
-                    No course orders found.
-                  </td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">No course orders found.</td>
                 </tr>
               ) : (
                 displayedOrders.map((order: any) => {
                   const course = order.course;
-
                   return (
-                    <tr
-                      key={order._id}
-                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {course?.title || "--"}
-                      </td>
-
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {course?.price ? `$${course.price}` : "--"}
-                      </td>
-
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </td>
-
-                      <td className="px-6 py-4 text-sm flex justify-end items-center gap-2">
+                    <tr key={order._id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-sm text-gray-900">{course?.title || "--"}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{course?.price ? `$${course.price}` : "--"}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{new Date(order.createdAt).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 text-sm flex justify-end items-center gap-2 flex-wrap">
                         <span className={getStatusStyle(order.status)}>
-                          {order.status.charAt(0).toUpperCase() +
-                            order.status.slice(1)}
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
-
                         {order.status === "pending" && (
                           <select
                             className="ml-2 border border-gray-300 rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-50"
                             defaultValue=""
-                            onChange={(e) =>
-                              handleStatusChange(order._id, e.target.value)
-                            }
+                            onChange={(e) => handleStatusChange(order._id, e.target.value)}
                           >
-                            <option value="" disabled>
-                              Select
-                            </option>
+                            <option value="" disabled>Select</option>
                             <option value="approved">Approved</option>
                             <option value="rejected">Rejected</option>
                           </select>
@@ -243,46 +180,43 @@ function MyOrders() {
           </table>
         </div>
 
-        {/* ✅ Pagination */}
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-600">
-            Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + itemsPerPage, filteredOrders.length)} of{" "}
-            {filteredOrders.length} results
-          </p>
-
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
-            >
-              <ChevronLeft size={16} />
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => (
+        {/* ✅ Pagination (show only if >7 orders) */}
+        {filteredOrders.length > 7 && (
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 flex-wrap">
+            <p className="text-xs text-gray-600">
+              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredOrders.length)} of {filteredOrders.length} results
+            </p>
+            <div className="flex items-center gap-1 flex-wrap">
               <button
-                key={i + 1}
-                onClick={() => handlePageChange(i + 1)}
-                className={`w-8 h-8 rounded text-sm font-medium ${
-                  currentPage === i + 1
-                    ? "bg-green-600 text-white hover:bg-green-700"
-                    : "border border-gray-300 text-gray-900 hover:bg-gray-100"
-                }`}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
               >
-                {i + 1}
+                <ChevronLeft size={16} />
               </button>
-            ))}
-
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
-            >
-              <ChevronRight size={16} />
-            </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => handlePageChange(i + 1)}
+                  className={`w-8 h-8 rounded text-sm font-medium ${
+                    currentPage === i + 1
+                      ? "bg-green-600 text-white hover:bg-green-700"
+                      : "border border-gray-300 text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
