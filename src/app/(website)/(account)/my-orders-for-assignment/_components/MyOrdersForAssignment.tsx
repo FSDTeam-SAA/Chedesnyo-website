@@ -30,7 +30,7 @@ function MyOrders() {
     },
   });
 
-  // ✅ Approve status mutation
+  // ✅ Approve Order
   const { mutate: updateStatus } = useMutation({
     mutationFn: async ({ orderId, newStatus }: { orderId: string; newStatus: string }) => {
       const res = await fetch(
@@ -51,12 +51,10 @@ function MyOrders() {
       toast.success("Order status updated!");
       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
     },
-    onError: () => {
-      toast.error("Failed to update status");
-    },
+    onError: () => toast.error("Failed to update status"),
   });
 
-  // ✅ Reject status mutation
+  // ✅ Reject Order
   const { mutate: updateStatusRejected } = useMutation({
     mutationFn: async ({ orderId, newStatus }: { orderId: string; newStatus: string }) => {
       const res = await fetch(
@@ -77,25 +75,29 @@ function MyOrders() {
       toast.success("Order status updated!");
       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
     },
-    onError: () => {
-      toast.error("Failed to update status");
-    },
+    onError: () => toast.error("Failed to update status"),
   });
 
-  // ✅ Filter ONLY assignment orders
+  // ✅ Filter Assignment Orders
   const filterOrders = () => {
     if (!ordersData?.data) return [];
     const orders = ordersData.data.filter((order: any) => order.assigment);
+    
     if (activeTab === "in-progress")
-      return orders.filter((order: any) => order.status === "pending" || order.status === "processing");
-    if (activeTab === "completed") return orders.filter((order: any) => order.status === "approved");
+      return orders.filter((o: any) => o.status === "pending" || o.status === "processing");
+
+    if (activeTab === "completed")
+      return orders.filter((o: any) => o.status === "approved");
+
     if (activeTab === "cancelled")
-      return orders.filter((order: any) => order.status === "refunded" || order.status === "cancelled");
+      return orders.filter((o: any) => o.status === "refunded" || o.status === "cancelled");
+
     return orders;
   };
 
   const filteredOrders = filterOrders();
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const showPagination = filteredOrders.length > 7; // ✅ Show only if orders > 7
   const startIndex = (currentPage - 1) * itemsPerPage;
   const displayedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
 
@@ -133,11 +135,11 @@ function MyOrders() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto py-[96px]">
+      <div className="container lg:px-6 px-2 mx-auto py-[96px]">
         <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">My Assignment Orders</h1>
 
-        {/* 🔥 Tabs */}
-        <div className="flex gap-3 mb-6">
+        {/* ✅ Tabs */}
+        <div className="flex gap-3 mb-6 overflow-x-auto">
           {[
             { key: "in-progress", label: "In Progress" },
             { key: "completed", label: "Completed" },
@@ -149,7 +151,7 @@ function MyOrders() {
                 setActiveTab(tab.key);
                 setCurrentPage(1);
               }}
-              className={`px-4 py-2 text-sm font-medium rounded border ${
+              className={`px-4 py-2 text-sm font-medium rounded border whitespace-nowrap flex-shrink-0 ${
                 activeTab === tab.key
                   ? "bg-green-50 border-green-600 text-green-600"
                   : "bg-white border-green-600 text-green-600 hover:bg-green-50"
@@ -161,57 +163,46 @@ function MyOrders() {
         </div>
 
         {/* ✅ Orders Table */}
-        <div className="border border-gray-300 rounded-lg overflow-hidden mb-6">
-          <table className="w-full">
+        <div className="border border-gray-300 rounded-lg overflow-x-auto mb-6">
+          <table className="w-full min-w-[600px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-300">
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Assignment</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Budget</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Date</th>
-                <th className="py-3 pr-16 text-sm font-medium text-gray-900 text-end">Action</th>
+                <th className="px-4 lg:px-6 py-3 text-left text-sm font-medium text-gray-900">Assignment</th>
+                <th className="px-4 lg:px-6 py-3 text-left text-sm font-medium text-gray-900">Budget</th>
+                <th className="px-4 lg:px-6 py-3 text-left text-sm font-medium text-gray-900">Date</th>
+                <th className="px-4 lg:px-6 py-3 text-sm font-medium text-gray-900 text-end">Action</th>
               </tr>
             </thead>
 
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">
-                    Loading...
-                  </td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">Loading...</td>
                 </tr>
               ) : displayedOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">
-                    No assignment orders found.
-                  </td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">No assignment orders found.</td>
                 </tr>
               ) : (
                 displayedOrders.map((order: any) => {
                   const asg = order.assigment;
                   return (
-                    <tr
-                      key={order._id}
-                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-6 py-4 text-sm text-gray-900">{asg?.title || "--"}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{asg?.budget ? `$${asg.budget}` : "--"}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-sm flex justify-end items-center gap-2">
+                    <tr key={order._id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                      <td className="px-4 lg:px-6 py-4 text-sm">{asg?.title || "--"}</td>
+                      <td className="px-4 lg:px-6 py-4 text-sm">{asg?.budget ? `$${asg.budget}` : "--"}</td>
+                      <td className="px-4 lg:px-6 py-4 text-sm">{new Date(order.createdAt).toLocaleDateString()}</td>
+                      <td className="px-4 lg:px-6 py-4 text-sm flex justify-end items-center gap-2 flex-wrap">
                         <span className={getStatusStyle(order.status)}>
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
 
                         {order.status === "pending" && (
                           <select
-                            className="ml-2 border border-gray-300 rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-50"
+                            className="border border-gray-300 rounded px-2 py-1 text-sm"
                             defaultValue=""
                             onChange={(e) => handleStatusChange(order._id, e.target.value)}
                           >
-                            <option value="" disabled>
-                              Select
-                            </option>
+                            <option value="" disabled>Select</option>
                             <option value="approved">Approved</option>
                             <option value="rejected">Rejected</option>
                           </select>
@@ -225,45 +216,46 @@ function MyOrders() {
           </table>
         </div>
 
-        {/* ✅ Pagination */}
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-600">
-            Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredOrders.length)} of{" "}
-            {filteredOrders.length} results
-          </p>
+        {/* ✅ Pagination (Visible only if >7 orders) */}
+        {showPagination && (
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 flex-wrap">
+            <p className="text-xs text-gray-600">
+              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredOrders.length)} of {filteredOrders.length} results
+            </p>
 
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
-            >
-              <ChevronLeft size={16} />
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => (
+            <div className="flex items-center gap-1 flex-wrap">
               <button
-                key={i + 1}
-                onClick={() => handlePageChange(i + 1)}
-                className={`w-8 h-8 rounded text-sm font-medium ${
-                  currentPage === i + 1
-                    ? "bg-green-600 text-white hover:bg-green-700"
-                    : "border border-gray-300 text-gray-900 hover:bg-gray-100"
-                }`}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
               >
-                {i + 1}
+                <ChevronLeft size={16} />
               </button>
-            ))}
 
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
-            >
-              <ChevronRight size={16} />
-            </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => handlePageChange(i + 1)}
+                  className={`w-8 h-8 rounded text-sm font-medium ${
+                    currentPage === i + 1
+                      ? "bg-green-600 text-white hover:bg-green-700"
+                      : "border border-gray-300 text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
