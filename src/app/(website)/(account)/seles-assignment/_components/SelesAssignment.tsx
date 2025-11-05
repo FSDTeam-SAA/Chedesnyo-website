@@ -13,17 +13,13 @@ function SelesAssignment() {
   const { data: session } = useSession();
   const TOKEN = session?.user?.accessToken || "";
 
-  // ✅ Fetch payments
+  // Fetch payments
   const { data: paymentsData, isLoading } = useQuery({
     queryKey: ["seles-assignments"],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`,
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${TOKEN}` } }
       );
       if (!res.ok) throw new Error("Network response was not ok");
       return res.json() as Promise<any>;
@@ -31,10 +27,10 @@ function SelesAssignment() {
     enabled: !!TOKEN,
   });
 
-  // ✅ Extract ONLY assignment payments
+  // Extract only assignment payments
   const assignments = paymentsData?.data.filter((p: any) => p.assigment) || [];
 
-  // ✅ Filter logic based on tab using payment status
+  // Filter logic based on tab
   const filterAssignments = () => {
     if (activeTab === "all") return assignments;
     if (activeTab === "in-progress")
@@ -81,7 +77,6 @@ function SelesAssignment() {
 
   return (
     <div className="w-full">
-      {/* Breadcrumb Header */}
       <BreadcrumbHeader
         title="My Assignments"
         breadcrumbs={[
@@ -89,87 +84,55 @@ function SelesAssignment() {
           { label: "My Assignments", href: "/my-assignments" },
         ]}
       />
-      <div className="container px-10 mx-auto py-[96px]">
+
+      <div className="container mx-auto py-[96px] px-2 lg:px-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">
           My Assignments
         </h1>
 
         {/* Tabs */}
-        <div className="flex gap-3 mb-6">
-          <button
-            onClick={() => {
-              setActiveTab("in-progress");
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-2 text-sm font-medium rounded border ${
-              activeTab === "in-progress"
-                ? "bg-green-50 border-green-600 text-green-600"
-                : "bg-white border-green-600 text-green-600 hover:bg-green-50"
-            }`}
-          >
-            In Progress
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab("completed");
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-2 text-sm font-medium rounded border ${
-              activeTab === "completed"
-                ? "bg-green-50 border-green-600 text-green-600"
-                : "bg-white border-green-600 text-green-600 hover:bg-green-50"
-            }`}
-          >
-            Completed
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab("cancelled");
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-2 text-sm font-medium rounded border ${
-              activeTab === "cancelled"
-                ? "bg-green-50 border-green-600 text-green-600"
-                : "bg-white border-green-600 text-green-600 hover:bg-green-50"
-            }`}
-          >
-            Cancelled
-          </button>
+        <div className="flex gap-3 mb-6 overflow-x-auto">
+          {[
+            { key: "in-progress", label: "In Progress" },
+            { key: "completed", label: "Completed" },
+            { key: "cancelled", label: "Cancelled" },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => {
+                setActiveTab(tab.key);
+                setCurrentPage(1);
+              }}
+              className={`px-4 py-2 text-sm font-medium rounded border flex-shrink-0 ${
+                activeTab === tab.key
+                  ? "bg-green-50 border-green-600 text-green-600"
+                  : "bg-white border-green-600 text-green-600 hover:bg-green-50"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         {/* Table */}
-        <div className="border border-gray-300 rounded-lg overflow-hidden mb-6">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-300">
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Title
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Budget
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Posted By
-                </th>
-                <th className="py-3 pr-16 text-sm font-medium text-gray-900 text-end">
-                  Status
-                </th>
+        <div className="border border-gray-300 rounded-lg overflow-x-auto mb-6">
+          <table className="w-full min-w-[600px]">
+            <thead className="bg-gray-50 border-b border-gray-300">
+              <tr>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Title</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Budget</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Posted By</th>
+                <th className="px-6 py-3 text-sm font-medium text-gray-900 text-end">Status</th>
               </tr>
             </thead>
-
-            {/* ✅ Table Body with file link for approved */}
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">
-                    Loading...
-                  </td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">Loading...</td>
                 </tr>
               ) : displayedAssignments.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">
-                    No assignments found.
-                  </td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">No assignments found.</td>
                 </tr>
               ) : (
                 displayedAssignments.map((assignment: any) => (
@@ -179,8 +142,6 @@ function SelesAssignment() {
                   >
                     <td className="px-6 py-4 text-sm text-gray-900 flex flex-col gap-2">
                       {assignment?.assigment?.title || "Untitled"}
-
-                      {/* ✅ Show file link ONLY if approved */}
                       {assignment.status === "approved" &&
                         assignment?.assigment?.uploadFile && (
                           <a
@@ -193,23 +154,16 @@ function SelesAssignment() {
                           </a>
                         )}
                     </td>
-
                     <td className="px-6 py-4 text-sm text-gray-900">
                       ${assignment?.assigment?.budget || "N/A"}
                     </td>
-
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {assignment?.assigment?.user
-                        ? assignment.assigment.user.firstName
-                        : "Unknown"}
+                      {assignment?.assigment?.user?.firstName || "Unknown"}
                     </td>
-
                     <td className="px-6 py-4 text-sm flex justify-end">
-                      <div className="flex items-center gap-2">
-                        <span className={getStatusStyle(assignment.status)}>
-                          {assignment.status?.toUpperCase() || "N/A"}
-                        </span>
-                      </div>
+                      <span className={getStatusStyle(assignment.status)}>
+                        {assignment.status?.toUpperCase() || "N/A"}
+                      </span>
                     </td>
                   </tr>
                 ))
@@ -218,46 +172,47 @@ function SelesAssignment() {
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-600">
-            Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + itemsPerPage, filteredAssignments.length)} of{" "}
-            {filteredAssignments.length} results
-          </p>
-
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft size={16} />
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => (
+        {/* Pagination (only if items > 7) */}
+        {filteredAssignments.length > 7 && (
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 flex-wrap">
+            <p className="text-xs text-gray-600">
+              Showing {startIndex + 1} to{" "}
+              {Math.min(startIndex + itemsPerPage, filteredAssignments.length)} of{" "}
+              {filteredAssignments.length} results
+            </p>
+            <div className="flex items-center gap-1 flex-wrap">
               <button
-                key={i + 1}
-                onClick={() => handlePageChange(i + 1)}
-                className={`w-8 h-8 rounded text-sm font-medium ${
-                  currentPage === i + 1
-                    ? "bg-green-600 text-white hover:bg-green-700"
-                    : "border border-gray-300 text-gray-900 hover:bg-gray-100"
-                }`}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {i + 1}
+                <ChevronLeft size={16} />
               </button>
-            ))}
 
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronRight size={16} />
-            </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => handlePageChange(i + 1)}
+                  className={`w-8 h-8 rounded text-sm font-medium ${
+                    currentPage === i + 1
+                      ? "bg-green-600 text-white hover:bg-green-700"
+                      : "border border-gray-300 text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

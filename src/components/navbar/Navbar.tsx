@@ -26,9 +26,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
 
   // Scroll listener
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
@@ -115,6 +113,12 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
           { label: "Blogs", href: "/blogs" },
         ];
 
+  // Function to check active route (fix multiple active issue)
+  const checkIsActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname === href;
+  };
+
   return (
     <>
       <nav
@@ -139,7 +143,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
           {/* Desktop Links */}
           <div className="hidden md:flex items-center justify-center flex-wrap lg:flex-nowrap gap-4 lg:gap-6 flex-1 px-4">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = checkIsActive(link.href); // ✅ Updated
               return (
                 <Link
                   key={link.href}
@@ -176,7 +180,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
                   </button>
                 </PopoverTrigger>
 
-                <PopoverContent className="p-0 w-[300px] shadow-lg border border-gray-200 overflow-hidden">
+                <PopoverContent className="p-0 w-[300px] max-h-[80vh] overflow-y-auto shadow-lg border border-gray-200">
                   {/* Email & Role */}
                   <div className="px-4 py-3 bg-green-50 border-b border-gray-200">
                     <p className="text-sm font-semibold text-gray-700 truncate text-center">
@@ -189,7 +193,8 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
 
                   {/* Links */}
                   <div className="flex flex-col">
-                    {[{ label: "My Profile", href: "/profile" },
+                    {[
+                      { label: "My Profile", href: "/profile" },
                       { label: "Inbox", href: "/inbox" },
                       ...(user?.role === "business" ? [{ label: "My Assignments", href: "/assignment" }] : []),
                       { label: "My Courses", href: "/courese" },
@@ -212,7 +217,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
                         : []),
                       { label: "My Earning History", href: "/earnings" },
                     ].map((link) => {
-                      const isActive = pathname === link.href;
+                      const isActive = checkIsActive(link.href); // ✅ Updated
                       return (
                         <Link
                           key={link.href}
@@ -290,31 +295,143 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-gray-200">
-            <div className="flex flex-col gap-3 mt-4">
+          <div className="md:hidden fixed top-20 left-0 w-full h-[calc(100vh-5rem)] overflow-y-auto border-t border-gray-200 bg-white shadow-md z-50">
+            <div className="flex flex-col gap-2 px-4 py-4">
               {navLinks.map((link) => {
-                const isActive = pathname === link.href;
+                const isActive = checkIsActive(link.href); // ✅ Updated
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`text-sm font-medium py-2 transition duration-200 ${
-                      isActive ? "text-green-600 font-semibold" : "text-gray-700 hover:text-green-600"
-                    }`}
                     onClick={() => setIsOpen(false)}
+                    className={`text-sm font-medium py-2 px-2 rounded transition-colors duration-200 ${
+                      isActive
+                        ? "bg-green-50 text-green-600 font-semibold"
+                        : "text-gray-700 hover:bg-green-50 hover:text-green-600"
+                    }`}
                   >
                     {link.label}
                   </Link>
                 );
               })}
             </div>
-            {/* Mobile User/Auth */}
-            {/* ...same as previous mobile popover/login/signup section */}
+
+            <div className="border-t border-gray-200 px-4 py-4 flex flex-col gap-2">
+              {user ? (
+                <>
+                  <div className="flex items-center gap-3 mb-2">
+                    {user.profileImage ? (
+                      <Image
+                        src={user.profileImage}
+                        alt="Profile"
+                        width={40}
+                        height={40}
+                        className="rounded-full object-cover"
+                      />
+                    ) : (
+                      <User size={40} className="text-green-600" />
+                    )}
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-gray-700 truncate">{user.email}</span>
+                      {user.role && <span className="text-xs text-gray-500">{user.role}</span>}
+                    </div>
+                  </div>
+
+                  {/* User Links */}
+                  {[
+                    { label: "My Profile", href: "/profile" },
+                    { label: "Inbox", href: "/inbox" },
+                    ...(user?.role === "business" ? [{ label: "My Assignments", href: "/assignment" }] : []),
+                    { label: "My Courses", href: "/courese" },
+                    ...(user?.role === "seles" ? [{ label: "My Purchase Assignments", href: "/seles-assignment" }] : []),
+                    ...(user?.role === "business"
+                      ? [
+                          { label: "My Orders Assignment", href: "/my-orders-for-assignment" },
+                          { label: "My Orders Course", href: "/my-orders-for-course" },
+                        ]
+                      : user?.role === "seles"
+                      ? [{ label: "My Orders Course", href: "/my-orders-for-course" }]
+                      : []),
+                    ...(user?.role === "business"
+                      ? [
+                          { label: "My Purchase Courses", href: "/seles-purchase-course" },
+                          { label: "My Purchase Assignment", href: "/seles-assignment" },
+                        ]
+                      : user?.role === "seles"
+                      ? [{ label: "My Purchase Courses", href: "/seles-purchase-course" }]
+                      : []),
+                    { label: "My Earning History", href: "/earnings" },
+                  ].map((link) => {
+                    const isActive = checkIsActive(link.href); // ✅ Updated
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setIsOpen(false)}
+                        className={`block px-4 py-2 text-gray-700 text-sm rounded hover:bg-gray-100 transition ${
+                          isActive ? "bg-green-50 text-green-600 font-semibold" : ""
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    );
+                  })}
+
+                  {/* Stripe Section */}
+                  {useData?.data?.stripeAccountId ? (
+                    <button
+                      onClick={() => {
+                        fetchStripeDashboardLink.mutate();
+                        setIsOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-gray-700 text-sm rounded hover:bg-gray-100 transition"
+                    >
+                      Stripe Dashboard
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        createStripDashboard.mutate();
+                        setIsOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-gray-700 text-sm rounded hover:bg-gray-100 transition"
+                    >
+                      Add Stripe Account
+                    </button>
+                  )}
+
+                  {/* Logout */}
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-red-600 text-sm rounded hover:bg-red-50 transition mt-2"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="text-sm text-gray-700 hover:text-green-600 transition"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="text-sm text-white bg-green-600 rounded-full text-center py-2 hover:bg-green-700 transition"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         )}
       </nav>
 
-      {/* Spacer - fixed height to prevent translation widget affecting layout */}
+      {/* Spacer */}
       <div className="h-20 w-full flex-shrink-0"></div>
     </>
   );

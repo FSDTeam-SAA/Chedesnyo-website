@@ -18,9 +18,7 @@ function SelesPurchaseCourse() {
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`,
-        {
-          headers: { Authorization: `Bearer ${TOKEN}` },
-        }
+        { headers: { Authorization: `Bearer ${TOKEN}` } }
       );
       if (!res.ok) throw new Error("Network response was not ok");
       return res.json() as Promise<any>;
@@ -33,15 +31,10 @@ function SelesPurchaseCourse() {
   const filterCourses = () => {
     if (activeTab === "in-progress")
       return courses.filter((c: any) => c.status === "pending" || c.status === "processing");
-
     if (activeTab === "completed")
       return courses.filter((c: any) => c.status === "approved");
-
     if (activeTab === "cancelled")
-      return courses.filter((c: any) => 
-        c.status === "refunded" || c.status === "rejected" || c.status === "cancelled"
-      );
-
+      return courses.filter((c: any) => c.status === "refunded" || c.status === "rejected" || c.status === "cancelled");
     return courses;
   };
 
@@ -70,7 +63,6 @@ function SelesPurchaseCourse() {
     if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
 
-  // ✅ Open video in new tab if approved
   const handleOpenVideo = (course: any) => {
     if (course.status === "approved" && course.course?.courseVideo) {
       window.open(course.course.courseVideo, "_blank");
@@ -79,7 +71,6 @@ function SelesPurchaseCourse() {
 
   return (
     <div className="w-full">
-
       <BreadcrumbHeader
         title="My Courses"
         breadcrumbs={[
@@ -88,91 +79,59 @@ function SelesPurchaseCourse() {
         ]}
       />
 
-      <div className="container px-10 mx-auto py-[96px]">
+      <div className="container mx-auto py-[96px] px-2 lg:px-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">My Courses</h1>
 
-        <div className="flex gap-3 mb-6">
-          <button
-            onClick={() => { setActiveTab("in-progress"); setCurrentPage(1); }}
-            className={`px-4 py-2 text-sm font-medium rounded border ${
-              activeTab === "in-progress"
-                ? "bg-green-50 border-green-600 text-green-600"
-                : "bg-white border-green-600 text-green-600 hover:bg-green-50"
-            }`}
-          >
-            In Progress
-          </button>
-
-          <button
-            onClick={() => { setActiveTab("completed"); setCurrentPage(1); }}
-            className={`px-4 py-2 text-sm font-medium rounded border ${
-              activeTab === "completed"
-                ? "bg-green-50 border-green-600 text-green-600"
-                : "bg-white border-green-600 text-green-600 hover:bg-green-50"
-            }`}
-          >
-            Completed
-          </button>
-
-          <button
-            onClick={() => { setActiveTab("cancelled"); setCurrentPage(1); }}
-            className={`px-4 py-2 text-sm font-medium rounded border ${
-              activeTab === "cancelled"
-                ? "bg-green-50 border-green-600 text-green-600"
-                : "bg-white border-green-600 text-green-600 hover:bg-green-50"
-            }`}
-          >
-            Cancelled
-          </button>
+        {/* Tabs */}
+        <div className="flex gap-3 mb-6 overflow-x-auto">
+          {[
+            { key: "in-progress", label: "In Progress" },
+            { key: "completed", label: "Completed" },
+            { key: "cancelled", label: "Cancelled" },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => { setActiveTab(tab.key); setCurrentPage(1); }}
+              className={`px-4 py-2 text-sm font-medium rounded border flex-shrink-0 ${
+                activeTab === tab.key
+                  ? "bg-green-50 border-green-600 text-green-600"
+                  : "bg-white border-green-600 text-green-600 hover:bg-green-50"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        <div className="border border-gray-300 rounded-lg overflow-hidden mb-6">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-300">
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Title
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">
-                  Price
-                </th>
-                <th className="py-3 pr-16 text-sm font-medium text-gray-900 text-end">
-                  Status
-                </th>
+        {/* Table */}
+        <div className="border border-gray-300 rounded-lg overflow-x-auto mb-6">
+          <table className="w-full min-w-[600px]">
+            <thead className="bg-gray-50 border-b border-gray-300">
+              <tr>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Title</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Price</th>
+                <th className="px-6 py-3 text-sm font-medium text-gray-900 text-end">Status</th>
               </tr>
             </thead>
-
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-8 text-gray-500">
-                    Loading...
-                  </td>
+                  <td colSpan={3} className="text-center py-8 text-gray-500">Loading...</td>
                 </tr>
               ) : displayedCourses.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-8 text-gray-500">
-                    No courses found.
-                  </td>
+                  <td colSpan={3} className="text-center py-8 text-gray-500">No courses found.</td>
                 </tr>
               ) : (
                 displayedCourses.map((course: any) => (
-                  <tr key={course._id}
-                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                  >
+                  <tr key={course._id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
                     <td
-                      className={`px-6 py-4 text-sm text-gray-900 ${
-                        course.status === "approved" ? "cursor-pointer text-green-600 font-medium" : ""
-                      }`}
+                      className={`px-6 py-4 text-sm text-gray-900 ${course.status === "approved" ? "cursor-pointer text-green-600 font-medium" : ""}`}
                       onClick={() => handleOpenVideo(course)}
                     >
                       {course?.course?.title || "Untitled"}
                     </td>
-
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      ${course?.course?.price || "N/A"}
-                    </td>
-
+                    <td className="px-6 py-4 text-sm text-gray-900">${course?.course?.price || "N/A"}</td>
                     <td className="px-6 py-4 text-sm flex justify-end">
                       <span className={getStatusStyle(course.status)}>
                         {course.status?.toUpperCase() || "N/A"}
@@ -185,44 +144,45 @@ function SelesPurchaseCourse() {
           </table>
         </div>
 
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-600">
-            Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredCourses.length)} of {filteredCourses.length} results
-          </p>
-
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft size={16} />
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => (
+        {/* Pagination (only if > 7 items) */}
+        {filteredCourses.length > 7 && (
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 flex-wrap">
+            <p className="text-xs text-gray-600">
+              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredCourses.length)} of {filteredCourses.length} results
+            </p>
+            <div className="flex items-center gap-1 flex-wrap">
               <button
-                key={i + 1}
-                onClick={() => handlePageChange(i + 1)}
-                className={`w-8 h-8 rounded text-sm font-medium ${
-                  currentPage === i + 1
-                    ? "bg-green-600 text-white hover:bg-green-700"
-                    : "border border-gray-300 text-gray-900 hover:bg-gray-100"
-                }`}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {i + 1}
+                <ChevronLeft size={16} />
               </button>
-            ))}
 
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronRight size={16} />
-            </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => handlePageChange(i + 1)}
+                  className={`w-8 h-8 rounded text-sm font-medium ${
+                    currentPage === i + 1
+                      ? "bg-green-600 text-white hover:bg-green-700"
+                      : "border border-gray-300 text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
-        </div>
-
+        )}
       </div>
     </div>
   );
