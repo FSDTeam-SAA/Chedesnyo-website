@@ -5,8 +5,9 @@ import { MessageCircle, Phone, Star, MapPin, Copy } from "lucide-react";
 import Image from "next/image";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import CustomerReviews from "@/components/share/CustomerReviews";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 type FreelancerUser = {
   _id: string;
@@ -21,8 +22,13 @@ type FreelancerUser = {
 
 function ExploreFreelancersDetails() {
   const params = useParams();
-  const freelancerId = params?.id;
+  const router = useRouter();
+  const { data: session } = useSession();
 
+  const freelancerId = params?.id;
+  const token = session?.user?.accessToken;
+
+  // ✅ Fetch profile
   const { data, isLoading, error } = useQuery({
     queryKey: ["freelancerDetails", freelancerId],
     queryFn: async () => {
@@ -36,23 +42,51 @@ function ExploreFreelancersDetails() {
     enabled: !!freelancerId,
   });
 
+  // ✅ Create Conversation Mutation
+  const createConversation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/conversation`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ✅ If your API needs token
+          },
+          body: JSON.stringify({ receiverId: freelancerId }),
+        }
+      );
+      if (!res.ok) throw new Error("Failed to create conversation");
+      const json = await res.json();
+      return json.data.conversation;
+    },
+    onSuccess: () => {
+      router.push("/inbox"); // ✅ Redirect to inbox
+    },
+  });
+
+  const handleChatClick = () => {
+    if (!token) {
+      alert("Please login to start chat");
+      return router.push("/login");
+    }
+    createConversation.mutate();
+  };
+
+  const handleContactClick = () => {
+    if (!data?.email) return;
+    navigator.clipboard.writeText(data.email);
+    window.open(`mailto:${data.email}`, "_blank");
+    alert(`Email copied: ${data.email}`);
+  };
+
   if (isLoading)
     return <div className="min-h-screen flex items-center justify-center text-gray-700">Loading...</div>;
   if (error)
     return <div className="min-h-screen flex items-center justify-center text-red-500">Something went wrong!</div>;
 
-  const handleContactClick = () => {
-    if (!data?.email) return;
-    // Copy email to clipboard
-    navigator.clipboard.writeText(data.email);
-    // Open mail client in new tab
-    window.open(`mailto:${data.email}`, "_blank");
-    alert(`Email copied to clipboard: ${data.email}`);
-  };
-
   return (
     <div className="min-h-screen">
-      {/* Breadcrumb Header */}
       <BreadcrumbHeader
         title="Freelancer Details"
         breadcrumbs={[
@@ -64,8 +98,9 @@ function ExploreFreelancersDetails() {
       <div className="py-12 sm:py-16">
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
-            {/* Left Section - Image */}
-            <div className="w-full lg:w-1/3 flex-shrink-0 h-[350px] sm:h-[400px] md:h-[500px] lg:h-[550px] border rounded-lg overflow-hidden shadow-sm">
+            
+            {/* Image */}
+            <div className="w-full lg:w-1/3 h-[350px] sm:h-[400px] md:h-[500px] lg:h-[550px] border rounded-lg overflow-hidden shadow-sm">
               <Image
                 width={400}
                 height={400}
@@ -75,20 +110,14 @@ function ExploreFreelancersDetails() {
               />
             </div>
 
-            {/* Right Section - Details */}
+            {/* Details */}
             <div className="flex-1 flex flex-col justify-between">
               <div>
-                {/* Name */}
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                   {data?.firstName} {data?.lastName}{" "}
-                  {data?.verified && (
-                    <span className="inline-block ml-2 text-green-600 font-semibold text-sm">
-                      Verified
-                    </span>
-                  )}
+                  {data?.verified && <span className="ml-2 text-green-600 font-semibold text-sm">Verified</span>}
                 </h1>
 
-                {/* Badges */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {data?.businessName && (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
@@ -104,7 +133,6 @@ function ExploreFreelancersDetails() {
                   )}
                 </div>
 
-                {/* Rating & Location */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6 text-gray-600 mb-6">
                   <div className="flex items-center gap-1.5">
                     <Star size={18} className="fill-yellow-400 text-yellow-400" />
@@ -119,38 +147,43 @@ function ExploreFreelancersDetails() {
                   )}
                 </div>
 
-                {/* Email Badge */}
-<div className="mb-6">
-  <h3 className="text-sm text-gray-500 mb-1">Email:</h3>
-  <span
-    onClick={handleContactClick}
-    className="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer"
-  >
-    {data?.email}
-  </span>
-</div>
+                <div className="mb-6">
+                  <h3 className="text-sm text-gray-500 mb-1">Email:</h3>
+                  <span
+                    onClick={handleContactClick}
+                    className="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium cursor-pointer hover:bg-gray-200"
+                  >
+                    {data?.email}
+                  </span>
+                </div>
 
-                {/* Action Buttons */}
+                {/* ✅ Chat & Contact Buttons (same design) */}
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full transition flex items-center justify-center gap-2">
-                    <MessageCircle size={18} />
-                    Chat
+                  <button
+                    onClick={handleChatClick}
+                    disabled={createConversation.isPending}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full transition flex items-center justify-center gap-2"
+                  >
+                    {createConversation.isPending ? "Starting Chat..." : (
+                      <>
+                        <MessageCircle size={18} /> Chat
+                      </>
+                    )}
                   </button>
+
                   <button
                     onClick={handleContactClick}
                     className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full transition flex items-center justify-center gap-2"
                   >
-                    <Phone size={18} />
-                    Contact
-                    <Copy size={16} className="ml-1" />
+                    <Phone size={18} /> Contact <Copy size={16} />
                   </button>
                 </div>
+
               </div>
             </div>
           </div>
         </div>
 
-        {/* Customer Reviews */}
         <div className="px-4 md:px-6 lg:px-8 mt-12">
           <CustomerReviews />
         </div>

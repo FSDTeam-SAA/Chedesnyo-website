@@ -1,266 +1,268 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Search, Paperclip, Send } from "lucide-react";
 import Image from "next/image";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { socket } from "@/lib/socket";
 
 function InboxPage() {
+  const { data: session } = useSession();
+  const userId = session?.user?.id || "";
+  const TOKEN = session?.user?.accessToken || "";
+
   const [selectedChat, setSelectedChat] = useState(0);
   const [messageInput, setMessageInput] = useState("");
+  const [messages, setMessages] = useState<any[]>([]);
+  const messagesRef = useRef<any[]>([]); // ✅ keep latest messages
+  const [unreadCount, setUnreadCount] = useState<{ [key: string]: number }>({});
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const conversations = [
-    {
-      id: 1,
-      name: "Byteline Executi...",
-      title: "Systems Executive",
-      avatar: "/images/courseImage.jpg",
-      time: "10:15 AM",
-      lastMessage: "Hi i have a question.",
-      isActive: true,
-      unread: true,
+  // -------------------- Fetch Conversations --------------------
+  const { data: convRes } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/conversation`, {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+      });
+      const json = await res.json();
+      return json.data;
     },
-    {
-      id: 2,
-      name: "Byteline Execut...",
-      title: "Systems Executive",
-      avatar: "/images/courseImage.jpg",
-      time: "10:15 AM",
-      lastMessage: "I need help",
-      isActive: false,
-      unread: false,
-    },
-    {
-      id: 3,
-      name: "Byteline Execut...",
-      title: "Systems Executive",
-      avatar: "/images/courseImage.jpg",
-      time: "10:15 AM",
-      lastMessage: "I need help",
-      isActive: false,
-      unread: false,
-    },
-    {
-      id: 4,
-      name: "Byteline Execut...",
-      title: "Systems Executive",
-      avatar: "/images/courseImage.jpg",
-      time: "10:15 AM",
-      lastMessage: "I need help",
-      isActive: false,
-      unread: false,
-    },
-  ];
+    enabled: !!userId,
+  });
 
-  const selectedConversation = conversations[selectedChat] || conversations[0];
+  const conversations = convRes || [];
+  const selectedConversation = conversations[selectedChat];
 
-  const messages = [
-    {
-      id: 1,
-      type: "received",
-      text: "Hi i have a question.",
-      timestamp: "10:15 AM",
-    },
-    {
-      id: 2,
-      type: "sent",
-      image: "/images/courseImage.jpg",
-      timestamp: "10:18 AM",
-    },
-    {
-      id: 3,
-      type: "sent",
-      image: "/images/courseImage.jpg",
-      timestamp: "10:20 AM",
-    },
-    {
-      id: 4,
-      type: "received",
-      image: "/images/courseImage.jpg",
-      timestamp: "10:22 AM",
-    },
-  ];
+  // -------------------- Fetch Messages --------------------
+  const fetchMessages = useCallback(async () => {
+    if (!selectedConversation) return;
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/message/${selectedConversation._id}`,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+      }
+    );
+    const json = await res.json();
+    setMessages(json.data);
+    messagesRef.current = json.data; // ✅ sync ref
+  }, [selectedConversation?._id, TOKEN]);
 
-  const handleSendMessage = () => {
-    if (messageInput.trim().length === 0) return;
-    console.log("Message sent:", messageInput);
+  useEffect(() => {
+    fetchMessages();
+  }, [fetchMessages]);
+
+  // -------------------- Socket.IO --------------------
+  useEffect(() => {
+    if (!userId) return;
+
+    socket.emit("addUser", userId);
+
+    const handleReceiveMessage = (msg: any) => {
+      // If current conversation
+      if (msg.conversationId === selectedConversation?._id) {
+        // ✅ Always update latest state
+        messagesRef.current = [...messagesRef.current, msg];
+        setMessages([...messagesRef.current]);
+      } else {
+        // For other conversations, increment unread count
+        setUnreadCount((prev) => ({
+          ...prev,
+          [msg.conversationId]: (prev[msg.conversationId] || 0) + 1,
+        }));
+      }
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
+
+    return () => {
+      socket.off("receiveMessage", handleReceiveMessage);
+    };
+  }, [userId, selectedConversation?._id]);
+
+  // -------------------- Send Message --------------------
+  const handleSendMessage = async () => {
+    if (!messageInput.trim() || !selectedConversation) return;
+
+    const receiverId = selectedConversation.members.find((m: any) => m._id !== userId)?._id;
+    const payload = {
+      senderId: userId,
+      receiverId,
+      conversationId: selectedConversation._id,
+      message: messageInput,
+    };
+
+    // Send to backend
+    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/message`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${TOKEN}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    // Emit via socket
+    socket.emit("sendMessage", payload);
+
+    // Update UI immediately
+    messagesRef.current = [...messagesRef.current, { ...payload, _id: Date.now().toString() }];
+    setMessages([...messagesRef.current]);
     setMessageInput("");
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  // -------------------- Handle Conversation Switch --------------------
+  const handleSelectConversation = (index: number) => {
+    setSelectedChat(index);
+    setUnreadCount((prev) => ({
+      ...prev,
+      [conversations[index]?._id]: 0,
+    }));
+  };
+
+  // -------------------- Auto-scroll --------------------
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div>
-       {/* Breadcrumb Header */}
-            <BreadcrumbHeader
-              title="Inbox"
-              breadcrumbs={[
-                { label: "Home", href: "/" },
-                { label: "Inbox", href: "/inbox" },
-              ]}
-            />
+      <BreadcrumbHeader
+        title="Inbox"
+        breadcrumbs={[
+          { label: "Home", href: "/" },
+          { label: "Inbox", href: "/inbox" },
+        ]}
+      />
+
       <div className="flex h-[80vh] container mx-auto py-9 px-10">
-        {/* Left Sidebar - Conversations List */}
+        {/* Sidebar */}
         <div className="w-80 bg-white border border-gray-200 flex flex-col">
           <div className="p-6 border-b border-gray-200">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Messages</h1>
-
-            {/* Search Input */}
             <div className="relative">
-              <Search
-                size={18}
-                className="absolute left-3 top-3 text-gray-400"
-              />
+              <Search size={18} className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search Message ..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
               />
             </div>
           </div>
 
-          {/* Conversations List */}
           <div className="flex-1 overflow-y-auto">
-            {conversations.map((conversation, index) => (
-              <button
-                key={conversation.id}
-                onClick={() => setSelectedChat(index)}
-                className={`w-full px-4 py-3 flex items-start gap-3 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                  selectedChat === index ? "bg-green-50" : ""
-                }`}
-              >
-                <Image
-                  width={48}
-                  height={48}
-                  src={conversation.avatar}
-                  alt={conversation.name}
-                  className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                />
-                <div className="flex-1 min-w-0 text-left">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3
-                      className={`font-medium text-gray-900 truncate ${
-                        selectedChat === index ? "font-semibold" : ""
-                      }`}
-                    >
-                      {conversation.name}
+            {conversations.map((c: any, i: number) => {
+              const otherUser = c.members.find((m: any) => m._id !== userId);
+              return (
+                <button
+                  key={c._id}
+                  onClick={() => {
+                    handleSelectConversation(i);
+                    setTimeout(fetchMessages, 50); // fetch latest messages
+                  }}
+                  className={`w-full px-4 py-3 flex items-start gap-3 border-b border-gray-100 hover:bg-gray-50 ${
+                    selectedChat === i ? "bg-green-50" : ""
+                  }`}
+                >
+                  <Image
+                    width={48}
+                    height={48}
+                    src={otherUser?.profileImage || "/noavatar.png"}
+                    alt="avatar"
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div className="flex-1 min-w-0 text-left">
+                    <h3 className="font-medium text-gray-900 truncate">
+                      {otherUser?.firstName} {otherUser?.lastName}
                     </h3>
-                    <span className="text-xs text-gray-500 flex-shrink-0">
-                      {conversation.time}
-                    </span>
+                    <p className="text-xs text-gray-600 truncate">{otherUser?.email}</p>
                   </div>
-                  <p className="text-xs text-gray-600 truncate">
-                    {conversation.title}
-                  </p>
-                  <p className="text-sm text-gray-600 truncate mt-1">
-                    {conversation.lastMessage}
-                  </p>
-                </div>
-                {selectedChat === index && (
-                  <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0 mt-2"></div>
-                )}
-              </button>
-            ))}
+                  {unreadCount[c._id] > 0 && (
+                    <span className="bg-red-500 text-white rounded-full px-2 text-xs">
+                      {unreadCount[c._id]}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Right Side - Chat Area */}
+        {/* Chat Area */}
         <div className="flex-1 bg-white flex flex-col">
-          {/* Chat Header */}
-          <div className="p-6 border border-gray-200 bg-white">
-            {selectedConversation && (
-              <div className="flex items-center gap-3">
+          {selectedConversation && (
+            <>
+              <div className="p-6 border border-gray-200 bg-white flex items-center gap-3">
                 <Image
                   width={48}
                   height={48}
-                  src={selectedConversation.avatar}
-                  alt={selectedConversation.name}
+                  src={
+                    selectedConversation.members.find((m: any) => m._id !== userId)
+                      ?.profileImage || "/noavatar.png"
+                  }
+                  alt="User"
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div>
                   <h2 className="font-semibold text-gray-900">
-                    {selectedConversation.name}
+                    {selectedConversation.members.find((m: any) => m._id !== userId)?.firstName}{" "}
+                    {selectedConversation.members.find((m: any) => m._id !== userId)?.lastName}
                   </h2>
                   <p className="text-sm text-gray-600">
-                    {selectedConversation.title}
+                    {selectedConversation.members.find((m: any) => m._id !== userId)?.email}
                   </p>
                 </div>
               </div>
-            )}
-          </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.type === "sent" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div className="max-w-xs">
-                  {message.image && (
-                    <div className="relative group">
-                      <Image
-                        width={200}
-                        height={200}
-                        src={message.image}
-                        alt="Message"
-                        className="rounded-lg max-h-48 object-cover"
-                      />
-                      <div className="absolute inset-0 rounded-lg bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
-                        <div className="w-10 h-10 rounded-full bg-white bg-opacity-0 group-hover:bg-opacity-100 transition-all flex items-center justify-center">
-                          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                            <span className="text-xs text-gray-600">↓</span>
-                          </div>
-                        </div>
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
+                {messages.map((m: any) => {
+                  const isSender = m.senderId === userId || m.senderId?._id === userId;
+                  return (
+                    <div
+                      key={m._id}
+                      className={`flex ${isSender ? "justify-end" : "justify-start"}`}
+                    >
+                      <div
+                        className={`${
+                          isSender ? "bg-green-600 text-white" : "bg-gray-200 text-gray-900"
+                        } rounded-lg px-4 py-2 max-w-xs`}
+                        ref={scrollRef}
+                      >
+                        {m.message}
                       </div>
                     </div>
-                  )}
-                  {message.text && (
-                    <div
-                      className={`${
-                        message.type === "sent"
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-200 text-gray-900"
-                      } rounded-lg px-4 py-2 inline-block`}
-                    >
-                      {message.text}
-                    </div>
-                  )}
-                  <p
-                    className={`text-xs text-gray-500 mt-1 ${
-                      message.type === "sent" ? "text-right" : ""
-                    }`}
+                  );
+                })}
+              </div>
+
+              <div className="p-6 border border-gray-200 bg-white">
+                <div className="flex items-center gap-3">
+                  <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                    <Paperclip size={20} />
+                  </button>
+                  <input
+                    type="text"
+                    placeholder="Type your message..."
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                    className="flex-1 bg-gray-100 rounded-full px-4 py-2 outline-none"
+                  />
+                  <button
+                    onClick={handleSendMessage}
+                    className="p-3 bg-green-600 text-white rounded-full hover:bg-green-700"
                   >
-                    {message.timestamp}
-                  </p>
+                    <Send size={20} />
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Input Area */}
-          <div className="p-6 border border-gray-200 bg-white">
-            <div className="flex items-center gap-3">
-              <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                <Paperclip size={20} />
-              </button>
-              <div className="flex-1 flex items-center bg-gray-100 rounded-full px-4 py-2">
-                <input
-                  type="text"
-                  placeholder="Add Image Or Files"
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                  className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-500"
-                />
-              </div>
-              <button
-                onClick={handleSendMessage}
-                className="p-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
-              >
-                <Send size={20} />
-              </button>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>
