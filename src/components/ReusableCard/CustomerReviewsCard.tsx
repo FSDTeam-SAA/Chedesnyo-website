@@ -98,7 +98,7 @@ export const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
   );
 
   return (
-    <div className="bg-gray-50 py-16 px-4 md:px-6">
+    <div className="py-16 px-4 md:px-6">
       <div className="">
         {/* Header with Navigation */}
         {showHeader && (

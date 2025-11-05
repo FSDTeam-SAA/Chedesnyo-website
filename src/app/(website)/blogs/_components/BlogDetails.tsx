@@ -37,44 +37,59 @@ function BlogDetailPage() {
     enabled: !!id,
   });
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">Failed to load blog</div>;
+  if (isLoading)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-700">
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        Failed to load blog
+      </div>
+    );
 
   const blog = data?.data;
 
-  if (!blog) return <div className="min-h-screen flex items-center justify-center text-gray-500">No blog found</div>;
+  if (!blog)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        No blog found
+      </div>
+    );
 
   return (
     <div className="min-h-screen">
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
-        title="Blogs Details"
+        title="Blog Details"
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Blogs Details", href: "/blogs" },
+          { label: "Blogs", href: "/blogs" },
         ]}
       />
 
-      <div className="container mx-auto px-6 lg:py-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 lg:py-12 py-10">
         {/* Featured Image */}
         <div className="mb-8 rounded-lg overflow-hidden">
           <Image
-            width={600}
+            width={800}
             height={600}
             src={blog.thumbnail}
             alt={blog.title}
-            className="w-full h-96 object-cover"
+            className="w-full h-64 sm:h-80 md:h-96 lg:h-[28rem] object-cover rounded-lg"
           />
         </div>
 
         {/* Meta Information */}
-        <div className="flex items-center gap-6 mb-6 pb-6 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">By</span>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6 pb-6 border-b border-gray-200">
+          <div className="flex items-center gap-2 text-sm sm:text-base">
+            <span className="text-gray-500">By</span>
             <span className="font-semibold text-gray-900">Admin</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Date</span>
+          <div className="flex items-center gap-2 text-sm sm:text-base">
+            <span className="text-gray-500">Date</span>
             <span className="font-semibold text-gray-900">
               {new Date(blog.createdAt).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -83,7 +98,7 @@ function BlogDetailPage() {
               })}
             </span>
           </div>
-          <div className="flex items-center gap-4 ml-auto">
+          <div className="flex items-center gap-4 mt-2 sm:mt-0 sm:ml-auto">
             <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <Heart size={20} className="text-gray-600" />
             </button>
@@ -97,47 +112,43 @@ function BlogDetailPage() {
         </div>
 
         {/* Blog Title */}
-        <h1 className="text-4xl font-bold text-gray-900 mb-8 leading-tight">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-6 sm:mb-8 leading-snug sm:leading-tight">
           {blog.title}
         </h1>
 
-        {/* Blog Content */}
-        <div className="prose prose-lg max-w-none text-gray-700 space-y-6">
-          <p className="text-base leading-relaxed">{blog.description}</p>
-        </div>
+       <div
+  className="prose prose-sm sm:prose lg:prose-lg max-w-none text-gray-700 space-y-6"
+  dangerouslySetInnerHTML={{ __html:(blog.description) }}
+></div>
 
         {/* Tags Section */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <p className="text-sm text-gray-600 mb-3">Tags:</p>
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-200">
+          <p className="text-sm text-gray-600 mb-2 sm:mb-3">Tags:</p>
           <div className="flex flex-wrap gap-2">
-            <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 cursor-pointer transition-colors">
-              #Blog
-            </span>
-            <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 cursor-pointer transition-colors">
-              #Design
-            </span>
-            <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 cursor-pointer transition-colors">
-              #Technology
-            </span>
-            <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 cursor-pointer transition-colors">
-              #Insights
-            </span>
+            {["Blog", "Design", "Technology", "Insights"].map((tag) => (
+              <span
+                key={tag}
+                className="px-3 py-1 sm:px-4 sm:py-2 bg-gray-100 text-gray-700 rounded-full text-xs sm:text-sm hover:bg-gray-200 cursor-pointer transition-colors"
+              >
+                #{tag}
+              </span>
+            ))}
           </div>
         </div>
 
         {/* Author Section */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <div className="flex items-center gap-4">
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <Image
               width={500}
               height={500}
               src="/images/blogDetailsImage.jpg"
               alt="Author"
-              className="w-16 h-16 rounded-full object-cover"
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover"
             />
             <div>
-              <h3 className="font-bold text-gray-900">Admin</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-bold text-gray-900 text-lg sm:text-xl">Admin</h3>
+              <p className="text-sm sm:text-base text-gray-600">
                 Experienced writer and content creator passionate about sharing insights and knowledge with readers worldwide.
               </p>
             </div>

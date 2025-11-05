@@ -9,7 +9,6 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ReviewsCarousel } from "@/components/ReusableCard/CustomerReviewsCard";
 
-// ✅ Type for API User
 type FreelancerUser = {
   _id: string;
   firstName: string;
@@ -66,7 +65,7 @@ function FindBusinessDetails() {
 
   if (isLoading)
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center text-gray-700">
         Loading...
       </div>
     );
@@ -85,7 +84,6 @@ function FindBusinessDetails() {
       </div>
     );
 
-  // Merge assignment and course reviews
   const allReviews = [
     ...assignments.flatMap((a: any) =>
       (a.review || []).map((r: any) => ({
@@ -117,16 +115,14 @@ function FindBusinessDetails() {
     ),
   ];
 
-  // Copy email to clipboard
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(user.email);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000); // reset after 2s
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <div className="min-h-screen">
-      {/* Breadcrumb Header */}
       <BreadcrumbHeader
         title="Business Details"
         breadcrumbs={[
@@ -135,63 +131,76 @@ function FindBusinessDetails() {
         ]}
       />
 
-      <div className="bg-gray-50">
-        <div className="container mx-auto px-6 py-[96px]">
-          <div className="overflow-hidden">
-            <div className="flex flex-col md:flex-row gap-10 md:gap-16">
-              {/* Left Section - Image */}
-              <div className="w-full md:w-[40%] h-[400px] md:h-[600px]">
-                <Image
-                  width={400}
-                  height={400}
-                  src={user.profileImage || "/images/businessImage.jpg"}
-                  alt={user.businessName || user.firstName}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
+      <div className="bg-gray-50 py-12 sm:py-16">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
+            {/* Left Section - Image */}
+            <div className="w-full lg:w-1/3 h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-sm">
+              <Image
+                width={400}
+                height={400}
+                src={user.profileImage || "/images/businessImage.jpg"}
+                alt={user.businessName || user.firstName}
+                className="w-full h-full object-cover"
+              />
+            </div>
 
-              {/* Right Section - Details */}
-              <div className="flex-1">
-                {/* Header - Name and Title */}
-                <div className="mb-6">
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                    {user.businessName || `${user.firstName} ${user.lastName || ""}`}
-                  </h1>
-
-                  {/* Badges */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                      {user.role} {user.verified ? "(Verified)" : ""}
+            {/* Right Section - Details */}
+            <div className="flex-1 flex flex-col justify-between">
+              <div>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                  {user.businessName || `${user.firstName} ${user.lastName || ""}`}{" "}
+                  {user.verified && (
+                    <span className="ml-2 text-green-600 font-semibold text-sm">
+                      Verified
                     </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
-                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                      {user.industry || "N/A"}
-                    </span>
-                  </div>
+                  )}
+                </h1>
 
-                  {/* Location */}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-1.5 text-gray-600">
-                      <MapPin size={16} />
-                      <span className="text-sm">{user.location || "N/A"}</span>
-                    </div>
-                    {user.kvkVatNumber && (
-                      <p className="text-gray-600 text-sm">KVK/VAT: {user.kvkVatNumber}</p>
-                    )}
-                  </div>
+                {/* Badges */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    {user.role} {user.verified ? "(Verified)" : ""}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    {user.industry || "N/A"}
+                  </span>
                 </div>
 
+                {/* Location */}
+                <div className="flex flex-col gap-2 mb-6">
+                  <div className="flex items-center gap-1.5 text-gray-600">
+                    <MapPin size={16} />
+                    <span className="text-sm">{user.location || "N/A"}</span>
+                  </div>
+                  {user.kvkVatNumber && (
+                    <p className="text-gray-600 text-sm">KVK/VAT: {user.kvkVatNumber}</p>
+                  )}
+                </div>
+
+
+                <div className="mb-6">
+  <h3 className="text-sm text-gray-500 mb-1">Email:</h3>
+  <span
+    // onClick={handleContactClick}
+    className="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer"
+  >
+    {user.email}
+  </span>
+</div>
+
                 {/* Action Buttons */}
-                <div className="flex gap-3 mb-6">
-                  <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-full transition-colors flex items-center justify-center gap-2">
+                <div className="flex flex-col sm:flex-row gap-3 mb-6">
+                  <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full transition flex items-center justify-center gap-2">
                     <MessageCircle size={18} />
                     Chat
                   </button>
 
                   <button
                     onClick={handleCopyEmail}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-full transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full transition flex items-center justify-center gap-2"
                   >
                     <Phone size={18} />
                     {copied ? "Copied!" : user.email}
@@ -200,27 +209,24 @@ function FindBusinessDetails() {
 
                 {/* Overview / Details */}
                 <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">Overview:</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {user.overviewExperience || "No overview available."}
-                    </p>
-                  </div>
-
+                  {user.overviewExperience && (
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Overview:</h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">{user.overviewExperience}</p>
+                    </div>
+                  )}
                   {user.achievements && (
                     <div>
                       <h3 className="text-lg font-bold text-gray-900 mb-2">Achievements:</h3>
                       <p className="text-gray-600 text-sm leading-relaxed">{user.achievements}</p>
                     </div>
                   )}
-
                   {user.specialties && (
                     <div>
                       <h3 className="text-lg font-bold text-gray-900 mb-2">Specialties:</h3>
                       <p className="text-gray-600 text-sm leading-relaxed">{user.specialties}</p>
                     </div>
                   )}
-
                   {user.portfolio && (
                     <div>
                       <h3 className="text-lg font-bold text-gray-900 mb-2">Portfolio:</h3>

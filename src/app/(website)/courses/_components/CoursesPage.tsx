@@ -128,7 +128,7 @@ function CoursesPage() {
       </div>
 
       {/* Courses Grid */}
-      <div className="container mx-auto lg:px-6 px-3 pb-16">
+      <div className="container mx-auto lg:px-6 px-3 lg:pb-16 pb-0">
         {courses.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">

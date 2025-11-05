@@ -108,8 +108,8 @@ export default function CourseDetails() {
 
   return (
     <div>
-      <div className="min-h-screen bg-gray-50 pb-[96px]">
-        <div className="pb-[96px]">
+      <div className="min-h-screen bg-gray-50 lg:pb-[96px]">
+        <div className="my-8 lg:my-0">
           <BreadcrumbHeader
             title="Course Details"
             breadcrumbs={[
