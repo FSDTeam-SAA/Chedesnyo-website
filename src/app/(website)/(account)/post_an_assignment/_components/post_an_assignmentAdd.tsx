@@ -260,9 +260,9 @@ function PostAnAssignmentAdd() {
                 <SelectValue placeholder="Select Pricing Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="fixed">Fixed Price</SelectItem>
                 <SelectItem value="hourly">Hourly</SelectItem>
-                <SelectItem value="project">Project Based</SelectItem>
+                <SelectItem value="commission">Connission Based</SelectItem>
+                <SelectItem value="hourly&fee">Hourly&Commission</SelectItem>
               </SelectContent>
             </Select>
           </div>

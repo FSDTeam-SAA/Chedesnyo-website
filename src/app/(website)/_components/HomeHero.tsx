@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function HomeHero() {
   return (
     <div
-      className="w-full flex items-center min-h-[85vh] justify-center px-4 lg:py-20 md:py-10 py-10 relative bg-none md:bg-[url('/images/HeroBg.png')] md:bg-cover md:bg-center md:bg-no-repeat"
+      className="w-full flex items-center min-h-[92vh] justify-center px-4 lg:py-20 md:py-10 py-10 relative bg-none md:bg-[url('/images/HeroBg.png')] md:bg-cover md:bg-center md:bg-no-repeat"
       // className="bg-none md:bg-[url('/images/HeroBg.png')] bg-cover bg-center bg-no-repeat w-full flex items-center min-h-[80vh] justify-center px-4 py-20 relative"
     >
       <div className="relative container mx-auto w-full z-10">

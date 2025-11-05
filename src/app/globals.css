@@ -8,6 +8,37 @@
   }
 }
 
+/* Hide Google Translate elements that cause spacing issues */
+.skiptranslate {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+#google_translate_element {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  height: 0;
+  overflow: hidden;
+}
+
+.VIpgJd-ZVi9od-l4eHX-hSRGPd,
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+  display: none !important;
+}
+
+.translated-ltr,
+.translated-rtl {
+  margin-top: 0 !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -6,6 +6,7 @@ import { useEffect } from "react";
 const config = {
   languages: [
     { title: 'English', name: 'en' },
+    { title: 'Bangla', name: 'bn' },
     { title: 'Dutch (Netherlands)', name: 'nl' },
   ],
   defaultLanguage: 'en',
