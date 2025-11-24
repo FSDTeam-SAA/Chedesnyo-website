@@ -204,7 +204,7 @@ function SalesProfile() {
         ]}
       />
 
-      <div className="container mx-auto px-10 py-[96px]">
+      <div className="container mx-auto lg:px-10 px-5 py-[96px]">
         <div className="flex flex-col md:flex-row gap-10">
           {/* Left Side */}
           <div className="md:w-[40%] flex flex-col items-center">

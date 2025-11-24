@@ -172,7 +172,7 @@ function UploadNewCourse() {
           { label: "Upload New Course", href: "/upload_new_course" },
         ]}
       />
-      <div className="container mx-auto bg-white rounded-lg p-[96px]">
+      <div className="container mx-auto bg-white rounded-lg lg:p-[96px] p-3">
         <h1 className="text-3xl font-bold text-gray-900 mb-14 text-center">
           Upload New Course
         </h1>
@@ -230,7 +230,7 @@ function UploadNewCourse() {
               <label className="flex items-center justify-center w-full px-4 py-3 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-gray-400">
                 <span>
                   {formData.courseThumbnail
-                    ? formData.courseThumbnail.name
+                    ? formData.courseThumbnail.name.slice(0,15)
                     : "No File Chosen"}
                 </span>
                 <input
@@ -317,7 +317,7 @@ function UploadNewCourse() {
               <label className="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400">
                 <span>
                   {formData.uploadExtraFiles
-                    ? formData.uploadExtraFiles.name
+                    ? formData.uploadExtraFiles.name.slice(0,15)
                     : "No File Chosen"}
                 </span>
                 <input

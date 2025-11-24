@@ -54,7 +54,7 @@ export default function AssignmentCard({
 
           {/* Title */}
           <h3 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
-            {title.length > 50 ? `${title.slice(0, 50)}...` : title}
+            {title.length > 20 ? `${title.slice(0, 20)}...` : title}
           </h3>
 
           {/* Divider */}
