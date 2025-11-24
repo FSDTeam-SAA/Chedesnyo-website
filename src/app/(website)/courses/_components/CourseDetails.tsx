@@ -119,13 +119,13 @@ export default function CourseDetails() {
           />
         </div>
 
-        <div className="container mx-auto bg-white rounded-2xl border border-gray-200">
-          <div className="relative h-[400px] w-full">
+        <div className="container mx-auto bg-white rounded-2xl border border-gray-200 mt-10">
+          <div className="relative h-[400px] w-full rounded-t-md">
             <Image
               src={course.thumbnail}
               alt={course.title}
               fill
-              className="object-cover"
+              className="object-cover rounded-t-lg"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
               <h1 className="text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">
