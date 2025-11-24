@@ -64,7 +64,7 @@ export default function CoursesCard({
           {/* Details */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-gray-600 font-medium">{type}</span>
+              <span className="text-gray-600 font-medium">{type.slice(0,30)}....</span>
             </div>
 
             <div className="flex items-center justify-between">

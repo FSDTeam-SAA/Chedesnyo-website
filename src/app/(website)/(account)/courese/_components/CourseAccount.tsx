@@ -189,7 +189,7 @@ function CourseAccount() {
                       {index + 1}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {course.title}
+                      {course.title.slice(0,10)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {new Date(course.createdAt).toLocaleDateString()}
