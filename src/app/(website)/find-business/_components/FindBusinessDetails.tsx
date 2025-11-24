@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { MessageCircle, Phone, MapPin } from "lucide-react";
+import { MessageCircle, Phone, MapPin, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { useParams } from "next/navigation";
@@ -65,8 +65,8 @@ function FindBusinessDetails() {
 
   if (isLoading)
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-700">
-        Loading...
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="animate-spin text-green-600" size={40} />
       </div>
     );
 
@@ -135,7 +135,7 @@ function FindBusinessDetails() {
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
             {/* Left Section - Image */}
-            <div className="w-full lg:w-1/3 h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-sm">
+            <div className="w-full lg:w-1/3 h-[200px] sm:h-[200px] md:h-[300px] lg:h-[400px] rounded-lg overflow-hidden shadow-sm">
               <Image
                 width={400}
                 height={400}

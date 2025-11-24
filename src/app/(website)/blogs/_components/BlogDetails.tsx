@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Heart, Share2, Bookmark } from "lucide-react";
+import { Heart, Share2, Bookmark, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { useParams } from "next/navigation";
@@ -39,10 +39,11 @@ function BlogDetailPage() {
 
   if (isLoading)
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-700">
-        Loading...
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="animate-spin text-green-600" size={40} />
       </div>
     );
+
   if (error)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">

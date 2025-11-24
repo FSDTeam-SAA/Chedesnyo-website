@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { MessageCircle, Phone, Star, MapPin, Copy } from "lucide-react";
+import { MessageCircle, Phone, Star, MapPin, Copy, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import CustomerReviews from "@/components/share/CustomerReviews";
@@ -80,8 +80,12 @@ function ExploreFreelancersDetails() {
     alert(`Email copied: ${data.email}`);
   };
 
-  if (isLoading)
-    return <div className="min-h-screen flex items-center justify-center text-gray-700">Loading...</div>;
+ if (isLoading)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="animate-spin text-green-600" size={40} />
+      </div>
+    );
   if (error)
     return <div className="min-h-screen flex items-center justify-center text-red-500">Something went wrong!</div>;
 
@@ -100,7 +104,7 @@ function ExploreFreelancersDetails() {
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
             
             {/* Image */}
-            <div className="w-full lg:w-1/3 h-[350px] sm:h-[400px] md:h-[500px] lg:h-[550px] border rounded-lg overflow-hidden shadow-sm">
+            <div className="w-full lg:w-1/3 h-[250px] sm:h-[300px] md:h-[300px] lg:h-[350px] border rounded-lg overflow-hidden shadow-sm">
               <Image
                 width={400}
                 height={400}
