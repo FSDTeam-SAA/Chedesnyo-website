@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type LeaderboardItem = {
   userId: string;
@@ -78,13 +79,6 @@ function LeaderBoard() {
     return colors[id % colors.length];
   };
 
-  if (isLoading)
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
-      </div>
-    );
-
   if (error)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
@@ -128,51 +122,76 @@ function LeaderBoard() {
 
         {/* Leaderboard List */}
         <div className="space-y-4 mb-8">
-          {leaderboardItems.map((professional, index) => (
-            <div
-              key={professional.userId || index}
-              className="bg-black rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-            >
-              <div className="flex items-center gap-4 flex-1">
-                {/* Avatar */}
+          {isLoading
+            ? Array.from({ length: itemsPerPage }).map((_, index) => (
                 <div
-                  className={`w-12 h-12 rounded-full ${getAvatarColor(
-                    index
-                  )} flex items-center justify-center text-white font-bold text-lg flex-shrink-0`}
+                  key={index}
+                  className="bg-gray-500 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-pulse"
                 >
-                  {getInitial(professional.user?.firstName || "U")}
+                  <div className="flex items-center gap-4 flex-1">
+                    <Skeleton className="w-12 h-12 rounded-full" />
+                    <div className="flex flex-col gap-2">
+                      <Skeleton className="h-4 w-32 rounded" />
+                      <Skeleton className="h-3 w-24 rounded" />
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 mt-2 sm:mt-0">
+                    <div className="flex flex-col gap-1 text-left sm:text-right">
+                      <Skeleton className="h-3 w-20 rounded" />
+                      <Skeleton className="h-4 w-16 rounded" />
+                      <Skeleton className="h-3 w-20 rounded" />
+                    </div>
+                    <Skeleton className="h-6 w-12 rounded-full" />
+                  </div>
                 </div>
+              ))
+            : leaderboardItems.map((professional, index) => (
+                <div
+                  key={professional.userId || index}
+                  className="bg-black rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                >
+                  <div className="flex items-center gap-4 flex-1">
+                    {/* Avatar */}
+                    <div
+                      className={`w-12 h-12 rounded-full ${getAvatarColor(
+                        index
+                      )} flex items-center justify-center text-white font-bold text-lg flex-shrink-0`}
+                    >
+                      {getInitial(professional.user?.firstName || "U")}
+                    </div>
 
-                {/* Name and Email */}
-                <div className="flex flex-col">
-                  <p className="text-white font-semibold text-sm sm:text-base">
-                    {professional.user?.firstName || "Unknown User"}{" "}
-                    {professional.user?.lastName || ""}
-                  </p>
-                  <p className="text-gray-400 text-xs sm:text-sm">
-                    {professional.user?.email || "N/A"}
-                  </p>
-                </div>
-              </div>
+                    {/* Name and Email */}
+                    <div className="flex flex-col">
+                      <p className="text-white font-semibold text-sm sm:text-base">
+                        {professional.user?.firstName || "Unknown User"}{" "}
+                        {professional.user?.lastName || ""}
+                      </p>
+                      <p className="text-gray-400 text-xs sm:text-sm">
+                        {professional.user?.email || "N/A"}
+                      </p>
+                    </div>
+                  </div>
 
-              {/* Sales Info */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 mt-2 sm:mt-0">
-                <div className="text-left sm:text-right">
-                  <p className="text-gray-400 text-xs sm:text-sm">Total Sales: </p>
-                  <p className="text-white font-semibold text-sm sm:text-base">
-                    {professional.totalSales}
-                  </p>
-                  <p className="text-gray-400 text-xs sm:text-sm">Ratings: </p>
-                </div>
+                  {/* Sales Info */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 mt-2 sm:mt-0">
+                    <div className="text-left sm:text-right">
+                      <p className="text-gray-400 text-xs sm:text-sm">
+                        Total Sales:{" "}
+                      </p>
+                      <p className="text-white font-semibold text-sm sm:text-base">
+                        {professional.totalSales}
+                      </p>
+                      <p className="text-gray-400 text-xs sm:text-sm">Ratings: </p>
+                    </div>
 
-                {/* Rating Badge */}
-                <div className="bg-orange-500 text-white font-bold px-3 py-1 rounded-full text-sm sm:text-base">
-                  {professional.avgRating || 0}
+                    {/* Rating Badge */}
+                    <div className="bg-orange-500 text-white font-bold px-3 py-1 rounded-full text-sm sm:text-base">
+                      {professional.avgRating || 0}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-          {leaderboardItems.length === 0 && (
+              ))}
+          {!isLoading && leaderboardItems.length === 0 && (
             <p className="text-center text-gray-500 py-10 text-sm sm:text-base">
               No data available for {timeframe}
             </p>

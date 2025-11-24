@@ -6,6 +6,7 @@ import BlogCard from "@/components/ReusableCard/BlogCard";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton"; // Tailwind/Component based skeleton
 
 type BlogPost = {
   _id: string;
@@ -32,8 +33,7 @@ export default function BlogPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // Fetch API data
-  const { data: blogData, error, isLoading } = useQuery<BlogApiResponse>({
+  const { data: blogData, isLoading } = useQuery<BlogApiResponse>({
     queryKey: ["blogData", currentPage],
     queryFn: async () => {
       const res = await fetch(
@@ -46,7 +46,6 @@ export default function BlogPage() {
 
   const totalPages = Math.ceil((blogData?.meta?.total || 0) / itemsPerPage);
 
-  // Pagination numbers with ellipsis
   const getPageNumbers = () => {
     const pages: number[] = [];
     const maxPagesToShow = 5;
@@ -73,18 +72,6 @@ export default function BlogPage() {
     router.push(`/blogs/${postId}`);
   };
 
-  if (isLoading)
-    return (
-      <div className="min-h-screen flex items-center justify-center">Loading...</div>
-    );
-
-  if (error)
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-500">
-        Failed to load blogs
-      </div>
-    );
-
   const paginatedPosts = blogData?.data || [];
 
   return (
@@ -99,7 +86,17 @@ export default function BlogPage() {
       />
 
       <div className="container mx-auto lg:py-[96px] px-6 py-10">
-        {paginatedPosts.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: itemsPerPage }).map((_, idx) => (
+              <div key={idx} className="animate-pulse">
+                <Skeleton className="h-48 w-full rounded-lg mb-4" />
+                <Skeleton className="h-5 w-3/4 rounded mb-2" />
+                <Skeleton className="h-4 w-1/2 rounded" />
+              </div>
+            ))}
+          </div>
+        ) : paginatedPosts.length > 0 ? (
           <>
             {/* Blog Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -139,7 +136,9 @@ export default function BlogPage() {
                       >
                         01
                       </button>
-                      {pageNumbers[0] > 2 && <span className="px-2 text-gray-400">...</span>}
+                      {pageNumbers[0] > 2 && (
+                        <span className="px-2 text-gray-400">...</span>
+                      )}
                     </>
                   )}
 

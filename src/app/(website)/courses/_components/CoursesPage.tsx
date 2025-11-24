@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -7,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import CoursesCard from "@/components/ReusableCard/CoursesCard";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// ✅ TypeScript type for a single course
+// Types
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Course = {
   _id: string;
@@ -32,7 +32,6 @@ type Course = {
   application: any[];
 };
 
-// ✅ TypeScript type for API response
 type CoursesApiResponse = {
   statusCode: number;
   success: boolean;
@@ -50,8 +49,8 @@ function CoursesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // ✅ Fetch courses from API with search and pagination
-  const { data: courseData, error } = useQuery<CoursesApiResponse>({
+  // Fetch Courses
+  const { data: courseData, error, isLoading } = useQuery<CoursesApiResponse>({
     queryKey: ["coursesData", searchTerm, currentPage],
     queryFn: async () => {
       const res = await fetch(
@@ -92,8 +91,6 @@ function CoursesPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
- 
-
   if (error)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
@@ -129,12 +126,31 @@ function CoursesPage() {
 
       {/* Courses Grid */}
       <div className="container mx-auto lg:px-6 px-3 lg:pb-16 pb-0">
-        {courses.length > 0 ? (
+        {/* 🔄 Loading Skeleton */}
+        {isLoading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {[...Array(6)].map((_, idx) => (
+              <div
+                key={idx}
+                className="rounded-xl border bg-white shadow p-4 space-y-4"
+              >
+                <Skeleton className="h-40 w-full rounded-lg" />
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-8 w-full rounded-lg" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* If Data Loaded */}
+        {!isLoading && courses.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
               {courses.map((course) => (
                 <CoursesCard
-                id={course._id}
+                  id={course._id}
                   key={course._id}
                   image={course.thumbnail}
                   category={course.level}
@@ -153,26 +169,12 @@ function CoursesPage() {
                 <button
                   onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
                 >
                   <ChevronLeft size={20} className="text-gray-600" />
                 </button>
 
                 <div className="flex items-center justify-center gap-2 flex-wrap">
-                  {pageNumbers[0] > 1 && (
-                    <>
-                      <button
-                        onClick={() => handlePageChange(1)}
-                        className="px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors text-gray-700 font-medium"
-                      >
-                        01
-                      </button>
-                      {pageNumbers[0] > 2 && (
-                        <span className="px-2 text-gray-400">...</span>
-                      )}
-                    </>
-                  )}
-
                   {pageNumbers.map((page) => (
                     <button
                       key={page}
@@ -186,20 +188,6 @@ function CoursesPage() {
                       {String(page).padStart(2, "0")}
                     </button>
                   ))}
-
-                  {pageNumbers[pageNumbers.length - 1] < totalPages && (
-                    <>
-                      {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
-                        <span className="px-2 text-gray-400">...</span>
-                      )}
-                      <button
-                        onClick={() => handlePageChange(totalPages)}
-                        className="px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors text-gray-700 font-medium"
-                      >
-                        {String(totalPages).padStart(2, "0")}
-                      </button>
-                    </>
-                  )}
                 </div>
 
                 <button
@@ -207,16 +195,19 @@ function CoursesPage() {
                     handlePageChange(Math.min(totalPages, currentPage + 1))
                   }
                   disabled={currentPage === totalPages}
-                  className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
                 >
                   <ChevronRight size={20} className="text-gray-600" />
                 </button>
               </div>
             )}
           </>
-        ) : (
+        ) : null}
+
+        {/* If No Data */}
+        {!isLoading && courses.length === 0 && (
           <p className="text-center text-gray-500 py-10">
-            No courses found for{searchTerm}
+            No courses found for {searchTerm}
           </p>
         )}
       </div>

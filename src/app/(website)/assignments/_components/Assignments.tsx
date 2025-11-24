@@ -7,6 +7,7 @@ import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { Input } from "@/components/ui/input";
 import AssignmentCard from "@/components/ReusableCard/AssignmentCard";
 import { Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // ✅ Type for API data
 type Assignment = {
@@ -53,10 +54,8 @@ export default function Assignments() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // ✅ Debounced search term
   const debouncedSearch = useDebounce(searchTerm, 400);
 
-  // ✅ Fetch assignments with React Query
   const { data, isError, isFetching } = useQuery({
     queryKey: ["assignments", debouncedSearch],
     queryFn: () => fetchAssignments(debouncedSearch),
@@ -64,7 +63,6 @@ export default function Assignments() {
 
   const assignments: Assignment[] = data?.data || [];
 
-  // ✅ Pagination logic
   const totalPages = Math.ceil(assignments.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedAssignments = assignments.slice(
@@ -75,27 +73,25 @@ export default function Assignments() {
   const getPageNumbers = () => {
     const pages = [];
     const maxPagesToShow = 5;
+
     let startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-    if (endPage - startPage < maxPagesToShow - 1)
+
+    if (endPage - startPage < maxPagesToShow - 1) {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
     for (let i = startPage; i <= endPage; i++) pages.push(i);
+
     return pages;
   };
 
   const pageNumbers = getPageNumbers();
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  // ✅ Loading & Error UI
-  // if (isLoading)
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <p className="text-gray-500">Loading assignments...</p>
-  //     </div>
-  //   );
 
   if (isError)
     return (
@@ -141,6 +137,22 @@ export default function Assignments() {
 
       {/* Assignment Cards */}
       <div className="container mx-auto lg:px-6 px-3 lg:pb-16">
+
+        {/* ⭐ Skeleton Loader (first load + search load) */}
+        {isFetching && paginatedAssignments.length === 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className="bg-white shadow rounded-xl p-4 space-y-4">
+                <Skeleton className="w-full h-32 rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-10 w-full rounded-md" />
+              </div>
+            ))}
+          </div>
+        )}
+
         {paginatedAssignments.length > 0 ? (
           <>
             <div

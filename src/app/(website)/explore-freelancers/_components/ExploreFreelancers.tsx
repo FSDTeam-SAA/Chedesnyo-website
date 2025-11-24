@@ -4,9 +4,9 @@ import React, { useState, useEffect } from "react";
 import { FreelancerCard } from "@/components/ReusableCard/FreelancersCard";
 import { BreadcrumbHeader } from "@/components/ReusableCard/SubHero";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Freelancer = {
   _id: string;
@@ -22,27 +22,29 @@ export default function ExploreFreelancers() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
- 
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearchTerm(searchTerm), 500);
+    const handler = setTimeout(
+      () => setDebouncedSearchTerm(searchTerm),
+      500
+    );
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  
-  const { data, isError, refetch } = useQuery({
-    queryKey: ["freelancers", debouncedSearchTerm,currentPage],
+  const { data, isError, isFetching, isLoading, refetch } = useQuery({
+    queryKey: ["freelancers", debouncedSearchTerm, currentPage],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("role", "seles");
       params.append("status", "approved");
       params.append("page", currentPage.toString());
       params.append("limit", itemsPerPage.toString());
+      if (debouncedSearchTerm)
+        params.append("searchTerm", debouncedSearchTerm);
 
-      if (debouncedSearchTerm) params.append("searchTerm", debouncedSearchTerm);
-     
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/all-user?${params.toString()}`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/all-user?${params.toString()}`
+      );
       if (!res.ok) throw new Error("Failed to fetch freelancers");
       return res.json();
     },
@@ -68,14 +70,12 @@ export default function ExploreFreelancers() {
     return pages;
   };
 
-
   const pageNumbers = getPageNumbers();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
 
   if (isError)
     return (
@@ -86,7 +86,7 @@ export default function ExploreFreelancers() {
 
   return (
     <div className="min-h-screen mb-[96px]">
-      {/* ✅ Breadcrumb Header */}
+      {/* Breadcrumb Header */}
       <BreadcrumbHeader
         title="Explore Freelancers"
         breadcrumbs={[
@@ -96,7 +96,7 @@ export default function ExploreFreelancers() {
       />
 
       <div className="container mx-auto lg:px-6 px-3">
-        {/* ✅ Search Bar */}
+        {/* Search Bar */}
         <div className="max-w-5xl mx-auto px-6 lg:pb-6 flex items-center justify-center">
           <div className="relative w-full lg:py-[96px] py-14">
             <Input
@@ -113,108 +113,82 @@ export default function ExploreFreelancers() {
               onClick={() => refetch()}
               className="absolute right-1 top-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white p-2.5 rounded-full transition-colors flex items-center justify-center"
             >
-              <Search size={20} />
+              {isFetching ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Search size={20} />
+              )}
             </button>
           </div>
         </div>
 
-        {/* ✅ Filters */}
-        {/* <div className="flex flex-col sm:flex-row gap-4 pb-[72px] items-center mx-auto max-w-5xl">
-          <div className="flex gap-6 items-center">
-            <p>Filter by :</p>
-            <div className="flex gap-[40px]">
-              <Select onValueChange={(val) => { setCategory(val); setCurrentPage(1); }}>
-                <SelectTrigger className="w-full sm:w-64 rounded-full h-[45px] shadow-[0px_4px_32px_0px_#00000040]">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="design">Design</SelectItem>
-                  <SelectItem value="development">Development</SelectItem>
-                  <SelectItem value="marketing">Marketing</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select onValueChange={(val) => { setExperience(val); setCurrentPage(1); }}>
-                <SelectTrigger className="w-full sm:w-64 rounded-full h-[45px] shadow-[0px_4px_32px_0px_#00000040]">
-                  <SelectValue placeholder="Experience Level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="beginner">Beginner</SelectItem>
-                  <SelectItem value="intermediate">Intermediate</SelectItem>
-                  <SelectItem value="expert">Expert</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        {/* ⭐ Skeleton Loader */}
+        {(isLoading || isFetching) && freelancersData.length === 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="border p-6 rounded-xl shadow bg-white space-y-4"
+              >
+                <Skeleton className="w-24 h-24 rounded-full mx-auto" />
+                <Skeleton className="h-4 w-2/3 mx-auto" />
+                <Skeleton className="h-4 w-1/3 mx-auto" />
+                <Skeleton className="h-4 w-1/2 mx-auto" />
+                <Skeleton className="h-10 w-full rounded-md" />
+              </div>
+            ))}
           </div>
-        </div> */}
+        )}
 
-        {/* ✅ Freelancers Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {freelancersData.map((freelancer) => (
-            <FreelancerCard
-              key={freelancer._id}
-              id={freelancer._id}
-              name={freelancer.firstName}
-              image={freelancer.profileImage}
-              bio={freelancer.location || ""}
-              rating={freelancer.rating || 0}
-              reviewCount={freelancer.reviewCount || 0}
-            />
-          ))}
-        </div>
+        {/* Actual Freelancer Grid */}
+        {!isLoading && freelancersData.length > 0 && (
+          <div
+            className="grid grid-cols-1 lg:grid-cols-2 gap-8 transition-all duration-300"
+            style={{
+              opacity: isFetching ? 0.6 : 1,
+            }}
+          >
+            {freelancersData.map((freelancer) => (
+              <FreelancerCard
+                key={freelancer._id}
+                id={freelancer._id}
+                name={freelancer.firstName}
+                image={freelancer.profileImage}
+                bio={freelancer.location || ""}
+                rating={freelancer.rating || 0}
+                reviewCount={freelancer.reviewCount || 0}
+              />
+            ))}
+          </div>
+        )}
 
-        {/* ✅ Pagination */}
+        {/* Pagination */}
         {totalPages > 1 && (
           <div className="w-full flex items-center justify-between mt-12 pt-6">
             <button
-              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              onClick={() =>
+                handlePageChange(Math.max(1, currentPage - 1))
+              }
               disabled={currentPage === 1}
-              className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
             >
               <ChevronLeft size={20} className="text-gray-600" />
             </button>
 
             <div className="flex items-center justify-center gap-2 flex-wrap">
-              {pageNumbers[0] > 1 && (
-                <>
-                  <button
-                    onClick={() => handlePageChange(1)}
-                    className="px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors text-gray-700 font-medium"
-                  >
-                    01
-                  </button>
-                  {pageNumbers[0] > 2 && (
-                    <span className="px-2 text-gray-400">...</span>
-                  )}
-                </>
-              )}
-
               {pageNumbers.map((page) => (
                 <button
                   key={page}
                   onClick={() => handlePageChange(page)}
-                  className={`px-3 py-2 rounded-md border font-medium transition-colors ${currentPage === page
+                  className={`px-3 py-2 rounded-md border font-medium ${
+                    currentPage === page
                       ? "border-green-500 bg-green-50 text-green-600"
                       : "border-gray-300 text-gray-700 hover:bg-gray-100"
-                    }`}
+                  }`}
                 >
                   {String(page).padStart(2, "0")}
                 </button>
               ))}
-
-              {pageNumbers[pageNumbers.length - 1] < totalPages && (
-                <>
-                  {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
-                    <span className="px-2 text-gray-400">...</span>
-                  )}
-                  <button
-                    onClick={() => handlePageChange(totalPages)}
-                    className="px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors text-gray-700 font-medium"
-                  >
-                    {String(totalPages).padStart(2, "0")}
-                  </button>
-                </>
-              )}
             </div>
 
             <button
@@ -222,7 +196,7 @@ export default function ExploreFreelancers() {
                 handlePageChange(Math.min(totalPages, currentPage + 1))
               }
               disabled={currentPage === totalPages}
-              className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
             >
               <ChevronRight size={20} className="text-gray-600" />
             </button>
