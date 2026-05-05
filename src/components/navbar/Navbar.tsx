@@ -268,7 +268,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
             ) : (
               <>
                 <Link
-                  href="/login"
+                  href="/signin"
                   className="w-[139px] h-[48px] flex items-center justify-center text-[16px] font-semibold text-green-600 border-2 border-green-600 rounded-full hover:bg-green-50 transition duration-200"
                 >
                   Login
@@ -411,7 +411,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
               ) : (
                 <>
                   <Link
-                    href="/login"
+                    href="/signin"
                     className="text-sm text-gray-700 hover:text-green-600 transition"
                     onClick={() => setIsOpen(false)}
                   >
