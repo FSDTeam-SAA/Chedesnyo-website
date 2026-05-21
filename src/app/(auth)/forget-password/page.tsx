@@ -3,8 +3,9 @@ import ForgotPasswordForm from './_components/ForgetPasswordForm'
 
 function page() {
   return (
+
     <div>
-        <ForgotPasswordForm />
+      <ForgotPasswordForm />
     </div>
   )
 }
