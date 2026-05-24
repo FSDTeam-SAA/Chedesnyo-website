@@ -58,14 +58,14 @@ export default function SignInForm() {
         redirect: false,
       });
 
-      if (!res) throw new Error("Login failed!");
+      if (!res) throw new Error("Inloggen mislukt!");
 
       if (res.error) {
         throw new Error(res.error);
       }
 
       // Show toast before redirect
-      toast.success("Login Successful!");
+      toast.success("Succesvol ingelogd!");
 
       // Short delay so toast is visible
       setTimeout(() => {
@@ -73,7 +73,7 @@ export default function SignInForm() {
       }, 500);
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : String(err) || "Login failed!";
+        err instanceof Error ? err.message : String(err) || "Inloggen mislukt!";
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -86,7 +86,7 @@ export default function SignInForm() {
       <div className="hidden lg:block lg:w-1/2 h-screen relative">
         <Image
           src="/images/cheAuthImage.png"
-          alt="Professional woman working on laptop"
+          alt="Professionele vrouw werkt op laptop"
           fill
           quality={100}
           className="object-cover"

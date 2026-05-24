@@ -18,10 +18,10 @@ interface DealCardProps {
 
 export default function CoursesCard({
   image = "https://via.placeholder.com/400x300?text=HTML5+Development",
-  category = "Information Technology",
-  title = "Web application development",
-  type = "Test Assignment",
-  paymentType = "Hourly",
+  category = "Informatietechnologie",
+  title = "Webapplicatieontwikkeling",
+  type = "Testopdracht",
+  paymentType = "Per uur",
   paymentAmount = "$17.00",
   applications = 3,
   id,
@@ -69,7 +69,7 @@ export default function CoursesCard({
 
             <div className="flex items-center justify-between">
               <span className="text-gray-600">
-                <span className="font-bold">Payment Type: </span>
+                <span className="font-bold">Betalingstype: </span>
                 <span className="text-gray-900">
                   {paymentType} ({paymentAmount})
                 </span>
@@ -78,7 +78,7 @@ export default function CoursesCard({
 
             <div className="flex items-center justify-between">
               <span className="text-gray-600">
-                Applications:{" "}
+                Aanmeldingen:{" "}
                 <span className="font-semibold text-gray-900">
                   {applications}
                 </span>
@@ -92,7 +92,7 @@ export default function CoursesCard({
           <Link href={`/courses/${id}`}>
             <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
               <Book size={20} />
-              Course Details
+              Cursusdetails
             </button>
           </Link>
         </div>

@@ -58,7 +58,7 @@ export default function FindBusiness() {
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/all-user/?${params.toString()}`
       );
 
-      if (!res.ok) throw new Error("Failed to fetch businesses");
+      if (!res.ok) throw new Error("Bedrijven ophalen mislukt");
       return res.json();
     },
   });
@@ -91,10 +91,10 @@ export default function FindBusiness() {
   return (
     <div className="min-h-screen lg:mb-[96px] mb-10">
       <BreadcrumbHeader
-        title="Find Business"
+        title="Vind bedrijven"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Find Business", href: "/find-business" },
+          { label: "Startpagina", href: "/" },
+          { label: "Vind bedrijven", href: "/find-business" },
         ]}
       />
 
@@ -110,7 +110,7 @@ export default function FindBusiness() {
               <>
                 <Input
                   type="text"
-                  placeholder="Search here..."
+                  placeholder="Zoek hier..."
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
@@ -139,11 +139,11 @@ export default function FindBusiness() {
           </div>
         ) : isError ? (
           <div className="min-h-[300px] flex items-center justify-center text-red-500">
-            Something went wrong!
+            Er is iets misgegaan!
           </div>
         ) : businessesData.length === 0 ? (
           <div className="min-h-[300px] flex items-center justify-center text-gray-500">
-            No businesses found.
+            Geen bedrijven gevonden.
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:pt-[96px]">

@@ -51,7 +51,7 @@ function UploadNewCourse() {
           },
         }
       );
-      if (!res.ok) throw new Error("Failed to fetch user profile");
+      if (!res.ok) throw new Error("Gebruikersprofiel ophalen mislukt");
       return res.json();
     },
   });
@@ -121,13 +121,13 @@ function UploadNewCourse() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to create course");
+        throw new Error("Cursus aanmaken mislukt");
       }
       return res.json();
     },
     onSuccess: (data) => {
       console.log("Course created successfully:", data);
-      toast.success("Course uploaded successfully!");
+      toast.success("Cursus succesvol geupload!");
       setFormData({
         courseTitle: "",
         courseLevel: "Beginner",
@@ -147,7 +147,7 @@ function UploadNewCourse() {
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Failed to create course");
+      toast.error("Cursus aanmaken mislukt");
     },
   });
 
@@ -156,7 +156,7 @@ function UploadNewCourse() {
      const stripeAccountId = useData?.data?.stripeAccountId;
         if (!stripeAccountId) {
           toast.error(
-            "You need to add a Stripe account before creating an assignment."
+            "U moet een Stripe-account toevoegen voordat u een cursus kunt aanmaken."
           );
           return;
         }
@@ -198,12 +198,12 @@ function UploadNewCourse() {
                 onValueChange={handleCourseLevelChange}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Level" />
+                  <SelectValue placeholder="Selecteer niveau" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Beginner">Beginner</SelectItem>
-                  <SelectItem value="Intermediate">Intermediate</SelectItem>
-                  <SelectItem value="Advanced">Advanced</SelectItem>
+                  <SelectItem value="Intermediate">Gemiddeld</SelectItem>
+                  <SelectItem value="Advanced">Gevorderd</SelectItem>
                   <SelectItem value="Expert">Expert</SelectItem>
                 </SelectContent>
               </Select>

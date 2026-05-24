@@ -51,7 +51,7 @@ function Footer() {
                   </li>
                   {/* <li>
                     <Link href="/about" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      About Us
+                      Over ons
                     </Link>
                   </li> */}
                   <li>
@@ -68,7 +68,7 @@ function Footer() {
                 <ul className="space-y-3">
                   {/* <li>
                     <Link href="/contact" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      Contact Us
+                      Neem contact op
                     </Link>
                   </li> */}
                   <li>
@@ -83,12 +83,12 @@ function Footer() {
                   </li>
                   {/* <li>
                     <Link href="/privacy-policy" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      Privacy Policy
+                      Privacybeleid
                     </Link>
                   </li> */}
                   {/* <li>
                     <Link href="/terms-of-service" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      Terms Of Service
+                      Servicevoorwaarden
                     </Link>
                   </li> */}
                 </ul>

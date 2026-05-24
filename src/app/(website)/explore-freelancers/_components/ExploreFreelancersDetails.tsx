@@ -35,7 +35,7 @@ function ExploreFreelancersDetails() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/${freelancerId}`
       );
-      if (!res.ok) throw new Error("Failed to fetch freelancer details");
+      if (!res.ok) throw new Error("Freelancerdetails ophalen mislukt");
       const json = await res.json();
       return json.data.user as FreelancerUser;
     },
@@ -56,7 +56,7 @@ function ExploreFreelancersDetails() {
           body: JSON.stringify({ receiverId: freelancerId }),
         }
       );
-      if (!res.ok) throw new Error("Failed to create conversation");
+      if (!res.ok) throw new Error("Gesprek aanmaken mislukt");
       const json = await res.json();
       return json.data.conversation;
     },
@@ -77,7 +77,7 @@ function ExploreFreelancersDetails() {
     if (!data?.email) return;
     navigator.clipboard.writeText(data.email);
     window.open(`mailto:${data.email}`, "_blank");
-    alert(`Email copied: ${data.email}`);
+    alert(`E-mail gekopieerd: ${data.email}`);
   };
 
  if (isLoading)
@@ -87,14 +87,14 @@ function ExploreFreelancersDetails() {
       </div>
     );
   if (error)
-    return <div className="min-h-screen flex items-center justify-center text-red-500">Something went wrong!</div>;
+    return <div className="min-h-screen flex items-center justify-center text-red-500">Er is iets misgegaan!</div>;
 
   return (
     <div className="min-h-screen">
       <BreadcrumbHeader
         title="Freelancer Details"
         breadcrumbs={[
-          { label: "Home", href: "/" },
+          { label: "Startpagina", href: "/" },
           { label: "Freelancer Details", href: "/assignments" },
         ]}
       />
@@ -119,7 +119,7 @@ function ExploreFreelancersDetails() {
               <div>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                   {data?.firstName} {data?.lastName}{" "}
-                  {data?.verified && <span className="ml-2 text-green-600 font-semibold text-sm">Verified</span>}
+                  {data?.verified && <span className="ml-2 text-green-600 font-semibold text-sm">Geverifieerd</span>}
                 </h1>
 
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -152,7 +152,7 @@ function ExploreFreelancersDetails() {
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-sm text-gray-500 mb-1">Email:</h3>
+                  <h3 className="text-sm text-gray-500 mb-1">E-mail:</h3>
                   <span
                     onClick={handleContactClick}
                     className="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium cursor-pointer hover:bg-gray-200"

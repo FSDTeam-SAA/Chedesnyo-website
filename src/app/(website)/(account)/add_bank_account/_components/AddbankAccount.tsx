@@ -64,16 +64,16 @@ function AddbankAccount() {
     <div className="min-h-screen">
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
-        title="Add bank Account"
+        title="Bankrekening toevoegen"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Add bank Account", href: "/add_bank_account" },
+          { label: "Startpagina", href: "/" },
+          { label: "Bankrekening toevoegen", href: "/add_bank_account" },
         ]}
       />
       <div className="container mx-auto py-[96px] px-10">
         {/* Header */}
         <div className="bg-green-700 text-white px-6 py-3 rounded-t-lg font-semibold text-sm">
-          Add Bank Account
+          Bankrekening toevoegen
         </div>
 
         {/* Main Content */}
@@ -84,7 +84,7 @@ function AddbankAccount() {
               htmlFor="country"
               className="text-sm font-medium text-gray-700 mb-2 block"
             >
-              Country
+              Land
             </Label>
             <div className="relative flex items-center gap-3">
               <Select
@@ -92,7 +92,7 @@ function AddbankAccount() {
                 onValueChange={handleCountryChange}
               >
                 <SelectTrigger className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-900">
-                  <SelectValue placeholder="Select Country" />
+                  <SelectValue placeholder="Selecteer land" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="UK">UK</SelectItem>
@@ -113,7 +113,7 @@ function AddbankAccount() {
               htmlFor="bankName"
               className="text-sm font-medium text-gray-700 mb-2 block"
             >
-              Bank Name
+              Banknaam
             </Label>
             <Select
               value={formData.bankName}
@@ -138,7 +138,7 @@ function AddbankAccount() {
               htmlFor="sortCode"
               className="text-sm font-medium text-gray-700 mb-2 block"
             >
-              Sort Code
+              Sorteercode
             </Label>
             <Input
               id="sortCode"
@@ -157,7 +157,7 @@ function AddbankAccount() {
               htmlFor="accountNumber"
               className="text-sm font-medium text-gray-700 mb-2 block"
             >
-              Account Number
+              Rekeningnummer
             </Label>
             <Input
               id="accountNumber"
@@ -176,7 +176,7 @@ function AddbankAccount() {
               onClick={handleSave}
               className="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-8 rounded-full h-auto text-sm"
             >
-              Save
+              Opslaan
             </Button>
           </div>
         </div>

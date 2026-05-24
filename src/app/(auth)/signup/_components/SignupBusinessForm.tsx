@@ -69,7 +69,7 @@ export default function SignupBusinessForm() {
     queryFn: async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/industry`)
       if (!res.ok) {
-        throw new Error("Failed to fetch industries")
+        throw new Error("Industrieen ophalen mislukt")
       }
       return res.json()
     },
@@ -86,7 +86,7 @@ export default function SignupBusinessForm() {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}))
-        throw new Error(errorData.message || "Registration failed")
+        throw new Error(errorData.message || "Registratie mislukt")
       }
 
       return res.json()
@@ -146,7 +146,7 @@ export default function SignupBusinessForm() {
               <Controller
                 name="businessName"
                 control={form.control}
-                rules={{ required: "Business Name is required" }}
+                rules={{ required: "Bedrijfsnaam is verplicht" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>
@@ -162,7 +162,7 @@ export default function SignupBusinessForm() {
               <Controller
                 name="industry"
                 control={form.control}
-                rules={{ required: "Industry is required" }}
+                rules={{ required: "Industrie is verplicht" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>
@@ -199,7 +199,7 @@ export default function SignupBusinessForm() {
               <Controller
                 name="email"
                 control={form.control}
-                rules={{ required: "Email is required" }}
+                rules={{ required: "E-mail is verplicht" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>
@@ -215,7 +215,7 @@ export default function SignupBusinessForm() {
               <Controller
                 name="kvkVatNumber"
                 control={form.control}
-                rules={{ required: "KVK/VAT Number is required" }}
+                rules={{ required: "KVK/btw-nummer is verplicht" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>

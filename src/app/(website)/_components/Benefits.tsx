@@ -5,49 +5,49 @@ import { ChevronRight } from 'lucide-react';
 export default function Benefits() {
   const freelanceBenefits = [
     {
-      title: 'Work from anywhere',
-      description: 'from home, a cafe or while traveling – you choose when and where you work.'
+      title: 'Werk overal vandaan',
+      description: 'vanuit huis, een cafe of tijdens het reizen - u kiest waar en wanneer u werkt.'
     },
     {
-      title: 'Earn attractive commissions',
-      description: 'Get paid fairly per closed deal. Your success is in your hands'
+      title: 'Verdien aantrekkelijke commissies',
+      description: 'Ontvang een eerlijke vergoeding per gesloten deal. Uw succes ligt in uw handen'
     },
     {
-      title: 'Diverse opportunities',
-      description: 'Explore a wide range of projects and companies that match your skills and interests'
+      title: 'Diverse kansen',
+      description: 'Ontdek een breed aanbod aan projecten en bedrijven die passen bij uw vaardigheden en interesses'
     }
   ];
 
   const businessBenefits = [
     {
-      title: 'More Sales, Less Risk',
-      description: 'Only pay for results. No fixed salaries or recruitment fees – just a clear commission per closed deal.'
+      title: 'Meer verkoop, minder risico',
+      description: 'Betaal alleen voor resultaten. Geen vaste salarissen of wervingskosten - alleen een duidelijke commissie per gesloten deal.'
     },
     {
-      title: 'Access to Skilled Sales Agents',
-      description: 'Connect with motivated freelancers who are ready to grow your business.'
+      title: 'Toegang tot ervaren salesagenten',
+      description: 'Kom in contact met gemotiveerde freelancers die klaar zijn om uw bedrijf te laten groeien.'
     },
     {
-      title: 'Quick and Easy Collaboration',
-      description: 'Post your assignment, select the right sales agent, and let the deals flow.'
+      title: 'Snelle en eenvoudige samenwerking',
+      description: 'Plaats uw opdracht, selecteer de juiste salesagent en laat de deals binnenkomen.'
     }
   ];
 
   const whyChooseUs = [
     {
       icon: BarChart3,
-      title: 'Transparency',
-      description: 'With a simple 15% fee on successful deals, we ensure fairness and clarity in every transaction'
+      title: 'Transparantie',
+      description: 'Met een eenvoudige vergoeding van 15% op succesvolle deals zorgen we voor eerlijkheid en duidelijkheid bij elke transactie'
     },
     {
       icon: Zap,
-      title: 'Flexibility',
-      description: 'We embrace the future of work. Employ sales agents and businesses freedom and choice.'
+      title: 'Flexibiliteit',
+      description: 'Wij omarmen de toekomst van werk en geven salesagenten en bedrijven vrijheid en keuze.'
     },
     {
       icon: Target,
-      title: 'Focus on Results',
-      description: 'We believe in rewarding outcomes, not effort, creating a performance-driven culture for everyone involved.'
+      title: 'Focus op resultaten',
+      description: 'Wij geloven in het belonen van resultaten, niet alleen inspanning, en creeren zo een prestatiegerichte cultuur voor iedereen.'
     }
   ];
 
@@ -63,7 +63,7 @@ export default function Benefits() {
                 <TrendingUp className="w-8 h-8 text-green-600" strokeWidth={2.5} />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-center text-gray-900 mb-6">Benefits for Freelance Sales Agents</h3>
+            <h3 className="text-2xl font-bold text-center text-gray-900 mb-6">Voordelen voor freelance salesagenten</h3>
 
             <ul className="space-y-4">
               {freelanceBenefits.map((benefit, index) => (
@@ -85,7 +85,7 @@ export default function Benefits() {
                 <Briefcase className="w-8 h-8 text-green-600" strokeWidth={2.5} />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-center text-gray-900 mb-6">Benefits for Business</h3>
+            <h3 className="text-2xl font-bold text-center text-gray-900 mb-6">Voordelen voor bedrijven</h3>
 
             <ul className="space-y-4">
               {businessBenefits.map((benefit, index) => (
@@ -106,13 +106,13 @@ export default function Benefits() {
           {/* Left - Why Choose Us Card */}
           <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-8 text-white lg:shadow-xl lg:row-span-1 flex flex-col justify-between h-full">
             <div>
-              <h2 className="text-4xl font-bold mb-6">Why Choose Us?</h2>
+              <h2 className="text-4xl font-bold mb-6">Waarom voor ons kiezen?</h2>
               <p className="text-green-100 leading-relaxed mb-8">
-                We created DealClosed to bridge this gap. By connecting businesses with motivated, freelance sales agents, we offer a win-win solution: businesses grow their revenue without unnecessary overhead, and sales agents gain the flexibility to work how, when, and where they want.
+                We hebben DealClosed ontwikkeld om deze kloof te overbruggen. Door bedrijven te verbinden met gemotiveerde freelance salesagenten bieden we een win-winoplossing: bedrijven vergroten hun omzet zonder onnodige overhead en salesagenten krijgen de flexibiliteit om te werken hoe, wanneer en waar ze willen.
               </p>
             </div>
             <button className="bg-white text-green-600 hover:bg-green-50 px-6 py-3 rounded-full font-semibold flex items-center gap-2 transition-all self-start">
-              Learn More
+              Meer informatie
               <ChevronRight size={20} />
             </button>
           </div>

@@ -54,7 +54,7 @@ export default function ForgotPasswordForm() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to send email");
+        throw new Error(errorData.message || "E-mail verzenden mislukt");
       }
 
       return res.json();
@@ -81,7 +81,7 @@ export default function ForgotPasswordForm() {
       <div className="hidden lg:block lg:w-1/2 h-screen relative">
         <Image
           src="/images/cheAuthImage.png"
-          alt="Professional woman working on laptop"
+          alt="Professionele vrouw werkt op laptop"
           fill
           quality={100}
           className="object-cover"

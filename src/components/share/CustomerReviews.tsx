@@ -13,7 +13,7 @@ export default function CustomerReviews() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/review`, {
         method: "GET",
       });
-      if (!res.ok) throw new Error("Failed to fetch reviews");
+      if (!res.ok) throw new Error("Beoordelingen ophalen mislukt");
       return res.json();
     },
   });

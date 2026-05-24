@@ -15,7 +15,7 @@ export default function HomeHero() {
             {/* Badge */}
             <div className="inline-block">
               <span className="bg-teal-50 text-teal-700 px-4 py-2 rounded-full text-xs font-semibold border border-teal-200">
-                ✓ Precision Customization Technology
+                ✓ Precisie-maatwerktechnologie
               </span>
             </div>
 

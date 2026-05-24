@@ -21,7 +21,7 @@ export default function Signup() {
       <div className="hidden lg:block w-1/2 h-screen relative">
         <Image
           src="/images/cheAuthImage.png"
-          alt="Professional woman working on laptop"
+          alt="Professionele vrouw werkt op laptop"
           fill
           className="object-cover"
           quality={100}
@@ -36,7 +36,7 @@ export default function Signup() {
               <Image src="/images/chedsnyoLogo.png" alt="Chedesnyo Logo" width={200} height={200} className="w-[113px] h-[108px]" />
             </div>
             <CardTitle className="text-3xl font-bold text-center">
-              Create an account
+            Maak een account aan
             </CardTitle>
           </CardHeader>
 
@@ -44,20 +44,20 @@ export default function Signup() {
             <Tabs defaultValue="business" className="lg:w-[60%] w-[90%] mx-auto">
               <div className="mb-6">
                 <Label className="text-sm font-medium mb-2 block">
-                  Select User Type *
+            Selecteer gebruikerstype *
                 </Label>
                 <TabsList className="grid w-full grid-cols-2 bg-[#B0D8B0] p-1 rounded-full">
                   <TabsTrigger
                     value="business"
                     className="rounded-full data-[state=active]:bg-[#008000] data-[state=active]:text-white data-[state=active]:shadow-sm"
                   >
-                    Business
+                  Bedrijf
                   </TabsTrigger>
                   <TabsTrigger
                     value="sales"
                     className="rounded-full data-[state=active]:bg-[#008000] data-[state=active]:text-white data-[state=active]:shadow-sm"
                   >
-                    Sales Professionals
+                  Salesprofessionals
                   </TabsTrigger>
                 </TabsList>
               </div>

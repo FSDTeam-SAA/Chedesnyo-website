@@ -51,7 +51,7 @@ function Earnings() {
           },
         }
       );
-      if (!res.ok) throw new Error("Failed to fetch earnings data");
+      if (!res.ok) throw new Error("Inkomstgegevens ophalen mislukt");
       return res.json();
     },
     enabled: !!TOKEN,
@@ -75,10 +75,10 @@ function Earnings() {
   return (
     <div>
       <BreadcrumbHeader
-        title="Earnings"
+        title="Inkomsten"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Earnings", href: "/earnings" },
+          { label: "Startpagina", href: "/" },
+          { label: "Inkomsten", href: "/earnings" },
         ]}
       />
 
@@ -87,7 +87,7 @@ function Earnings() {
           <div className="flex items-center gap-2 p-4 border-b border-gray-200">
             <div className="w-4 h-4 bg-amber-700 rounded-sm"></div>
             <h2 className="text-base font-semibold text-gray-900">
-              Earnings from Referred Freelancers
+              Inkomsten uit doorverwezen freelancers
             </h2>
           </div>
 
@@ -96,19 +96,19 @@ function Earnings() {
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Referred Freelancer
+                    Doorverwezen freelancer
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Amount
+                    Bedrag
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Admin Fee
+                    Administratiekosten
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Your Earning
+                    Uw inkomsten
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Date
+                    Datum
                   </th>
                 </tr>
               </thead>
@@ -116,13 +116,13 @@ function Earnings() {
                 {isLoading ? (
                   <tr>
                     <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500">
-                      Loading earnings...
+                      Inkomsten laden...
                     </td>
                   </tr>
                 ) : isError ? (
                   <tr>
                     <td colSpan={5} className="px-4 py-8 text-center text-sm text-red-500">
-                      Failed to load data.
+                      Gegevens laden mislukt.
                     </td>
                   </tr>
                 ) : displayedEarnings.length > 0 ? (
@@ -154,7 +154,7 @@ function Earnings() {
                 ) : (
                   <tr>
                     <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500">
-                      No approved earnings available.
+                      Geen goedgekeurde inkomsten beschikbaar.
                     </td>
                   </tr>
                 )}
@@ -166,9 +166,9 @@ function Earnings() {
           {approvedEarnings.length > itemsPerPage && (
             <div className="flex items-center justify-between mt-4 flex-wrap gap-2">
               <p className="text-xs text-gray-600">
-                Showing {startIndex + 1} to{" "}
+                Weergegeven {startIndex + 1} tot{" "}
                 {Math.min(startIndex + itemsPerPage, approvedEarnings.length)} of{" "}
-                {approvedEarnings.length} results
+                {approvedEarnings.length} resultaten
               </p>
 
               <div className="flex items-center gap-1 flex-wrap">

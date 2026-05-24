@@ -75,7 +75,7 @@ function SalesProfile() {
           `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`,
           { headers: { Authorization: `Bearer ${TOKEN}` } }
         );
-        if (!res.ok) throw new Error("Failed to fetch profile");
+        if (!res.ok) throw new Error("Profiel ophalen mislukt");
         const data = await res.json();
         const user = data.data;
         setProfileData({
@@ -119,7 +119,7 @@ function SalesProfile() {
   // Upload image immediately when button clicked
   const handleUploadImageClick = async () => {
     if (!profileData.profileImage)
-      return alert("Select an image first");
+      return alert("Selecteer eerst een afbeelding");
 
     const formData = new FormData();
     formData.append("profileImage", profileData.profileImage);
@@ -133,13 +133,13 @@ function SalesProfile() {
           headers: { Authorization: `Bearer ${TOKEN}` },
         }
       );
-      if (!res.ok) throw new Error("Failed to upload image");
+      if (!res.ok) throw new Error("Afbeelding uploaden mislukt");
       const data = await res.json();
-      toast.success("Image uploaded successfully!");
+      toast.success("Afbeelding succesvol geupload!");
       if (data.profileImage) setImagePreview(data.profileImage);
       setProfileData((prev) => ({ ...prev, profileImage: null }));
     } catch (err: unknown) {
-      toast.error((err as Error).message || "Error uploading image");
+      toast.error((err as Error).message || "Fout bij het uploaden van de afbeelding");
     }
   };
 
@@ -150,7 +150,7 @@ function SalesProfile() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/industry`
       );
-      if (!res.ok) throw new Error("Failed to fetch industries");
+      if (!res.ok) throw new Error("Industrieen ophalen mislukt");
       return res.json();
     },
   });
@@ -178,14 +178,14 @@ function SalesProfile() {
           headers: { Authorization: `Bearer ${TOKEN}` },
         }
       );
-      if (!res.ok) throw new Error("Failed to update profile");
+      if (!res.ok) throw new Error("Profiel bijwerken mislukt");
       return res.json();
     },
     onSuccess: () => {
-      toast.success("Profile updated successfully!");
+      toast.success("Profiel succesvol bijgewerkt!");
     },
     onError: (err) => {
-      toast.error(err.message || "Error updating profile");
+      toast.error(err.message || "Fout bij het bijwerken van het profiel");
     },
   });
 
@@ -270,7 +270,7 @@ function SalesProfile() {
               {/* Industry Select & Email */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="industry">Industry</Label>
+                  <Label htmlFor="industry">Industrie</Label>
                   <Select
                     value={profileData.industry}
                     onValueChange={(value) =>
@@ -307,7 +307,7 @@ function SalesProfile() {
               {/* KVK/VAT & Location */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="kvkVatNumber">KVK/VAT Number</Label>
+                  <Label htmlFor="kvkVatNumber">KVK/btw-nummer</Label>
                   <Input
                     id="kvkVatNumber"
                     name="kvkVatNumber"
@@ -317,7 +317,7 @@ function SalesProfile() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="location">Locatie</Label>
                   <Input
                     id="location"
                     name="location"

@@ -40,7 +40,7 @@ export function EditCourseModal({ courseId }: { courseId: string }) {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course/${courseId}`
       );
-      if (!res.ok) throw new Error("Network response was not ok");
+      if (!res.ok) throw new Error("Netwerkreactie was niet in orde");
       const result = await res.json();
       return result.data;
     },
@@ -152,12 +152,12 @@ const updateCourseMutation = useMutation({
         },
       }
     );
-    if (!res.ok) throw new Error("Failed to update course");
+    if (!res.ok) throw new Error("Cursus bijwerken mislukt");
     return res.json();
   },
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ["course", courseId] });
-    toast.success("Course updated successfully!");
+    toast.success("Cursus succesvol bijgewerkt!");
 
     // Close modal & reload page
     const dialog = document.querySelector('dialog') as HTMLDialogElement;
@@ -165,7 +165,7 @@ const updateCourseMutation = useMutation({
     window.location.reload();
   },
   onError: (err) => {
-    toast.error(err.message || "Error updating course");
+    toast.error(err.message || "Fout bij het bijwerken van de cursus");
   },
 });
 
@@ -218,8 +218,8 @@ const updateCourseMutation = useMutation({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Beginner">Beginner</SelectItem>
-                  <SelectItem value="Intermediate">Intermediate</SelectItem>
-                  <SelectItem value="Advanced">Advanced</SelectItem>
+                  <SelectItem value="Intermediate">Gemiddeld</SelectItem>
+                  <SelectItem value="Advanced">Gevorderd</SelectItem>
                   <SelectItem value="Expert">Expert</SelectItem>
                 </SelectContent>
               </Select>
@@ -228,7 +228,7 @@ const updateCourseMutation = useMutation({
 
           {/* Description */}
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Beschrijving</Label>
             <Textarea
               id="description"
               name="description"
@@ -247,7 +247,7 @@ const updateCourseMutation = useMutation({
                   {courseData?.thumbnail && (
                     <Image
                       src={courseData.thumbnail}
-                      alt="Current Thumbnail"
+                      alt="Huidige miniatuur"
                       width={400}
                       height={200}
                       className="w-full h-40 object-cover rounded"
@@ -256,7 +256,7 @@ const updateCourseMutation = useMutation({
                   {previewThumbnail && (
                     <Image
                       src={previewThumbnail}
-                      alt="New Thumbnail Preview"
+                      alt="Voorbeeld van nieuwe miniatuur"
                       width={400}
                       height={200}
                       className="w-full h-40 object-cover rounded border border-blue-500"
@@ -292,7 +292,7 @@ const updateCourseMutation = useMutation({
                     courseData.extraFile.endsWith(".webp")) ? (
                     <Image
                       src={courseData.extraFile}
-                      alt="Current Extra File"
+                      alt="Huidig extra bestand"
                       width={400}
                       height={200}
                       className="w-full h-40 object-cover rounded"
@@ -303,13 +303,13 @@ const updateCourseMutation = useMutation({
                       target="_blank"
                       className="text-blue-600 underline"
                     >
-                      Current File
+                      Huidig bestand
                     </a>
                   ) : null}
                   {previewExtraFile && (
                     <Image
                       src={previewExtraFile}
-                      alt="New Extra File Preview"
+                      alt="Voorbeeld van nieuw extra bestand"
                       width={400}
                       height={200}
                       className="w-full h-40 object-cover rounded border border-blue-500"
@@ -340,7 +340,7 @@ const updateCourseMutation = useMutation({
               name="introductionVideo"
               value={formData.introductionVideo}
               onChange={handleInputChange}
-              placeholder="Enter video URL"
+              placeholder="Voer video-URL in"
             />
           </div>
 
@@ -352,7 +352,7 @@ const updateCourseMutation = useMutation({
                 name="fullCourseVideo"
                 value={formData.fullCourseVideo}
                 onChange={handleInputChange}
-                placeholder="Enter video URL"
+                placeholder="Voer video-URL in"
               />
             </div>
             <div>
@@ -420,7 +420,7 @@ const updateCourseMutation = useMutation({
                 onValueChange={handleDiscountChange}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select discount" />
+                  <SelectValue placeholder="Selecteer korting" />
                 </SelectTrigger>
                 <SelectContent>
                   {["0", "5", "10", "15", "20", "25", "30"].map((d) => (

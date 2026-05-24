@@ -76,7 +76,7 @@ export const BusinessesCard: React.FC<BusinessesCard> = ({
                   fill="currentColor"
                 />
               </svg>
-              View Profile
+              Profiel bekijken
             </button>
           </Link>
         </div>

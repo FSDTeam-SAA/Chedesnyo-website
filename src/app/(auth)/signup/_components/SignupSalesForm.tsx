@@ -63,7 +63,7 @@ export default function SignupSalesForm() {
     queryKey: ["industries"],
     queryFn: async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/industry`)
-      if (!res.ok) throw new Error("Failed to fetch industries")
+      if (!res.ok) throw new Error("Industrieen ophalen mislukt")
       return res.json()
     },
   })
@@ -79,7 +79,7 @@ export default function SignupSalesForm() {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}))
-        throw new Error(errorData.message || "Registration failed")
+        throw new Error(errorData.message || "Registratie mislukt")
       }
       return res.json()
     },
@@ -114,7 +114,7 @@ export default function SignupSalesForm() {
                 render={({ field }) => (
                   <Field>
                     <FieldLabel className="text-sm font-normal text-gray-700">
-                      Referral Code (optional)
+              Verwijzingscode (optioneel)
                     </FieldLabel>
                     <Input {...field} placeholder="# # # # #" className="" />
                   </Field>
@@ -141,7 +141,7 @@ export default function SignupSalesForm() {
               <Controller
                 name="industry"
                 control={form.control}
-                rules={{ required: "Industry is required" }}
+                rules={{ required: "Industrie is verplicht" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel className="text-sm font-normal text-gray-700">

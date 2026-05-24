@@ -81,7 +81,7 @@ export const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
   reviews,
   itemsPerView = 3,
   showHeader = true,
-  title = "Customer Reviews",
+  title = "Klantbeoordelingen",
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 

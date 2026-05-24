@@ -39,7 +39,7 @@ export default function BlogPage() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/blog?page=${currentPage}&limit=${itemsPerPage}`
       );
-      if (!res.ok) throw new Error("Failed to fetch blog data");
+      if (!res.ok) throw new Error("Bloggegevens ophalen mislukt");
       return res.json();
     },
   });
@@ -80,7 +80,7 @@ export default function BlogPage() {
       <BreadcrumbHeader
         title="Blogs"
         breadcrumbs={[
-          { label: "Home", href: "/" },
+          { label: "Startpagina", href: "/" },
           { label: "Blogs", href: "/blogs" },
         ]}
       />
@@ -105,7 +105,7 @@ export default function BlogPage() {
                   key={post._id}
                   id={post._id}
                   image={post.thumbnail}
-                  date={new Date(post.createdAt).toLocaleDateString("en-US", {
+                  date={new Date(post.createdAt).toLocaleDateString("nl-NL", {
                     year: "numeric",
                     month: "long",
                     day: "2-digit",
@@ -182,7 +182,7 @@ export default function BlogPage() {
             )}
           </>
         ) : (
-          <p className="text-center text-gray-500 py-10">No blog posts found.</p>
+          <p className="text-center text-gray-500 py-10">Geen blogberichten gevonden.</p>
         )}
       </div>
     </div>

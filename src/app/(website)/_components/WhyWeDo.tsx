@@ -11,22 +11,22 @@ export default function ConnectingSection() {
         <div className="w-full lg:w-3/5 flex flex-col justify-center h-full space-y-6 text-center lg:text-left">
           {/* <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold px-3 py-1">
             <span className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0"></span>
-            One Click Make Connection
+            Verbinden met een klik
           </div> */}
 
           {/* Main Heading */}
           <h2 className="text-4xl sm:text-5xl font-bold leading-snug">
-            <span className="text-[#008000]">Why We Do What We</span>
-            <span className="text-black"> Do uncovering</span>
+            <span className="text-[#008000]">Waarom we doen wat we</span>
+            <span className="text-black"> doen</span>
             <br />
-            <span className="text-[#0077B6]">purpose behind every action</span>
+            <span className="text-[#0077B6]">de reden achter elke actie</span>
           </h2>
 
           {/* Description */}
           <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
-            At DealClosed, we believe in solving real-world sales challenges
-            with simple, effective solutions. Our platform was created in
-            response to a clear need in the market.
+            Bij DealClosed geloven we in het oplossen van echte verkoopuitdagingen
+            met eenvoudige, effectieve oplossingen. Ons platform is ontstaan
+            vanuit een duidelijke behoefte in de markt.
           </p>
 
           {/* For Businesses */}
@@ -39,12 +39,12 @@ export default function ConnectingSection() {
               <div>
                 <p className="text-gray-700 leading-relaxed">
                   <span className="text-gray-700 leading-relaxed">
-                    For Businesses:
+                    Voor bedrijven:
                   </span>
-                  Many companies struggle to find reliable sales talent without
-                  long-term contracts or high recruitment costs. They need
-                  flexible, results-driven solutions to grow revenue without
-                  risk.
+                  Veel bedrijven hebben moeite om betrouwbaar salestalent te vinden
+                  zonder langlopende contracten of hoge wervingskosten. Ze hebben
+                  flexibele, resultaatgerichte oplossingen nodig om omzet te laten
+                  groeien zonder risico.
                 </p>
               </div>
             </div>
@@ -60,12 +60,11 @@ export default function ConnectingSection() {
               <div>
                 <p className="text-gray-700 leading-relaxed">
                   <span className="text-gray-700 leading-relaxed">
-                    For Businesses:
+                    Voor salesagenten:
                   </span>
-                  Many companies struggle to find reliable sales talent without
-                  long-term contracts or high recruitment costs. They need
-                  flexible, results-driven solutions to grow revenue without
-                  risk.
+                  Freelancers willen vrijheid, duidelijke kansen en eerlijke beloning
+                  voor hun resultaten. DealClosed helpt hen om passende opdrachten
+                  te vinden en flexibel samen te werken.
                 </p>
               </div>
             </div>
@@ -75,7 +74,7 @@ export default function ConnectingSection() {
           <div className="pt-4 flex justify-center lg:block">
   <Link href="/blogs">
     <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
-      Read More
+      Lees meer
       <ChevronRight size={20} />
     </button>
   </Link>
@@ -87,7 +86,7 @@ export default function ConnectingSection() {
           <div className="relative w-full h-full">
             <Image
               src="/images/connectionImage.png"
-              alt="Connecting companies with freelance sales agents"
+              alt="Bedrijven verbinden met freelance salesagenten"
               width={500}
               height={500}
               className="w-full h-full object-cover rounded-xl shadow-lg"

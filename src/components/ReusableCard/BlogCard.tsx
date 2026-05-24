@@ -42,7 +42,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
               onClick={onViewDetails}
               className="inline-flex items-center gap-2 text-green-600 font-medium hover:text-green-700 transition-colors duration-200 group"
             >
-              View Details
+              Details bekijken
               <ChevronRight
                 size={18}
                 className="group-hover:translate-x-1 transition-transform duration-200"

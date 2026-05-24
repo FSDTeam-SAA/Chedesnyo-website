@@ -7,29 +7,29 @@ function FaqSection() {
 
   const faqs = [
     {
-      question: "Lorem ipsum dolor sit amet, consectetur adipiscing elit?",
+      question: "Hoe werkt DealClosed voor bedrijven?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "Bedrijven plaatsen een opdracht, kiezen een geschikte freelance salesagent en betalen op basis van de afgesproken voorwaarden wanneer resultaten worden behaald.",
     },
     {
-      question: "Lorem ipsum dolor sit amet, consectetur adipiscing elit?",
+      question: "Hoe kunnen salesagenten opdrachten vinden?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Salesagenten kunnen beschikbare opdrachten bekijken, zich aanmelden voor passende deals en rechtstreeks samenwerken met bedrijven via het platform.",
     },
     {
-      question: "Lorem ipsum dolor sit amet, consectetur adipiscing elit?",
+      question: "Wanneer worden betalingen verwerkt?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Betalingen worden verwerkt volgens de gekozen betaalmethode en de voorwaarden van de opdracht of cursus.",
     },
     {
-      question: "Lorem ipsum dolor sit amet, consectetur adipiscing elit?",
+      question: "Kan ik mijn profiel promoten?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Ja, u kunt uw profiel, opdracht of cursus promoten om meer zichtbaarheid te krijgen binnen het platform.",
     },
     {
-      question: "Lorem ipsum dolor sit amet, consectetur adipiscing elit?",
+      question: "Is DealClosed geschikt voor kleine bedrijven?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Ja, DealClosed is geschikt voor kleine en groeiende bedrijven die flexibel willen samenwerken met freelance salesprofessionals.",
     },
   ];
 
@@ -43,14 +43,13 @@ function FaqSection() {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold">
-            Frequently <span className="text-green-600">Asked Questions</span>
+            Veelgestelde <span className="text-green-600">vragen</span>
           </h2>
           <p className="text-gray-600 mt-4 leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Vind snel antwoorden op veelgestelde vragen over opdrachten,
+            cursussen, betalingen en samenwerking via DealClosed.
             <br />
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-            nisi
+            Staat uw vraag er niet bij, neem dan gerust contact met ons op.
           </p>
         </div>
 

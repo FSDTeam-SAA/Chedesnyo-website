@@ -53,25 +53,25 @@ export default function VerifyOTPForm() {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.message || "OTP verification failed");
+        throw new Error(errorData?.message || "OTP-verificatie mislukt");
       }
 
       return res.json();
     },
     onSuccess: (data) => {
-      toast.success(data.message || "OTP verified successfully");
+      toast.success(data.message || "OTP succesvol geverifieerd");
       localStorage.setItem("refreshToken", data?.resetToken);
       router.push(`/reset-password?email=${encodeURIComponent(email)}`);
     },
     onError: (err) => {
-      toast.error(err instanceof Error ? err.message : "Invalid OTP, try again");
+      toast.error(err instanceof Error ? err.message : "Ongeldige OTP, probeer het opnieuw");
     },
   });
 
   // ✅ Submit function
   const onSubmit = (data: VerifyOTPFormData) => {
     if (!email) {
-      toast.error("Email is missing, cannot verify OTP.");
+      toast.error("E-mailadres ontbreekt, OTP kan niet worden geverifieerd.");
       return;
     }
     otpMutation.mutate({ email, otp: data.otp });
@@ -113,7 +113,7 @@ export default function VerifyOTPForm() {
       <div className="hidden lg:block lg:w-1/2 h-screen relative">
         <Image
           src="/images/cheAuthImage.png"
-          alt="Professional woman working on laptop"
+          alt="Professionele vrouw werkt op laptop"
           fill
           quality={100}
           className="object-cover"

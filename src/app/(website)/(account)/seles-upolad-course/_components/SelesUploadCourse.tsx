@@ -101,13 +101,13 @@ function SelesUploadCourse() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to create course");
+        throw new Error("Cursus aanmaken mislukt");
       }
       return res.json();
     },
     onSuccess: (data) => {
       console.log("Course created successfully:", data);
-      toast.success("Course uploaded successfully!");
+      toast.success("Cursus succesvol geupload!");
       setFormData({
         courseTitle: "",
         courseLevel: "Beginner",
@@ -127,7 +127,7 @@ function SelesUploadCourse() {
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Failed to create course");
+      toast.error("Cursus aanmaken mislukt");
     },
   });
 
@@ -171,12 +171,12 @@ function SelesUploadCourse() {
                 onValueChange={handleCourseLevelChange}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Level" />
+                  <SelectValue placeholder="Selecteer niveau" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Beginner">Beginner</SelectItem>
-                  <SelectItem value="Intermediate">Intermediate</SelectItem>
-                  <SelectItem value="Advanced">Advanced</SelectItem>
+                  <SelectItem value="Intermediate">Gemiddeld</SelectItem>
+                  <SelectItem value="Advanced">Gevorderd</SelectItem>
                   <SelectItem value="Expert">Expert</SelectItem>
                 </SelectContent>
               </Select>

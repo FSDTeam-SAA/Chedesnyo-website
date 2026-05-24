@@ -39,7 +39,7 @@ export default function Navbar({ lang = "nl" }: NavbarProps) {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`, {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
-      if (!res.ok) throw new Error("Failed to fetch user profile");
+      if (!res.ok) throw new Error("Gebruikersprofiel ophalen mislukt");
       return res.json();
     },
   });
@@ -57,15 +57,15 @@ export default function Navbar({ lang = "nl" }: NavbarProps) {
           },
         }
       );
-      if (!res.ok) throw new Error("Stripe account creation failed");
+      if (!res.ok) throw new Error("Stripe-account aanmaken mislukt");
       return res.json();
     },
     onSuccess: (data) => {
       const url = data?.data?.url;
       if (url) window.location.href = url;
-      else alert("Stripe onboarding URL not found!");
+      else alert("Stripe-onboarding-URL niet gevonden!");
     },
-    onError: () => alert("Stripe onboarding failed. Please try again."),
+    onError: () => alert("Stripe-onboarding mislukt. Probeer het opnieuw."),
   });
 
   const fetchStripeDashboardLink = useMutation({
@@ -74,15 +74,15 @@ export default function Navbar({ lang = "nl" }: NavbarProps) {
         method: "GET",
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
-      if (!res.ok) throw new Error("Failed to fetch Stripe dashboard link");
+      if (!res.ok) throw new Error("Stripe-dashboardlink ophalen mislukt");
       return res.json();
     },
     onSuccess: (data) => {
       const url = data?.data?.url;
       if (url) window.location.href = url;
-      else alert("Stripe dashboard URL not found!");
+      else alert("Stripe-dashboard-URL niet gevonden!");
     },
-    onError: () => alert("Failed to fetch Stripe dashboard. Please try again."),
+    onError: () => alert("Stripe-dashboard ophalen mislukt. Probeer het opnieuw."),
   });
 
   const handleLogout = async () => {
@@ -380,7 +380,7 @@ export default function Navbar({ lang = "nl" }: NavbarProps) {
                       }}
                       className="block w-full text-left px-4 py-2 text-gray-700 text-sm rounded hover:bg-gray-100 transition"
                     >
-                      Stripe Dashboard
+                      {lang === "en" ? "Stripe Dashboard" : "Stripe-dashboard"}
                     </button>
                   ) : (
                     <button
@@ -390,7 +390,7 @@ export default function Navbar({ lang = "nl" }: NavbarProps) {
                       }}
                       className="block w-full text-left px-4 py-2 text-gray-700 text-sm rounded hover:bg-gray-100 transition"
                     >
-                      Add Stripe Account
+                      {lang === "en" ? "Add Stripe Account" : "Stripe-account toevoegen"}
                     </button>
                   )}
 
@@ -399,7 +399,7 @@ export default function Navbar({ lang = "nl" }: NavbarProps) {
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 text-red-600 text-sm rounded hover:bg-red-50 transition mt-2"
                   >
-                    Logout
+                    {lang === "en" ? "Logout" : "Uitloggen"}
                   </button>
                 </>
               ) : (

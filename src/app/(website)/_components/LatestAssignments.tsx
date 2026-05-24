@@ -25,7 +25,7 @@ export default function LatestAssignments() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment/?status=approved`
       );
-      if (!res.ok) throw new Error("Failed to fetch assignments");
+      if (!res.ok) throw new Error("Opdrachten ophalen mislukt");
       return res.json();
     },
   });
@@ -42,14 +42,14 @@ export default function LatestAssignments() {
               ASSIGNMENTS
             </p>
             <h2 className="text-4xl font-bold text-gray-900">
-              Latest Assignments
+              Nieuwste opdrachten
             </h2>
           </div>
           <Link
             href="/assignments"
             className="text-green-600 font-semibold flex items-center gap-1 hover:text-green-700 transition-colors"
           >
-            See All <ChevronRight size={20} />
+            Alles bekijken <ChevronRight size={20} />
           </Link>
         </div>
 
@@ -71,7 +71,7 @@ export default function LatestAssignments() {
         {/* Error State */}
         {!isLoading && isError && (
           <p className="text-center text-red-500 text-lg">
-            Failed to load assignments.
+            Opdrachten laden mislukt.
           </p>
         )}
 

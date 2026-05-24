@@ -74,7 +74,7 @@ export default function CoursesReviewForm({ courseId }: { courseId: string }) {
                         <label className="font-medium text-gray-700">Uw beoordeling</label>
                         <Textarea
                             rows={4}
-                            placeholder="Write your detailed review..."
+                            placeholder="Schrijf uw gedetailleerde beoordeling..."
                             className="rounded-xl"
                             value={review}
                             onChange={(e) => setReview(e.target.value)}

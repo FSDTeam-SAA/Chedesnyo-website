@@ -54,7 +54,7 @@ function PostAnAssignmentAdd() {
           },
         }
       );
-      if (!res.ok) throw new Error("Failed to fetch user profile");
+      if (!res.ok) throw new Error("Gebruikersprofiel ophalen mislukt");
       return res.json();
     },
   });
@@ -124,14 +124,14 @@ function PostAnAssignmentAdd() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to post assignment");
+        throw new Error("Opdracht plaatsen mislukt");
       }
 
       return res.json();
     },
     onSuccess: (response) => {
       console.log("✅ Assignment posted successfully:", response);
-      toast.success(response.message || "Assignment posted successfully!");
+      toast.success(response.message || "Opdracht succesvol geplaatst!");
       setFormData({
         banner: null,
         title: "",
@@ -146,7 +146,7 @@ function PostAnAssignmentAdd() {
     },
     onError: (error) => {
       console.error("❌ Error posting assignment:", error);
-      toast.error((error as Error).message || "Error posting assignment");
+      toast.error((error as Error).message || "Fout bij het plaatsen van de opdracht");
     },
   });
 
@@ -155,14 +155,14 @@ function PostAnAssignmentAdd() {
     e.preventDefault();
 
     if (userLoading) {
-      toast.error("Loading user data. Please wait...");
+      toast.error("Gebruikersgegevens laden. Even geduld...");
       return;
     }
 
     const stripeAccountId = useData?.data?.stripeAccountId;
     if (!stripeAccountId) {
       toast.error(
-        "You need to add a Stripe account before creating an assignment."
+        "U moet een Stripe-account toevoegen voordat u een opdracht kunt aanmaken."
       );
       return;
     }
@@ -253,16 +253,16 @@ function PostAnAssignmentAdd() {
           {/* Pricing Type */}
           <div>
             <Label className="text-sm font-medium text-gray-700 mb-2 block">
-              Choose Your Pricing Type
+              Kies uw prijstype
             </Label>
             <Select value={formData.pricingType} onValueChange={handlePricingTypeChange}>
               <SelectTrigger className="h-[50px]">
                 <SelectValue placeholder="Selecteer prijstype" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="hourly">Hourly</SelectItem>
-                <SelectItem value="commission">Connission Based</SelectItem>
-                <SelectItem value="hourly&fee">Hourly&Commission</SelectItem>
+                <SelectItem value="hourly">Per uur</SelectItem>
+                <SelectItem value="commission">Op commissie gebaseerd</SelectItem>
+                <SelectItem value="hourly&fee">Per uur en commissie</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -270,15 +270,15 @@ function PostAnAssignmentAdd() {
           {/* Payment Method */}
           <div>
             <Label className="text-sm font-medium text-gray-700 mb-2 block">
-              Select Payment Method
+              Selecteer betaalmethode
             </Label>
             <Select value={formData.paymentMethod} onValueChange={handlePaymentMethodChange}>
               <SelectTrigger className="h-[50px]">
                 <SelectValue placeholder="Selecteer betaalmethode" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="bank">Bank Transfer</SelectItem>
-                <SelectItem value="card">Credit Card</SelectItem>
+                <SelectItem value="bank">Overschrijving</SelectItem>
+                <SelectItem value="card">Creditcard</SelectItem>
                 <SelectItem value="wallet">Wallet</SelectItem>
               </SelectContent>
             </Select>
@@ -322,7 +322,7 @@ function PostAnAssignmentAdd() {
           {/* Upload File Optional */}
           <div>
             <Label className="text-sm font-medium text-gray-700 mb-2 block">
-              Upload File (Optional)
+              Bestand uploaden (optioneel)
             </Label>
             <label className="flex items-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors bg-white">
               <div className="flex items-center gap-3">

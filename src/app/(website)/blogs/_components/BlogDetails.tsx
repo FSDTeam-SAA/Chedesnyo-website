@@ -31,7 +31,7 @@ function BlogDetailPage() {
     queryKey: ["singleBlogData", id],
     queryFn: async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/blog/${id}`);
-      if (!res.ok) throw new Error("Failed to fetch blog details");
+      if (!res.ok) throw new Error("Blogdetails ophalen mislukt");
       return res.json();
     },
     enabled: !!id,
@@ -47,7 +47,7 @@ function BlogDetailPage() {
   if (error)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
-        Failed to load blog
+        Blog laden mislukt
       </div>
     );
 
@@ -56,7 +56,7 @@ function BlogDetailPage() {
   if (!blog)
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
-        No blog found
+        Geen blog gevonden
       </div>
     );
 
@@ -64,9 +64,9 @@ function BlogDetailPage() {
     <div className="min-h-screen">
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
-        title="Blog Details"
+        title="Blogdetails"
         breadcrumbs={[
-          { label: "Home", href: "/" },
+          { label: "Startpagina", href: "/" },
           { label: "Blogs", href: "/blogs" },
         ]}
       />
@@ -86,13 +86,13 @@ function BlogDetailPage() {
         {/* Meta Information */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6 pb-6 border-b border-gray-200">
           <div className="flex items-center gap-2 text-sm sm:text-base">
-            <span className="text-gray-500">By</span>
+            <span className="text-gray-500">Door</span>
             <span className="font-semibold text-gray-900">Admin</span>
           </div>
           <div className="flex items-center gap-2 text-sm sm:text-base">
-            <span className="text-gray-500">Date</span>
+            <span className="text-gray-500">Datum</span>
             <span className="font-semibold text-gray-900">
-              {new Date(blog.createdAt).toLocaleDateString("en-US", {
+              {new Date(blog.createdAt).toLocaleDateString("nl-NL", {
                 year: "numeric",
                 month: "long",
                 day: "2-digit",
@@ -126,7 +126,7 @@ function BlogDetailPage() {
         <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-600 mb-2 sm:mb-3">Tags:</p>
           <div className="flex flex-wrap gap-2">
-            {["Blog", "Design", "Technology", "Insights"].map((tag) => (
+            {["Blog", "Ontwerp", "Technologie", "Inzichten"].map((tag) => (
               <span
                 key={tag}
                 className="px-3 py-1 sm:px-4 sm:py-2 bg-gray-100 text-gray-700 rounded-full text-xs sm:text-sm hover:bg-gray-200 cursor-pointer transition-colors"
@@ -150,7 +150,7 @@ function BlogDetailPage() {
             <div>
               <h3 className="font-bold text-gray-900 text-lg sm:text-xl">Admin</h3>
               <p className="text-sm sm:text-base text-gray-600">
-                Experienced writer and content creator passionate about sharing insights and knowledge with readers worldwide.
+                Ervaren schrijver en contentmaker met passie voor het delen van inzichten en kennis met lezers wereldwijd.
               </p>
             </div>
           </div>

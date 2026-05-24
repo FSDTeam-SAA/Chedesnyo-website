@@ -33,7 +33,7 @@ export default function AssignmentDetails() {
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment/${assignmentId}`,
         { cache: "no-store" }
       );
-      if (!res.ok) throw new Error("Failed to fetch assignment details");
+      if (!res.ok) throw new Error("Opdrachtdetails ophalen mislukt");
       return res.json();
     },
     enabled: !!assignmentId,
@@ -55,7 +55,7 @@ export default function AssignmentDetails() {
           },
         }
       );
-      if (!res.ok) throw new Error("Payment initiation failed");
+      if (!res.ok) throw new Error("Betaling starten mislukt");
       return res.json();
     },
     onSuccess: (data) => {
@@ -63,11 +63,11 @@ export default function AssignmentDetails() {
       if (url) {
         window.location.href = url;
       } else {
-        alert("Payment URL not found!");
+        alert("Betaal-URL niet gevonden!");
       }
     },
     onError: () => {
-      alert("Payment initiation failed. Please try again.");
+      alert("Betaling starten mislukt. Probeer het opnieuw.");
     },
   });
 
@@ -89,14 +89,14 @@ export default function AssignmentDetails() {
   if (isError)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
-        Failed to load assignment details.
+        Opdrachtdetails laden mislukt.
       </div>
     );
 
   if (!assignment)
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
-        No assignment data found.
+        Geen opdrachtgegevens gevonden.
       </div>
     );
 
@@ -105,10 +105,10 @@ export default function AssignmentDetails() {
       <div className="min-h-screen bg-gray-50">
         <div className="lg:pb-[96px] pb-10">
           <BreadcrumbHeader
-            title="Assignment Details"
+            title="Opdrachtdetails"
             breadcrumbs={[
-              { label: "Home", href: "/" },
-              { label: "Assignments", href: "/assignments" },
+              { label: "Startpagina", href: "/" },
+              { label: "Opdrachten", href: "/assignments" },
             ]}
           />
         </div>
@@ -139,13 +139,13 @@ export default function AssignmentDetails() {
               <div className="flex items-center gap-2">
                 <Briefcase className="text-blue-600" size={20} />
                 <p>
-                  <span className="font-semibold">Price Type:</span> {assignment.priceType}
+                  <span className="font-semibold">Prijstype:</span> {assignment.priceType}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <Globe className="text-purple-600" size={20} />
                 <p>
-                  <span className="font-semibold">Payment:</span> {assignment.paymentMethod}
+                  <span className="font-semibold">Betaling:</span> {assignment.paymentMethod}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export default function AssignmentDetails() {
 
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-3">
-                Description
+                Beschrijving
               </h2>
               <p className="text-gray-700 leading-relaxed">{assignment.description}</p>
             </div>
@@ -169,7 +169,7 @@ export default function AssignmentDetails() {
             {assignment.uploadFile && (
               <div>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-3">
-                  Attached File
+                  Bijgevoegd bestand
                 </h2>
                 <a
                   href={assignment.uploadFile}
@@ -177,7 +177,7 @@ export default function AssignmentDetails() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-green-600 hover:underline font-medium"
                 >
-                  View Uploaded File →
+                  Geupload bestand bekijken →
                 </a>
               </div>
             )}
@@ -206,14 +206,14 @@ export default function AssignmentDetails() {
                   `}
                 >
                   {isCreator ? (
-                    "You created this assignment"
+                    "U hebt deze opdracht aangemaakt"
                   ) : paymentMutation.isPending ? (
                     <>
-                      <Loader2 className="animate-spin" size={20} /> Processing...
+                      <Loader2 className="animate-spin" size={20} /> Bezig met verwerken...
                     </>
                   ) : (
                     <>
-                      <Book size={20} /> Take This Deal
+                      <Book size={20} /> Neem deze deal
                     </>
                   )}
                 </button>
@@ -234,10 +234,10 @@ export default function AssignmentDetails() {
             <ReviewsCarousel
               reviews={assignment.review.map((r: any) => ({
                 id: r._id,
-                name: r.user?.firstName || "Anonymous",
+                name: r.user?.firstName || "Anoniem",
                 avatar: r.user?.profileImage || "/images/reviewImage.jpg",
                 rating: r.rating,
-                date: new Date(r.createdAt).toLocaleDateString("en-US", {
+                date: new Date(r.createdAt).toLocaleDateString("nl-NL", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -246,10 +246,10 @@ export default function AssignmentDetails() {
               }))}
               itemsPerView={3}
               showHeader={true}
-              title="Assignment Reviews"
+              title="Opdrachtbeoordelingen"
             />
           ) : (
-            <p className="text-center text-gray-500">No reviews yet.</p>
+            <p className="text-center text-gray-500">Nog geen beoordelingen.</p>
           )}
         </div>
       </div>

@@ -8,20 +8,20 @@ function ReferralProgram() {
     <div className="min-h-screen">
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
-        title="Upload New Course"
+        title="Verwijzingsprogramma"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Upload New Course", href: "/upload_new_course" },
+          { label: "Startpagina", href: "/" },
+          { label: "Verwijzingsprogramma", href: "/referrel_program" },
         ]}
       />
       <div className="container mx-auto py-[96px] px-10">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Referral Program – Earn Money by Sharing
+            Verwijzingsprogramma - verdien geld door te delen
           </h1>
           <p className="text-gray-600 text-base">
-            Help others find jobs or sales talent – and earn alongside them!
+            Help anderen werk of salestalent te vinden en verdien met hen mee!
           </p>
         </div>
 
@@ -31,26 +31,26 @@ function ReferralProgram() {
             <div className="flex items-start gap-3 mb-4">
               <Gift className="text-gray-700 mt-1" size={20} />
               <h2 className="text-lg font-semibold text-gray-900">
-                How Does It Work?
+                Hoe werkt het?
               </h2>
             </div>
             <ul className="space-y-2 text-gray-700 text-sm">
               <li className="flex gap-3">
                 <span className="text-gray-900">•</span>
-                <span>Every user gets a unique referral link or code.</span>
+                <span>Elke gebruiker krijgt een unieke verwijzingslink of code.</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-gray-900">•</span>
                 <span>
-                  Share it with others — like skilled freelance sales agents or
-                  companies looking for help.
+                  Deel deze met anderen, zoals ervaren freelance salesagenten of
+                  bedrijven die hulp zoeken.
                 </span>
               </li>
               <li className="flex gap-3">
                 <span className="text-gray-900">•</span>
                 <span>
-                  When someone signs up and completes a deal via your link, you
-                  earn commission.
+                  Wanneer iemand zich via uw link aanmeldt en een deal voltooit,
+                  verdient u commissie.
                 </span>
               </li>
             </ul>
@@ -61,7 +61,7 @@ function ReferralProgram() {
             <div className="flex items-start gap-3 mb-4">
               <TrendingUp className="text-gray-700 mt-1" size={20} />
               <h2 className="text-lg font-semibold text-gray-900">
-                How Much Do You Earn?
+                Hoeveel verdient u?
               </h2>
             </div>
             <div className="space-y-3">
@@ -69,32 +69,32 @@ function ReferralProgram() {
                 <li className="flex gap-3">
                   <span className="text-gray-900">•</span>
                   <span>
-                    DealClosed charges 15% commission per completed deal.
+                    DealClosed rekent 15% commissie per voltooide deal.
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-gray-900">•</span>
                   <span>
-                    You earn 20% of that 15% — every time your referral gets
-                    paid.
+                    U verdient 20% van die 15% telkens wanneer uw verwijzing
+                    wordt betaald.
                   </span>
                 </li>
               </ul>
 
               {/* Example Box */}
               <div className="bg-gray-100 p-4 rounded-lg mt-4 space-y-2">
-                <p className="font-semibold text-gray-900 text-sm">Example:</p>
+                <p className="font-semibold text-gray-900 text-sm">Voorbeeld:</p>
                 <div className="space-y-1 text-sm text-gray-700">
                   <p>
-                    A freelancer earns{" "}
+                    Een freelancer verdient{" "}
                     <span className="font-semibold">€1000</span>
                   </p>
                   <p>
-                    DealClosed takes{" "}
+                    DealClosed houdt{" "}
                     <span className="font-semibold">€150 (15%)</span>
                   </p>
                   <p>
-                    You earn{" "}
+                    U verdient{" "}
                     <span className="font-semibold">€30 (20% of €150)</span>
                   </p>
                 </div>
@@ -107,30 +107,30 @@ function ReferralProgram() {
             <div className="flex items-start gap-3 mb-4">
               <BarChart3 className="text-gray-700 mt-1" size={20} />
               <h2 className="text-lg font-semibold text-gray-900">
-                Your Personal Referral Dashboard
+                Uw persoonlijke verwijzingsdashboard
               </h2>
             </div>
             <div>
               <p className="text-gray-700 text-sm mb-3">
-                On your referral page, you can see:
+                Op uw verwijzingspagina ziet u:
               </p>
               <ul className="space-y-2 text-gray-700 text-sm">
                 <li className="flex gap-3">
                   <span className="text-gray-900">•</span>
-                  <span>Number of successful referrals</span>
+                  <span>Aantal succesvolle verwijzingen</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-gray-900">•</span>
-                  <span>Total earned commission</span>
+                  <span>Totaal verdiende commissie</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-gray-900">•</span>
-                  <span>Copy button to share your unique referral link</span>
+                  <span>Kopieerknop om uw unieke verwijzingslink te delen</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-gray-900">•</span>
                   <span>
-                    Coming soon: Direct sharing via email or social platforms
+                    Binnenkort: direct delen via e-mail of sociale platforms
                   </span>
                 </li>
               </ul>
@@ -140,9 +140,9 @@ function ReferralProgram() {
           {/* Tip Banner */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
             <p className="text-blue-900 text-sm">
-              <span className="font-semibold">Tip:</span> There&apos;s No Limit
-              To How Many People You Can Refer. The More You Share, The More You
-              Earn — Even Passively!
+              <span className="font-semibold">Tip:</span> Er is geen limiet aan
+              hoeveel mensen u kunt verwijzen. Hoe meer u deelt, hoe meer u
+              verdient, zelfs passief!
             </p>
           </div>
         </div>

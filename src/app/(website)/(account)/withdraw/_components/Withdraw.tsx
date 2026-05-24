@@ -57,43 +57,43 @@ function Withdraw() {
   return (
     <div>
       <BreadcrumbHeader
-        title="Withdraw"
+        title="Opnemen"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Withdraw", href: "/withdraw" },
+          { label: "Startpagina", href: "/" },
+          { label: "Opnemen", href: "/withdraw" },
         ]}
       />
 
       <div className="container mx-auto py-[96px] px-10">
         {/* Header */}
         <div className="bg-green-700 text-white px-6 py-3 rounded-t-lg font-semibold text-sm">
-          Withdraw Balance
+          Saldo opnemen
         </div>
 
         <div className="bg-white border border-gray-300 border-t-0 rounded-b-lg p-8 space-y-6">
           {/* Bank Accounts */}
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Bank Accounts</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Bankrekeningen</h2>
             <Button
               onClick={handleAddBankAccount}
               variant="outline"
               className="border-green-600 text-green-600 hover:bg-green-50 text-sm"
             >
-              Add Bank Account
+              Bankrekening toevoegen
             </Button>
           </div>
 
           {/* Select Bank Account */}
           <div>
             <Label htmlFor="bankAccount" className="text-sm font-medium text-gray-700 mb-2 block">
-              Select Bank Account
+              Selecteer bankrekening
             </Label>
             <Select
               value={formData.bankAccount}
               onValueChange={handleBankAccountChange}
             >
               <SelectTrigger className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900">
-                <SelectValue placeholder="Select Bank Account" />
+                <SelectValue placeholder="Selecteer bankrekening" />
               </SelectTrigger>
               <SelectContent>
                 {bankAccounts.map((account) => (
@@ -108,14 +108,14 @@ function Withdraw() {
           {/* Withdraw Amount */}
           <div>
             <Label htmlFor="withdrawAmount" className="text-sm font-medium text-gray-700 mb-2 block">
-              Withdraw Amount (₹)
+              Opnamebedrag (₹)
             </Label>
             <Input
               id="withdrawAmount"
               type="text"
               value={formData.withdrawAmount}
               onChange={handleWithdrawAmountChange}
-              placeholder="Enter amount"
+              placeholder="Voer bedrag in"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
@@ -126,7 +126,7 @@ function Withdraw() {
               onClick={handleWithdraw}
               className="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-12 rounded-full h-auto text-base"
             >
-              Withdraw
+              Opnemen
             </Button>
           </div>
         </div>

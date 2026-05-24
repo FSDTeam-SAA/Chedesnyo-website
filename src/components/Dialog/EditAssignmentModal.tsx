@@ -80,7 +80,7 @@ export function EditAssignmentModal({
           headers: { Authorization: `Bearer ${TOKEN}` },
         }
       );
-      if (!res.ok) throw new Error("Failed to fetch assignment");
+      if (!res.ok) throw new Error("Opdracht ophalen mislukt");
       return res.json();
     },
     enabled: !!assignmentId && !!TOKEN,
@@ -159,17 +159,17 @@ export function EditAssignmentModal({
         }
       );
 
-      if (!res.ok) throw new Error("Failed to update assignment");
+      if (!res.ok) throw new Error("Opdracht bijwerken mislukt");
       return res.json();
     },
     onSuccess: (response) => {
-      toast.success(response.message || "Assignment updated successfully!");
+      toast.success(response.message || "Opdracht succesvol bijgewerkt!");
       queryClient.invalidateQueries({queryKey: ["single-assignment", assignmentId]}); // ✅ refresh data
       setOpen(false); // ✅ close modal
       setTimeout(() => window.location.reload(), 500); // ✅ optional reload
     },
     onError: (error) => {
-      toast.error((error as Error).message || "Error updating assignment");
+      toast.error((error as Error).message || "Fout bij het bijwerken van de opdracht");
     },
   });
 
@@ -184,7 +184,7 @@ export function EditAssignmentModal({
       <DialogTrigger asChild>
         <button
           className="p-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded transition-colors"
-          title="Edit"
+          title="Bewerken"
         >
           <Edit2 size={18} />
         </button>
@@ -276,7 +276,7 @@ export function EditAssignmentModal({
 
             {/* Pricing Type */}
             <div>
-              <Label>Pricing Type</Label>
+              <Label>Prijstype</Label>
               <Select
                 value={formData.pricingType}
                 onValueChange={handlePricingTypeChange}
@@ -294,7 +294,7 @@ export function EditAssignmentModal({
 
             {/* Payment Method */}
             <div>
-              <Label>Payment Method</Label>
+              <Label>Betaalmethode</Label>
               <Select
                 value={formData.paymentMethod}
                 onValueChange={handlePaymentMethodChange}

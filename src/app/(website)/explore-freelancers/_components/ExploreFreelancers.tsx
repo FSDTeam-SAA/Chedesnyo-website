@@ -45,7 +45,7 @@ export default function ExploreFreelancers() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/all-user?${params.toString()}`
       );
-      if (!res.ok) throw new Error("Failed to fetch freelancers");
+      if (!res.ok) throw new Error("Freelancers ophalen mislukt");
       return res.json();
     },
   });
@@ -80,7 +80,7 @@ export default function ExploreFreelancers() {
   if (isError)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
-        Failed to load freelancers.
+        Freelancers laden mislukt.
       </div>
     );
 
@@ -90,7 +90,7 @@ export default function ExploreFreelancers() {
       <BreadcrumbHeader
         title="Explore Freelancers"
         breadcrumbs={[
-          { label: "Home", href: "/" },
+          { label: "Startpagina", href: "/" },
           { label: "Explore Freelancers", href: "/explore-freelancers" },
         ]}
       />
@@ -101,7 +101,7 @@ export default function ExploreFreelancers() {
           <div className="relative w-full lg:py-[96px] py-14">
             <Input
               type="text"
-              placeholder="Search here..."
+              placeholder="Zoek hier..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);

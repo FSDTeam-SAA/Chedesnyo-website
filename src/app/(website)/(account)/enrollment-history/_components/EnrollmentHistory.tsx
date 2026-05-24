@@ -56,7 +56,7 @@ function EnrollmentHistory() {
       );
 
       if (!res.ok) {
-        throw new Error("Failed to fetch enrollment data");
+        throw new Error("Inschrijvingsgegevens ophalen mislukt");
       }
 
       return res.json();
@@ -67,17 +67,17 @@ function EnrollmentHistory() {
     <div className="">
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
-        title="Enrollment History"
+        title="Inschrijvingsgeschiedenis"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Enrollment History", href: "/application" },
+          { label: "Startpagina", href: "/" },
+          { label: "Inschrijvingsgeschiedenis", href: "/application" },
         ]}
       />
 
       <div className="w-full container mx-auto px-10 py-[96px]">
         <div className="mb-6">
           <h2 className="text-lg font-normal text-gray-900">
-            Your Enrolled Courses
+              Uw ingeschreven cursussen
           </h2>
         </div>
 
@@ -86,10 +86,10 @@ function EnrollmentHistory() {
             <thead>
               <tr className="bg-white">
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b border-r border-gray-300">
-                  Course Title
+                  Cursustitel
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b border-gray-300">
-                  Enrolled On
+                  Ingeschreven op
                 </th>
               </tr>
             </thead>
@@ -100,7 +100,7 @@ function EnrollmentHistory() {
                     colSpan={2}
                     className="px-4 py-6 text-center text-gray-500 text-sm"
                   >
-                    Loading enrollment history...
+                    Inschrijvingsgeschiedenis laden...
                   </td>
                 </tr>
               ) : isError ? (
@@ -109,7 +109,7 @@ function EnrollmentHistory() {
                     colSpan={2}
                     className="px-4 py-6 text-center text-red-500 text-sm"
                   >
-                    Failed to load data.
+                    Gegevens laden mislukt.
                   </td>
                 </tr>
               ) : enrollData?.data && enrollData.data.length > 0 ? (
@@ -129,7 +129,7 @@ function EnrollmentHistory() {
                     colSpan={2}
                     className="px-4 py-6 text-center text-gray-500 text-sm"
                   >
-                    No enrolled courses found.
+                    Geen ingeschreven cursussen gevonden.
                   </td>
                 </tr>
               )}

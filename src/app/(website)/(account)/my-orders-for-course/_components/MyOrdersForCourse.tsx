@@ -23,7 +23,7 @@ function MyOrders() {
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my/all`,
         { headers: { Authorization: `Bearer ${TOKEN}` } }
       );
-      if (!res.ok) throw new Error("Network response was not ok");
+      if (!res.ok) throw new Error("Netwerkreactie was niet in orde");
       return res.json() as Promise<any>;
     },
   });
@@ -39,14 +39,14 @@ function MyOrders() {
           body: JSON.stringify({ status: newStatus }),
         }
       );
-      if (!res.ok) throw new Error("Failed to update status");
+      if (!res.ok) throw new Error("Status bijwerken mislukt");
       return res.json();
     },
     onSuccess: () => {
-      toast.success("Order status updated!");
+      toast.success("Bestelstatus bijgewerkt!");
       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
     },
-    onError: () => toast.error("Failed to update status"),
+    onError: () => toast.error("Status bijwerken mislukt"),
   });
 
   // ✅ Filter ONLY course orders
@@ -95,24 +95,24 @@ function MyOrders() {
   return (
     <div className="w-full">
       <BreadcrumbHeader
-        title="My Course Orders"
+        title="Mijn cursusbestellingen"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "My Course Orders", href: "/my-orders" },
+          { label: "Startpagina", href: "/" },
+          { label: "Mijn cursusbestellingen", href: "/my-orders" },
         ]}
       />
 
       <div className="container lg:px-6 px-3 mx-auto py-[96px]">
         <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-          My Course Orders
+          Mijn cursusbestellingen
         </h1>
 
         {/* 🔥 Tabs */}
         <div className="flex gap-3 mb-6 overflow-x-auto">
           {[
-            { key: "in-progress", label: "In Progress" },
-            { key: "completed", label: "Completed" },
-            { key: "cancelled", label: "Cancelled" },
+            { key: "in-progress", label: "In behandeling" },
+            { key: "completed", label: "Voltooid" },
+            { key: "cancelled", label: "Geannuleerd" },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -133,20 +133,20 @@ function MyOrders() {
           <table className="w-full min-w-[600px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-300">
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Course</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Price</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Date</th>
-                <th className="px-6 py-3 text-sm font-medium text-gray-900 text-end">Action</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Cursus</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Prijs</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Datum</th>
+                <th className="px-6 py-3 text-sm font-medium text-gray-900 text-end">Actie</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">Loading...</td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">Laden...</td>
                 </tr>
               ) : displayedOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">No course orders found.</td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">Geen cursusbestellingen gevonden.</td>
                 </tr>
               ) : (
                 displayedOrders.map((order: any) => {
@@ -166,9 +166,9 @@ function MyOrders() {
                             defaultValue=""
                             onChange={(e) => handleStatusChange(order._id, e.target.value)}
                           >
-                            <option value="" disabled>Select</option>
-                            <option value="approved">Approved</option>
-                            <option value="rejected">Rejected</option>
+                            <option value="" disabled>Selecteer</option>
+                            <option value="approved">Goedgekeurd</option>
+                            <option value="rejected">Afgewezen</option>
                           </select>
                         )}
                       </td>
@@ -184,7 +184,7 @@ function MyOrders() {
         {filteredOrders.length > 7 && (
           <div className="flex flex-col md:flex-row items-center justify-between gap-3 flex-wrap">
             <p className="text-xs text-gray-600">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredOrders.length)} of {filteredOrders.length} results
+              Weergegeven {startIndex + 1} tot {Math.min(startIndex + itemsPerPage, filteredOrders.length)} van {filteredOrders.length} resultaten
             </p>
             <div className="flex items-center gap-1 flex-wrap">
               <button

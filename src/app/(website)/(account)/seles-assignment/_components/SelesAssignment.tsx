@@ -21,7 +21,7 @@ function SelesAssignment() {
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`,
         { headers: { Authorization: `Bearer ${TOKEN}` } }
       );
-      if (!res.ok) throw new Error("Network response was not ok");
+      if (!res.ok) throw new Error("Netwerkreactie was niet in orde");
       return res.json() as Promise<any>;
     },
     enabled: !!TOKEN,
@@ -78,24 +78,24 @@ function SelesAssignment() {
   return (
     <div className="w-full">
       <BreadcrumbHeader
-        title="My Assignments"
+        title="Mijn opdrachten"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "My Assignments", href: "/my-assignments" },
+          { label: "Startpagina", href: "/" },
+          { label: "Mijn opdrachten", href: "/my-assignments" },
         ]}
       />
 
       <div className="container mx-auto py-[96px] px-2 lg:px-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-          My Assignments
+          Mijn opdrachten
         </h1>
 
         {/* Tabs */}
         <div className="flex gap-3 mb-6 overflow-x-auto">
           {[
-            { key: "in-progress", label: "In Progress" },
-            { key: "completed", label: "Completed" },
-            { key: "cancelled", label: "Cancelled" },
+            { key: "in-progress", label: "In behandeling" },
+            { key: "completed", label: "Voltooid" },
+            { key: "cancelled", label: "Geannuleerd" },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -119,20 +119,20 @@ function SelesAssignment() {
           <table className="w-full min-w-[600px]">
             <thead className="bg-gray-50 border-b border-gray-300">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Title</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Titel</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Budget</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Posted By</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Geplaatst door</th>
                 <th className="px-6 py-3 text-sm font-medium text-gray-900 text-end">Status</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">Loading...</td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">Laden...</td>
                 </tr>
               ) : displayedAssignments.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">No assignments found.</td>
+                  <td colSpan={4} className="text-center py-8 text-gray-500">Geen opdrachten gevonden.</td>
                 </tr>
               ) : (
                 displayedAssignments.map((assignment: any) => (
@@ -150,7 +150,7 @@ function SelesAssignment() {
                             rel="noopener noreferrer"
                             className="text-blue-600 underline text-xs hover:text-blue-800"
                           >
-                            View Uploaded File
+                            Geupload bestand bekijken
                           </a>
                         )}
                     </td>
@@ -176,9 +176,9 @@ function SelesAssignment() {
         {filteredAssignments.length > 7 && (
           <div className="flex flex-col md:flex-row items-center justify-between gap-3 flex-wrap">
             <p className="text-xs text-gray-600">
-              Showing {startIndex + 1} to{" "}
+              Weergegeven {startIndex + 1} tot{" "}
               {Math.min(startIndex + itemsPerPage, filteredAssignments.length)} of{" "}
-              {filteredAssignments.length} results
+              {filteredAssignments.length} resultaten
             </p>
             <div className="flex items-center gap-1 flex-wrap">
               <button

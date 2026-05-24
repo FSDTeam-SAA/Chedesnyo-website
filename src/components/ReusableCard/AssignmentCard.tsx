@@ -18,10 +18,10 @@ interface DealCardProps {
 
 export default function AssignmentCard({
   image = "https://via.placeholder.com/400x300?text=HTML5+Development",
-  category = "Information Technology",
-  title = "Web application development",
-  type = "Test Assignment",
-  paymentType = "Hourly",
+  category = "Informatietechnologie",
+  title = "Webapplicatieontwikkeling",
+  type = "Testopdracht",
+  paymentType = "Per uur",
   paymentAmount = "$17.00",
   applications = 3,
   id,
@@ -67,12 +67,12 @@ export default function AssignmentCard({
             </div>
             <div className="flex justify-between">
               <span>
-                <span className="font-semibold">Payment:</span> {paymentType} ({paymentAmount})
+                <span className="font-semibold">Betaling:</span> {paymentType} ({paymentAmount})
               </span>
             </div>
             <div className="flex justify-between">
               <span>
-                Applications: <span className="font-semibold">{applications}</span>
+                Aanmeldingen: <span className="font-semibold">{applications}</span>
               </span>
             </div>
           </div>
@@ -82,7 +82,7 @@ export default function AssignmentCard({
         <Link href={`/assignments/${id}`}>
           <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full flex items-center justify-center gap-2 shadow-md hover:shadow-lg mt-4 transition-all duration-300">
             <Book size={20} />
-            View Details
+            Details bekijken
           </button>
         </Link>
       </div>

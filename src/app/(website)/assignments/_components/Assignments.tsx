@@ -45,7 +45,7 @@ const fetchAssignments = async (searchTerm: string) => {
     : `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/assigment/?status=approved`;
 
   const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to fetch assignments");
+  if (!res.ok) throw new Error("Opdrachten ophalen mislukt");
   return res.json();
 };
 
@@ -96,7 +96,7 @@ export default function Assignments() {
   if (isError)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500">Failed to load assignments.</p>
+        <p className="text-red-500">Opdrachten laden mislukt.</p>
       </div>
     );
 
@@ -106,8 +106,8 @@ export default function Assignments() {
       <BreadcrumbHeader
         title="Our Services"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Assignments", href: "/assignments" },
+          { label: "Startpagina", href: "/" },
+          { label: "Opdrachten", href: "/assignments" },
         ]}
       />
 
@@ -116,7 +116,7 @@ export default function Assignments() {
         <div className="relative w-full">
           <Input
             type="text"
-            placeholder="Search here..."
+            placeholder="Zoek hier..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setCurrentPage(1)}
@@ -224,7 +224,7 @@ export default function Assignments() {
           </>
         ) : (
           <p className="text-center text-gray-500 py-10">
-            No assignments found for “{searchTerm}”
+            Geen opdrachten gevonden voor &quot;{searchTerm}&quot;
           </p>
         )}
       </div>

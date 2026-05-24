@@ -42,7 +42,7 @@ export function BreadcrumbHeader({ title, breadcrumbs = [] }: BreadcrumbHeaderPr
               ))
             ) : (
               <span className="text-white text-sm opacity-80">
-                No breadcrumbs
+                Geen breadcrumbs
               </span>
             )}
           </div>

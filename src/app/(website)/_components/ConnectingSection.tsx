@@ -13,7 +13,7 @@ export default function ConnectingSection() {
             <div className="relative w-full h-full">
               <Image
                 src="/images/connectionImage.png"
-                alt="Connecting companies with freelance sales agents"
+                alt="Bedrijven verbinden met freelance salesagenten"
                 width={500}
                 height={500}
                 className="w-full h-full object-cover rounded-xl shadow-lg"
@@ -29,36 +29,36 @@ export default function ConnectingSection() {
               <div className="inline-block">
                 <span className="bg-blue-100 text-[#0077B6] px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
                   <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                  One Click Make Connection
+                  Verbinden met een klik
                 </span>
               </div>
 
               {/* Main Heading */}
               <h2 className="text-3xl sm:text-4xl lg:text-4xl font-bold leading-[140%] text-gray-900">
-                Connecting <span className="text-[#0077B6]">companies with</span>
+                Verbind <span className="text-[#0077B6]">bedrijven met</span>
                 <br />
-                <span className="text-[#0077B6]">freelance sales</span> agents
-                who deliver.
+                <span className="text-[#0077B6]">freelance sales</span>agenten
+                die resultaat leveren.
               </h2>
 
               {/* Description */}
               <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
-                DealClosed is the platform where businesses and freelance sales
-                agents meet. No expensive contracts or recruitment agencies —
-                just performance-based collaboration.
+                DealClosed is het platform waar bedrijven en freelance
+                salesagenten elkaar ontmoeten. Geen dure contracten of
+                recruitmentbureaus, alleen prestatiegerichte samenwerking.
               </p>
 
               <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
-                Whether you&apos;re looking to close deals or need someone to
-                close them for you, DealClosed is the place to be. Work
-                flexibly. Earn fairly. Grow together.
+                Of u nu deals wilt sluiten of iemand zoekt die dat voor u doet,
+                DealClosed is de juiste plek. Werk flexibel. Verdien eerlijk.
+                Groei samen.
               </p>
 
               {/* CTA Button */}
               <div className="pt-4 flex justify-center items-center lg:block">
   <Link href="/explore-freelancers">
     <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
-      Get Started
+      Aan de slag
       <ChevronRight size={20} />
     </button>
   </Link>

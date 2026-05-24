@@ -45,7 +45,7 @@ function LeaderBoard() {
           `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/leaderboard?timeframe=${timeframe}&page=${currentPage}&limit=${itemsPerPage}`,
           { method: "GET", headers: { "Content-Type": "application/json" } }
         );
-        if (!res.ok) throw new Error("Failed to fetch leaderboard data");
+        if (!res.ok) throw new Error("Ranglijstgegevens ophalen mislukt");
         return res.json();
       },
     });
@@ -82,17 +82,17 @@ function LeaderBoard() {
   if (error)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
-        Failed to load leaderboard
+        Ranglijst laden mislukt
       </div>
     );
 
   return (
     <div className="min-h-screen">
       <BreadcrumbHeader
-        title="LeaderBoard"
+        title="Ranglijst"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "LeaderBoard", href: "/leaderboard" },
+          { label: "Startpagina", href: "/" },
+          { label: "Ranglijst", href: "/leaderboard" },
         ]}
       />
 
@@ -100,7 +100,7 @@ function LeaderBoard() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
-            Top Sales Professionals
+          Top salesprofessionals
           </h1>
 
           <div className="flex justify-center flex-wrap gap-3">
@@ -163,7 +163,7 @@ function LeaderBoard() {
                     {/* Name and Email */}
                     <div className="flex flex-col">
                       <p className="text-white font-semibold text-sm sm:text-base">
-                        {professional.user?.firstName || "Unknown User"}{" "}
+                        {professional.user?.firstName || "Onbekende gebruiker"}{" "}
                         {professional.user?.lastName || ""}
                       </p>
                       <p className="text-gray-400 text-xs sm:text-sm">
@@ -181,7 +181,7 @@ function LeaderBoard() {
                       <p className="text-white font-semibold text-sm sm:text-base">
                         {professional.totalSales}
                       </p>
-                      <p className="text-gray-400 text-xs sm:text-sm">Ratings: </p>
+                      <p className="text-gray-400 text-xs sm:text-sm">Beoordelingen: </p>
                     </div>
 
                     {/* Rating Badge */}
@@ -193,7 +193,7 @@ function LeaderBoard() {
               ))}
           {!isLoading && leaderboardItems.length === 0 && (
             <p className="text-center text-gray-500 py-10 text-sm sm:text-base">
-              No data available for {timeframe}
+              Geen gegevens beschikbaar voor {timeframe}
             </p>
           )}
         </div>

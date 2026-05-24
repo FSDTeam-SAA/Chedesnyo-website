@@ -53,7 +53,7 @@ function FindBusinessDetails() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/${freelancerId}`
       );
-      if (!res.ok) throw new Error("Failed to fetch freelancer details");
+      if (!res.ok) throw new Error("Freelancerdetails ophalen mislukt");
       return res.json();
     },
     enabled: !!freelancerId,
@@ -73,14 +73,14 @@ function FindBusinessDetails() {
   if (error)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
-        Something went wrong!
+        Er is iets misgegaan!
       </div>
     );
 
   if (!user)
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
-        User not found.
+        Gebruiker niet gevonden.
       </div>
     );
 
@@ -88,10 +88,10 @@ function FindBusinessDetails() {
     ...assignments.flatMap((a: any) =>
       (a.review || []).map((r: any) => ({
         id: r._id,
-        name: r.user?.firstName || "Anonymous",
+        name: r.user?.firstName || "Anoniem",
         avatar: r.user?.profileImage || "/images/reviewImage.jpg",
         rating: r.rating,
-        date: new Date(r.createdAt).toLocaleDateString("en-US", {
+        date: new Date(r.createdAt).toLocaleDateString("nl-NL", {
           year: "numeric",
           month: "long",
           day: "numeric",
@@ -102,10 +102,10 @@ function FindBusinessDetails() {
     ...courses.flatMap((c: any) =>
       (c.review || []).map((r: any) => ({
         id: r._id,
-        name: r.user?.firstName || "Anonymous",
+        name: r.user?.firstName || "Anoniem",
         avatar: r.user?.profileImage || "/images/reviewImage.jpg",
         rating: r.rating,
-        date: new Date(r.createdAt).toLocaleDateString("en-US", {
+        date: new Date(r.createdAt).toLocaleDateString("nl-NL", {
           year: "numeric",
           month: "long",
           day: "numeric",
@@ -124,10 +124,10 @@ function FindBusinessDetails() {
   return (
     <div className="min-h-screen">
       <BreadcrumbHeader
-        title="Business Details"
+        title="Bedrijfsdetails"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Business Details", href: "/find-business" },
+          { label: "Startpagina", href: "/" },
+          { label: "Bedrijfsdetails", href: "/find-business" },
         ]}
       />
 
@@ -152,7 +152,7 @@ function FindBusinessDetails() {
                   {user.businessName || `${user.firstName} ${user.lastName || ""}`}{" "}
                   {user.verified && (
                     <span className="ml-2 text-green-600 font-semibold text-sm">
-                      Verified
+                      Geverifieerd
                     </span>
                   )}
                 </h1>
@@ -161,7 +161,7 @@ function FindBusinessDetails() {
                 <div className="flex flex-wrap gap-2 mb-4">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
                     <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                    {user.role} {user.verified ? "(Verified)" : ""}
+                    {user.role} {user.verified ? "(Geverifieerd)" : ""}
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
@@ -176,13 +176,13 @@ function FindBusinessDetails() {
                     <span className="text-sm">{user.location || "N/A"}</span>
                   </div>
                   {user.kvkVatNumber && (
-                    <p className="text-gray-600 text-sm">KVK/VAT: {user.kvkVatNumber}</p>
+                    <p className="text-gray-600 text-sm">KVK/btw: {user.kvkVatNumber}</p>
                   )}
                 </div>
 
 
                 <div className="mb-6">
-  <h3 className="text-sm text-gray-500 mb-1">Email:</h3>
+  <h3 className="text-sm text-gray-500 mb-1">E-mail:</h3>
   <span
     // onClick={handleContactClick}
     className="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer"
@@ -203,7 +203,7 @@ function FindBusinessDetails() {
                     className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full transition flex items-center justify-center gap-2"
                   >
                     <Phone size={18} />
-                    {copied ? "Copied!" : user.email}
+                    {copied ? "Gekopieerd!" : user.email}
                   </button>
                 </div>
 
@@ -211,19 +211,19 @@ function FindBusinessDetails() {
                 <div className="space-y-6">
                   {user.overviewExperience && (
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Overview:</h3>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Overzicht:</h3>
                       <p className="text-gray-600 text-sm leading-relaxed">{user.overviewExperience}</p>
                     </div>
                   )}
                   {user.achievements && (
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Achievements:</h3>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Prestaties:</h3>
                       <p className="text-gray-600 text-sm leading-relaxed">{user.achievements}</p>
                     </div>
                   )}
                   {user.specialties && (
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Specialties:</h3>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Specialisaties:</h3>
                       <p className="text-gray-600 text-sm leading-relaxed">{user.specialties}</p>
                     </div>
                   )}
@@ -245,10 +245,10 @@ function FindBusinessDetails() {
                 reviews={allReviews}
                 itemsPerView={3}
                 showHeader={true}
-                title="All Reviews"
+                title="Alle beoordelingen"
               />
             ) : (
-              <p className="text-center text-gray-500">No reviews yet.</p>
+              <p className="text-center text-gray-500">Nog geen beoordelingen.</p>
             )}
           </div>
         </div>

@@ -20,7 +20,7 @@ function SelesPurchaseCourse() {
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/payment/my`,
         { headers: { Authorization: `Bearer ${TOKEN}` } }
       );
-      if (!res.ok) throw new Error("Network response was not ok");
+      if (!res.ok) throw new Error("Netwerkreactie was niet in orde");
       return res.json() as Promise<any>;
     },
     enabled: !!TOKEN,
@@ -72,22 +72,22 @@ function SelesPurchaseCourse() {
   return (
     <div className="w-full">
       <BreadcrumbHeader
-        title="My Courses"
+        title="Mijn cursussen"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "My Courses", href: "/my-courses" },
+          { label: "Startpagina", href: "/" },
+          { label: "Mijn cursussen", href: "/my-courses" },
         ]}
       />
 
       <div className="container mx-auto py-[96px] px-2 lg:px-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">My Courses</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">Mijn cursussen</h1>
 
         {/* Tabs */}
         <div className="flex gap-3 mb-6 overflow-x-auto">
           {[
-            { key: "in-progress", label: "In Progress" },
-            { key: "completed", label: "Completed" },
-            { key: "cancelled", label: "Cancelled" },
+            { key: "in-progress", label: "In behandeling" },
+            { key: "completed", label: "Voltooid" },
+            { key: "cancelled", label: "Geannuleerd" },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -108,19 +108,19 @@ function SelesPurchaseCourse() {
           <table className="w-full min-w-[600px]">
             <thead className="bg-gray-50 border-b border-gray-300">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Title</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Price</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Titel</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-900">Prijs</th>
                 <th className="px-6 py-3 text-sm font-medium text-gray-900 text-end">Status</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-8 text-gray-500">Loading...</td>
+                  <td colSpan={3} className="text-center py-8 text-gray-500">Laden...</td>
                 </tr>
               ) : displayedCourses.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-8 text-gray-500">No courses found.</td>
+                  <td colSpan={3} className="text-center py-8 text-gray-500">Geen cursussen gevonden.</td>
                 </tr>
               ) : (
                 displayedCourses.map((course: any) => (
@@ -148,7 +148,7 @@ function SelesPurchaseCourse() {
         {filteredCourses.length > 7 && (
           <div className="flex flex-col md:flex-row items-center justify-between gap-3 flex-wrap">
             <p className="text-xs text-gray-600">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredCourses.length)} of {filteredCourses.length} results
+              Weergegeven {startIndex + 1} tot {Math.min(startIndex + itemsPerPage, filteredCourses.length)} van {filteredCourses.length} resultaten
             </p>
             <div className="flex items-center gap-1 flex-wrap">
               <button

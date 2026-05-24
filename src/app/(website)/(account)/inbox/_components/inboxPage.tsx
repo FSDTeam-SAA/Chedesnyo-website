@@ -129,7 +129,7 @@ function InboxPage() {
       <BreadcrumbHeader
         title="Inbox"
         breadcrumbs={[
-          { label: "Home", href: "/" },
+          { label: "Startpagina", href: "/" },
           { label: "Inbox", href: "/inbox" },
         ]}
       />
@@ -138,12 +138,12 @@ function InboxPage() {
         {/* Sidebar */}
         <div className="w-full md:w-80 bg-white border border-gray-200 flex flex-col">
           <div className="p-4 md:p-6 border-b border-gray-200">
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">Messages</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">Berichten</h1>
             <div className="relative">
               <Search size={18} className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search Message ..."
+                placeholder="Zoek bericht ..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm md:text-base"
               />
             </div>
@@ -234,7 +234,7 @@ function InboxPage() {
                 </button>
                 <input
                   type="text"
-                  placeholder="Type your message..."
+                  placeholder="Typ uw bericht..."
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}

@@ -8,9 +8,9 @@ function Applications() {
     {
       id: 1,
       title: "Web application development",
-      assignmentType: "Test Assignment",
+      assignmentType: "Testopdracht",
       budget: "Budget: €",
-      bidAmount: "Bid Amount: €",
+      bidAmount: "Bodbedrag: €",
       bidDeadline: "Bid Deadline: 08 Oct 2025, 05:05",
     },
   ]);
@@ -19,11 +19,11 @@ function Applications() {
     <div className="">
       {/* Breadcrumb Header */}
       <BreadcrumbHeader
-        title="Applications"
+        title="Aanmeldingen"
         breadcrumbs={[
-          { label: "Home", href: "/" },
+          { label: "Startpagina", href: "/" },
           {
-            label: "Applications",
+            label: "Aanmeldingen",
             href: "/application",
           },
         ]}
@@ -31,7 +31,7 @@ function Applications() {
       <div className="container mx-auto px-10 py-[96px]">
         {/* Header */}
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          Applications
+          Aanmeldingen
         </h1>
 
         {/* Applications List */}
@@ -70,7 +70,7 @@ function Applications() {
         {/* Empty State Message (if needed) */}
         {applications.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No applications yet</p>
+            <p className="text-gray-500 text-lg">Nog geen aanmeldingen</p>
           </div>
         )}
       </div>

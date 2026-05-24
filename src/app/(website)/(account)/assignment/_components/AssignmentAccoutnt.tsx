@@ -56,7 +56,7 @@ function CourseAccount() {
           },
         }
       );
-      if (!res.ok) throw new Error("Network response was not ok");
+      if (!res.ok) throw new Error("Netwerkreactie was niet in orde");
       return res.json() as Promise<AssignmentResponse>;
     },
   });
@@ -72,16 +72,16 @@ function CourseAccount() {
           },
         }
       );
-      if (!res.ok) throw new Error("Failed to delete assignment");
+      if (!res.ok) throw new Error("Opdracht verwijderen mislukt");
       return res.json();
     },
     onSuccess: () => {
-      toast.success("Assignment deleted successfully!");
+      toast.success("Opdracht succesvol verwijderd!");
       queryClient.invalidateQueries({ queryKey: ["assignments"] });
       setDeleteModalOpen(false);
     },
     onError: (error) => {
-      toast.error(error?.message || "Failed to delete assignment");
+      toast.error(error?.message || "Opdracht verwijderen mislukt");
     },
   });
 
@@ -97,23 +97,23 @@ function CourseAccount() {
   return (
     <div>
       <BreadcrumbHeader
-        title="Assignments"
+        title="Opdrachten"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Assignments", href: "/assignment" },
+          { label: "Startpagina", href: "/" },
+          { label: "Opdrachten", href: "/assignment" },
         ]}
       />
 
       <div className="w-full lg:px-6 px-2 container mx-auto py-[96px]">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Assignments</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Opdrachten</h1>
         </div>
 
         <div className="mb-6 flex justify-start lg:justify-end">
           <Link href="/post_an_assignment">
             <button className="flex items-center gap-2 bg-[#008000] text-white px-4 py-2 rounded-lg hover:bg-[#095509] transition-colors font-medium">
               <Plus size={20} />
-              Post An Assignment
+              Plaats een opdracht
             </button>
           </Link>
         </div>
@@ -123,22 +123,22 @@ function CourseAccount() {
           <table className="w-full min-w-[700px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">No</th>
-                <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">Assignment Title</th>
+                <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">Nr.</th>
+                <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">Opdrachttitel</th>
                 <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">Deadline</th>
                 <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="pr-3 md:pr-10 py-3 md:py-4 text-end text-sm font-semibold text-gray-700">Action</th>
+                <th className="pr-3 md:pr-10 py-3 md:py-4 text-end text-sm font-semibold text-gray-700">Actie</th>
               </tr>
             </thead>
 
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-6 text-gray-500 text-sm">Loading assignments...</td>
+                  <td colSpan={4} className="text-center py-6 text-gray-500 text-sm">Opdrachten laden...</td>
                 </tr>
               ) : isError ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-6 text-red-500 text-sm">Failed to load assignments.</td>
+                  <td colSpan={4} className="text-center py-6 text-red-500 text-sm">Opdrachten laden mislukt.</td>
                 </tr>
               ) : data?.data?.length ? (
                 data.data.map((assignment, index) => (
@@ -178,7 +178,7 @@ function CourseAccount() {
 
                         <button
                           className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded transition-colors"
-                          title="Delete"
+                          title="Verwijderen"
                           onClick={() => handleDeleteClick(assignment._id)}
                         >
                           <Trash2 size={18} />
@@ -189,7 +189,7 @@ function CourseAccount() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="text-center py-6 text-gray-500 text-sm">No assignments found.</td>
+                  <td colSpan={4} className="text-center py-6 text-gray-500 text-sm">Geen opdrachten gevonden.</td>
                 </tr>
               )}
             </tbody>

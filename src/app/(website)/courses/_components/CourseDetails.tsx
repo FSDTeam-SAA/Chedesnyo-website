@@ -36,7 +36,7 @@ export default function CourseDetails() {
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/course/${courseId}`,
         { cache: "no-store" }
       );
-      if (!res.ok) throw new Error("Failed to fetch course details");
+      if (!res.ok) throw new Error("Cursusdetails ophalen mislukt");
       return res.json();
     },
     enabled: !!courseId,
@@ -59,25 +59,25 @@ export default function CourseDetails() {
         }
       );
 
-      if (!res.ok) throw new Error("Enrollment failed");
+      if (!res.ok) throw new Error("Inschrijving mislukt");
       return res.json();
     },
     onSuccess: (data) => {
-      toast.success("✅ Enrolled successfully!");
+      toast.success("Succesvol ingeschreven!");
       const url = data?.data?.url;
       if (url) {
         window.location.href = url;
       } else {
-        toast.error("Payment URL not found!");
+        toast.error("Betaal-URL niet gevonden!");
       }
     },
     onError: () => {
-      toast.error("❌ Failed to enroll. Try again!");
+      toast.error("Inschrijven mislukt. Probeer het opnieuw!");
     },
   });
 
   const handleTakeDeal = () => {
-    toast.loading("Processing enrollment...", { id: "enroll" });
+    toast.loading("Inschrijving verwerken...", { id: "enroll" });
     paymentMutation.mutate(undefined, {
       onSettled: () => toast.dismiss("enroll"),
     });
@@ -95,14 +95,14 @@ export default function CourseDetails() {
   if (isError)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
-        Failed to load course details.
+        Cursusdetails laden mislukt.
       </div>
     );
 
   if (!course)
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
-        No course data found.
+        Geen cursusgegevens gevonden.
       </div>
     );
 
@@ -111,10 +111,10 @@ export default function CourseDetails() {
       <div className="min-h-screen bg-gray-50 lg:pb-[96px]">
         <div className="my-8 lg:my-0">
           <BreadcrumbHeader
-            title="Course Details"
+            title="Cursusdetails"
             breadcrumbs={[
-              { label: "Home", href: "/" },
-              { label: "Courses", href: "/courses" },
+              { label: "Startpagina", href: "/" },
+              { label: "Cursussen", href: "/courses" },
             ]}
           />
         </div>
@@ -139,26 +139,26 @@ export default function CourseDetails() {
               <div className="flex items-center gap-2">
                 <DollarSign className="text-green-600" size={20} />
                 <p>
-                  <span className="font-semibold">Price:</span> ${course.price}
+                  <span className="font-semibold">Prijs:</span> ${course.price}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <GraduationCap className="text-blue-600" size={20} />
                 <p>
-                  <span className="font-semibold">Level:</span> {course.level}
+                  <span className="font-semibold">Niveau:</span> {course.level}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <Languages className="text-purple-600" size={20} />
                 <p>
-                  <span className="font-semibold">Language:</span>{" "}
+                  <span className="font-semibold">Taal:</span>{" "}
                   {course.language}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="text-orange-600" size={20} />
                 <p>
-                  <span className="font-semibold">Duration:</span>{" "}
+                  <span className="font-semibold">Duur:</span>{" "}
                   {course.duration}
                 </p>
               </div>
@@ -166,14 +166,14 @@ export default function CourseDetails() {
 
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">
-                Course Description
+                Cursusbeschrijving
               </h2>
               <p className="text-gray-700">{course.description}</p>
             </div>
 
             <div>
               <h2 className="text-xl font-semibold mb-3 text-gray-900">
-                Introduction Video
+                Introductievideo
               </h2>
               <video
                 src={course.introductionVideo}
@@ -185,13 +185,13 @@ export default function CourseDetails() {
             <div className="flex items-center gap-2">
               <BookOpen className="text-green-600" />
               <p className="font-medium text-gray-800">
-                {course.modules} Modules Included
+                {course.modules} modules inbegrepen
               </p>
             </div>
 
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Who should join?
+                Voor wie is dit bedoeld?
               </h2>
               <p className="text-gray-700">{course.targetAudience}</p>
             </div>
@@ -199,14 +199,14 @@ export default function CourseDetails() {
             {course.extraFile && (
               <div>
                 <h2 className="text-xl font-semibold mb-3 text-gray-900">
-                  Extra Resources
+                  Extra bronnen
                 </h2>
                 <a
                   href={course.extraFile}
                   target="_blank"
                   className="inline-flex items-center gap-2 text-green-700 font-medium hover:underline"
                 >
-                  <File size={20} /> View Resource
+                  <File size={20} /> Bron bekijken
                 </a>
               </div>
             )}
@@ -218,14 +218,14 @@ export default function CourseDetails() {
               className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-full mt-4 font-semibold shadow-lg flex justify-center items-center gap-2 disabled:bg-gray-500 disabled:cursor-not-allowed transition"
             >
               {isCreator ? (
-                "You created this course"
+                "U hebt deze cursus aangemaakt"
               ) : paymentMutation.isPending ? (
                 <>
-                  <Loader2 className="animate-spin" size={20} /> Processing...
+                  <Loader2 className="animate-spin" size={20} /> Bezig met verwerken...
                 </>
               ) : (
                 <>
-                  <Book size={20} /> Take This Deal
+                  <Book size={20} /> Neem deze deal
                 </>
               )}
             </button>
@@ -244,10 +244,10 @@ export default function CourseDetails() {
             <ReviewsCarousel
               reviews={course.review.map((r: any) => ({
                 id: r._id,
-                name: r.user?.firstName || "Anonymous",
+                name: r.user?.firstName || "Anoniem",
                 avatar: r.user?.profileImage || "/images/reviewImage.jpg",
                 rating: r.rating,
-                date: new Date(r.createdAt).toLocaleDateString("en-US", {
+                date: new Date(r.createdAt).toLocaleDateString("nl-NL", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -256,10 +256,10 @@ export default function CourseDetails() {
               }))}
               itemsPerView={3}
               showHeader={true}
-              title="Customer Reviews"
+              title="Klantbeoordelingen"
             />
           ) : (
-            <p className="text-center text-gray-500">No reviews yet.</p>
+            <p className="text-center text-gray-500">Nog geen beoordelingen.</p>
           )}
         </div>
       </div>

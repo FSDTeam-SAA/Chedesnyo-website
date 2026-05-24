@@ -79,23 +79,23 @@ export default function ResetPassword() {
       );
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.message || "Password reset failed");
+        throw new Error(errorData?.message || "Wachtwoord opnieuw instellen mislukt");
       }
       return res.json();
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Password reset successful");
+      toast.success(data.message || "Wachtwoord succesvol opnieuw ingesteld");
       router.push("/signin");
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to reset password");
+      toast.error(err.message || "Wachtwoord opnieuw instellen mislukt");
     },
   });
 
   // ✅ Submit function connected to mutation
   const onSubmit = (data: NewPasswordFormData) => {
     if (!email || !resetToken) {
-      toast.error("Missing email or reset token. Please try again.");
+      toast.error("E-mailadres of reset-token ontbreekt. Probeer het opnieuw.");
       return;
     }
     resetPasswordMutation.mutate({
@@ -111,7 +111,7 @@ export default function ResetPassword() {
       <div className="hidden lg:block lg:w-1/2 h-screen relative">
         <Image
           src="/images/cheAuthImage.png"
-          alt="Professional woman working on laptop"
+          alt="Professionele vrouw werkt op laptop"
           fill
           quality={100}
           className="object-cover"

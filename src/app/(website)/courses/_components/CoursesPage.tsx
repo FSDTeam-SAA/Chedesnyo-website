@@ -62,7 +62,7 @@ function CoursesPage() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      if (!res.ok) throw new Error("Failed to fetch courses");
+      if (!res.ok) throw new Error("Cursussen ophalen mislukt");
       return res.json();
     },
   });
@@ -94,7 +94,7 @@ function CoursesPage() {
   if (error)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
-        Failed to load courses
+        Cursussen laden mislukt
       </div>
     );
 
@@ -103,7 +103,7 @@ function CoursesPage() {
       <BreadcrumbHeader
         title="Courses"
         breadcrumbs={[
-          { label: "Home", href: "/" },
+          { label: "Startpagina", href: "/" },
           { label: "Courses", href: "/courses" },
         ]}
       />
@@ -113,7 +113,7 @@ function CoursesPage() {
         <div className="relative w-full">
           <Input
             type="text"
-            placeholder="Search here..."
+            placeholder="Zoek hier..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 h-[50px] shadow-[0px_4px_32px_0px_#00000040] bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400 text-gray-900"
@@ -156,7 +156,7 @@ function CoursesPage() {
                   category={course.level}
                   title={course.title}
                   type={course.description}
-                  paymentType="Fixed Price"
+                  paymentType="Vaste prijs"
                   paymentAmount={`$${course.price}`}
                   applications={course.application.length || 0}
                 />
@@ -207,7 +207,7 @@ function CoursesPage() {
         {/* If No Data */}
         {!isLoading && courses.length === 0 && (
           <p className="text-center text-gray-500 py-10">
-            No courses found for {searchTerm}
+            Geen cursussen gevonden voor {searchTerm}
           </p>
         )}
       </div>

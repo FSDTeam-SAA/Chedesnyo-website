@@ -79,7 +79,7 @@ export const FreelancerCard: React.FC<FreelancerCardProps> = ({
                   fill="currentColor"
                 />
               </svg>
-              View Profile
+              Profiel bekijken
             </button>
           </Link>
         </div>
