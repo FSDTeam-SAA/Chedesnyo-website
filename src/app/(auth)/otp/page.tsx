@@ -3,7 +3,7 @@ import VerifyOTPForm from './_components/OtpForm'
 
 function page() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Laden...</div>}>
         <VerifyOTPForm />
     </Suspense>
   )

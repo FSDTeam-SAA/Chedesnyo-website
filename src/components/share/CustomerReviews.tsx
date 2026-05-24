@@ -23,10 +23,10 @@ export default function CustomerReviews() {
   const reviews: Review[] =
     reviewData?.data?.data?.map((item: any) => ({
       id: item._id,
-      name: item.user?.firstName || "Anonymous",
+      name: item.user?.firstName || "Anoniem",
       avatar: item.user?.profileImage || "/images/reviewImage.jpg",
       rating: item.rating,
-      date: new Date(item.createdAt).toLocaleDateString("en-US", {
+      date: new Date(item.createdAt).toLocaleDateString("nl-NL", {
         month: "long",
         day: "numeric",
         year: "numeric",
@@ -34,15 +34,15 @@ export default function CustomerReviews() {
       text: item.comment,
     })) || [];
 
-  if (isLoading) return <p className="text-center py-10">Loading reviews...</p>;
-  if (isError) return <p className="text-center py-10 text-red-500">Failed to load reviews.</p>;
+  if (isLoading) return <p className="text-center py-10">Beoordelingen laden...</p>;
+  if (isError) return <p className="text-center py-10 text-red-500">Beoordelingen laden mislukt.</p>;
 
   return (
     <ReviewsCarousel
       reviews={reviews}
       itemsPerView={3}
       showHeader={true}
-      title="Customer Reviews"
+      title="Klantbeoordelingen"
     />
   );
 }

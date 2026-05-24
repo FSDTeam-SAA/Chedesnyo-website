@@ -92,12 +92,12 @@ export default function SignupBusinessForm() {
       return res.json()
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Registration successful! Please check your email.")
+      toast.success(data.message || "Registratie succesvol! Controleer uw e-mail.")
       form.reset()
       router.push("/signin")
     },
     onError: (error) => {
-      toast.error(`❌ Registration failed: ${error instanceof Error ? error.message : "Unknown error"}`)
+      toast.error(`❌ Registratie mislukt: ${error instanceof Error ? error.message : "Onbekende fout"}`)
     },
   })
 
@@ -118,13 +118,13 @@ export default function SignupBusinessForm() {
               <Controller
                 name="firstName"
                 control={form.control}
-                rules={{ required: "Full Name is required" }}
+                rules={{ required: "Volledige naam is vereist" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>
-                      Full Name <span className="text-red-500">*</span>
+                      Volledige naam <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Input {...field} placeholder="Write Your Full Name" />
+                    <Input {...field} placeholder="Voer uw volledige naam in" />
                     {fieldState.error && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
@@ -136,7 +136,7 @@ export default function SignupBusinessForm() {
                 control={form.control}
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>Referral Code (optional)</FieldLabel>
+                    <FieldLabel>Verwijzingscode (optioneel)</FieldLabel>
                     <Input {...field} placeholder="# # # # #" />
                   </Field>
                 )}
@@ -150,9 +150,9 @@ export default function SignupBusinessForm() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>
-                      Business Name <span className="text-red-500">*</span>
+                      Bedrijfsnaam <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Input {...field} placeholder="Write Your Business Name" />
+                    <Input {...field} placeholder="Voer uw bedrijfsnaam in" />
                     {fieldState.error && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
@@ -166,7 +166,7 @@ export default function SignupBusinessForm() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>
-                      Industry <span className="text-red-500">*</span>
+                      Industrie <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
                       value={field.value}
@@ -174,7 +174,7 @@ export default function SignupBusinessForm() {
                       disabled={isIndustryLoading}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={isIndustryLoading ? "Loading..." : "Select Industry"} />
+                        <SelectValue placeholder={isIndustryLoading ? "Laden..." : "Selecteer industrie"} />
                       </SelectTrigger>
                       <SelectContent>
                         {industryData?.data?.length ? (
@@ -184,8 +184,8 @@ export default function SignupBusinessForm() {
                             </SelectItem>
                           ))
                         ) : (
-                          <SelectItem disabled value="none">
-                            No industries found
+                            <SelectItem disabled value="none">
+                            Geen industrieën gevonden
                           </SelectItem>
                         )}
                       </SelectContent>
@@ -203,9 +203,9 @@ export default function SignupBusinessForm() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>
-                      Email <span className="text-red-500">*</span>
+                      E-mail <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Input {...field} type="email" placeholder="Write Your Email" />
+                    <Input {...field} type="email" placeholder="Voer uw e-mailadres in" />
                     {fieldState.error && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
@@ -219,7 +219,7 @@ export default function SignupBusinessForm() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>
-                      KVK/VAT Number <span className="text-red-500">*</span>
+                      KVK/BTW-nummer <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input {...field} placeholder="# # # # #" />
                     {fieldState.error && <FieldError errors={[fieldState.error]} />}
@@ -235,13 +235,13 @@ export default function SignupBusinessForm() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>
-                      Password <span className="text-red-500">*</span>
+                      Wachtwoord <span className="text-red-500">*</span>
                     </FieldLabel>
                     <div className="relative">
                       <Input
                         {...field}
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
+                        placeholder="Voer uw wachtwoord in"
                         className="pr-12"
                       />
                       <button
@@ -272,9 +272,9 @@ export default function SignupBusinessForm() {
                       ref={field.ref}
                     />
                     <span className="text-sm text-gray-700">
-                      I agree to the{" "}
+                      Ik ga akkoord met de{" "}
                       <span className="text-red-500 cursor-pointer hover:underline">
-                        terms & conditions
+                        algemene voorwaarden
                       </span>
                     </span>
                   </div>
@@ -288,12 +288,12 @@ export default function SignupBusinessForm() {
                 className="w-full"
                 disabled={businessRegistrationMutation.isPending}
               >
-                {businessRegistrationMutation.isPending ? "Registering..." : "Register"}
+                {businessRegistrationMutation.isPending ? "Registreren..." : "Registreren"}
               </Button>
 
               <div className="text-center text-sm text-gray-600">
-                Already have an account?{" "}
-                <Link href="/signin"><span className="text-blue-600 cursor-pointer hover:underline">Log In</span></Link>
+                Heeft u al een account?{" "}
+                <Link href="/signin"><span className="text-blue-600 cursor-pointer hover:underline">Inloggen</span></Link>
               </div>
             </CardFooter>
           </form>

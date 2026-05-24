@@ -5,11 +5,10 @@ import { useEffect } from "react";
 
 const config = {
   languages: [
+    { title: 'Nederlands', name: 'nl' },
     { title: 'English', name: 'en' },
-    // { title: 'Bangla', name: 'bn' },
-    { title: 'Dutch (Netherlands)', name: 'nl' },
   ],
-  defaultLanguage: 'en',
+  defaultLanguage: 'nl',
 };
 
 export default function LangConfig() {

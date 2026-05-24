@@ -15,7 +15,7 @@ interface NavbarProps {
   lang?: "en" | "nl"; // English or Dutch
 }
 
-export default function Navbar({ lang = "en" }: NavbarProps) {
+export default function Navbar({ lang = "nl" }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -119,6 +119,46 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
     return pathname === href;
   };
 
+  // User links (translated)
+  const userLinks =
+    lang === "en"
+      ? [
+          { label: "My Profile", href: "/profile" },
+          { label: "Inbox", href: "/inbox" },
+          ...(user?.role === "business" ? [{ label: "My Assignments", href: "/assignment" }] : []),
+          { label: "My Courses", href: "/courese" },
+          { label: "My Earning History", href: "/earnings" },
+        ]
+      : [
+          { label: "Mijn profiel", href: "/profile" },
+          { label: "Berichten", href: "/inbox" },
+          ...(user?.role === "business" ? [{ label: "Mijn opdrachten", href: "/assignment" }] : []),
+          { label: "Mijn cursussen", href: "/courese" },
+          { label: "Mijn inkomsten", href: "/earnings" },
+        ];
+
+  // Build full account links including role-specific items (translated)
+  const accountLinks = [
+    ...userLinks,
+    ...(user?.role === "seles" ? [{ label: lang === "en" ? "My Purchase Assignments" : "Mijn aangekochte opdrachten", href: "/seles-assignment" }] : []),
+    ...(user?.role === "business"
+      ? [
+          { label: lang === "en" ? "My Orders Assignment" : "Mijn bestellingen (opdrachten)", href: "/my-orders-for-assignment" },
+          { label: lang === "en" ? "My Orders Course" : "Mijn bestellingen (cursussen)", href: "/my-orders-for-course" },
+        ]
+      : user?.role === "seles"
+      ? [{ label: lang === "en" ? "My Orders Course" : "Mijn bestellingen (cursussen)", href: "/my-orders-for-course" }]
+      : []),
+    ...(user?.role === "business"
+      ? [
+          { label: lang === "en" ? "My Purchase Courses" : "Mijn aangekochte cursussen", href: "/seles-purchase-course" },
+          { label: lang === "en" ? "My Purchase Assignment" : "Mijn aangekochte opdrachten", href: "/seles-assignment" },
+        ]
+      : user?.role === "seles"
+      ? [{ label: lang === "en" ? "My Purchase Courses" : "Mijn aangekochte cursussen", href: "/seles-purchase-course" }]
+      : []),
+  ];
+
   return (
     <>
       <nav
@@ -193,31 +233,8 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
 
                   {/* Links */}
                   <div className="flex flex-col">
-                    {[
-                      { label: "My Profile", href: "/profile" },
-                      { label: "Inbox", href: "/inbox" },
-                      ...(user?.role === "business" ? [{ label: "My Assignments", href: "/assignment" }] : []),
-                      { label: "My Courses", href: "/courese" },
-                      ...(user?.role === "seles" ? [{ label: "My Purchase Assignments", href: "/seles-assignment" }] : []),
-                      ...(user?.role === "business"
-                        ? [
-                            { label: "My Orders Assignment", href: "/my-orders-for-assignment" },
-                            { label: "My Orders Course", href: "/my-orders-for-course" },
-                          ]
-                        : user?.role === "seles"
-                        ? [{ label: "My Orders Course", href: "/my-orders-for-course" }]
-                        : []),
-                      ...(user?.role === "business"
-                        ? [
-                            { label: "My Purchase Courses", href: "/seles-purchase-course" },
-                            { label: "My Purchase Assignment", href: "/seles-assignment" },
-                          ]
-                        : user?.role === "seles"
-                        ? [{ label: "My Purchase Courses", href: "/seles-purchase-course" }]
-                        : []),
-                      { label: "My Earning History", href: "/earnings" },
-                    ].map((link) => {
-                      const isActive = checkIsActive(link.href); // ✅ Updated
+                    {accountLinks.map((link) => {
+                      const isActive = checkIsActive(link.href);
                       return (
                         <Link
                           key={link.href}
@@ -241,7 +258,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
                         }}
                         className="block w-full text-left px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
                       >
-                        Stripe Dashboard
+                        {lang === "en" ? "Stripe Dashboard" : "Stripe-dashboard"}
                       </button>
                     ) : (
                       <button
@@ -251,7 +268,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
                         }}
                         className="block w-full text-left px-4 py-2 text-gray-700 text-sm hover:bg-gray-100"
                       >
-                        Add Stripe Account
+                        {lang === "en" ? "Add Stripe Account" : "Stripe-account toevoegen"}
                       </button>
                     )}
 
@@ -260,7 +277,7 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 border-t border-gray-200"
                     >
-                      Logout
+                      {lang === "en" ? "Logout" : "Uitloggen"}
                     </button>
                   </div>
                 </PopoverContent>
@@ -271,14 +288,14 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
                   href="/signin"
                   className="w-[139px] h-[48px] flex items-center justify-center text-[16px] font-semibold text-green-600 border-2 border-green-600 rounded-full hover:bg-green-50 transition duration-200"
                 >
-                  Login
+                  {lang === "en" ? "Login" : "Inloggen"}
                 </Link>
                 <div className="w-[3px] h-[32px] bg-[#0A192F]"></div>
                 <Link
                   href="/signup"
                   className="w-[139px] h-[48px] flex items-center justify-center text-[16px] font-semibold text-white bg-green-600 rounded-full hover:bg-green-700 transition duration-200"
                 >
-                  Get Started
+                  {lang === "en" ? "Get Started" : "Aanmelden"}
                 </Link>
               </>
             )}
@@ -338,31 +355,8 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
                   </div>
 
                   {/* User Links */}
-                  {[
-                    { label: "My Profile", href: "/profile" },
-                    { label: "Inbox", href: "/inbox" },
-                    ...(user?.role === "business" ? [{ label: "My Assignments", href: "/assignment" }] : []),
-                    { label: "My Courses", href: "/courese" },
-                    ...(user?.role === "seles" ? [{ label: "My Purchase Assignments", href: "/seles-assignment" }] : []),
-                    ...(user?.role === "business"
-                      ? [
-                          { label: "My Orders Assignment", href: "/my-orders-for-assignment" },
-                          { label: "My Orders Course", href: "/my-orders-for-course" },
-                        ]
-                      : user?.role === "seles"
-                      ? [{ label: "My Orders Course", href: "/my-orders-for-course" }]
-                      : []),
-                    ...(user?.role === "business"
-                      ? [
-                          { label: "My Purchase Courses", href: "/seles-purchase-course" },
-                          { label: "My Purchase Assignment", href: "/seles-assignment" },
-                        ]
-                      : user?.role === "seles"
-                      ? [{ label: "My Purchase Courses", href: "/seles-purchase-course" }]
-                      : []),
-                    { label: "My Earning History", href: "/earnings" },
-                  ].map((link) => {
-                    const isActive = checkIsActive(link.href); // ✅ Updated
+                  {accountLinks.map((link) => {
+                    const isActive = checkIsActive(link.href);
                     return (
                       <Link
                         key={link.href}
@@ -415,14 +409,14 @@ export default function Navbar({ lang = "en" }: NavbarProps) {
                     className="text-sm text-gray-700 hover:text-green-600 transition"
                     onClick={() => setIsOpen(false)}
                   >
-                    Login
+                    {lang === "en" ? "Login" : "Inloggen"}
                   </Link>
                   <Link
                     href="/signup"
                     className="text-sm text-white bg-green-600 rounded-full text-center py-2 hover:bg-green-700 transition"
                     onClick={() => setIsOpen(false)}
                   >
-                    Get Started
+                    {lang === "en" ? "Get Started" : "Aanmelden"}
                   </Link>
                 </>
               )}

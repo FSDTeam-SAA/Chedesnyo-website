@@ -26,7 +26,7 @@ import { Input } from "@/components/ui/input";
 
 // ✅ Zod validation schema
 const formSchema = z.object({
-  email: z.string().email("Please enter a valid email address."),
+  email: z.string().email("Voer een geldig e-mailadres in."),
 });
 
 // ✅ Infer type from schema
@@ -60,12 +60,12 @@ export default function ForgotPasswordForm() {
       return res.json();
     },
     onSuccess: (data, variables) => {
-      toast.success(data.message || "OTP sent successfully!");
+      toast.success(data.message || "OTP succesvol verzonden!");
       const encodedEmail = encodeURIComponent(variables.email);
       router.push(`/otp?email=${encodedEmail}`);
     },
     onError: (err) => {
-      const message = err instanceof Error ? err.message : "Failed to send OTP";
+      const message = err instanceof Error ? err.message : "OTP verzenden mislukt";
       toast.error(message);
     },
   });
@@ -106,11 +106,11 @@ export default function ForgotPasswordForm() {
 
             {/* Title & Description */}
             <CardTitle className="text-center text-2xl font-bold text-gray-900">
-              Forget Password
+              Wachtwoord vergeten
             </CardTitle>
             <CardDescription className="text-center text-gray-600 text-sm leading-6">
-              Please enter the email address linked to your account. We&apos;ll send a one-time password
-              (OTP) to your email for verification.
+              Voer het e-mailadres in dat aan uw account is gekoppeld. We sturen een eenmalig wachtwoord
+              (OTP) naar uw e-mail voor verificatie.
             </CardDescription>
           </CardHeader>
 
@@ -123,10 +123,10 @@ export default function ForgotPasswordForm() {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel>Email</FieldLabel>
+                      <FieldLabel>E-mail</FieldLabel>
                       <Input
                         {...field}
-                        placeholder="Enter your email address"
+                        placeholder="Voer uw e-mailadres in"
                         type="email"
                         className="placeholder-gray-400"
                       />
@@ -145,16 +145,16 @@ export default function ForgotPasswordForm() {
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-200"
               disabled={forgotPassMutation.isPending}
             >
-              {forgotPassMutation.isPending ? "Sending OTP..." : "Send OTP"}
+              {forgotPassMutation.isPending ? "OTP verzenden..." : "Verstuur OTP"}
             </Button>
 
             <div className="text-center text-sm">
-              <span className="text-gray-600">Back to </span>
+              <span className="text-gray-600">Terug naar </span>
               <Link
                 href="/signin"
                 className="text-green-600 hover:text-green-700 font-semibold"
               >
-                Log In
+                inloggen
               </Link>
             </div>
           </CardFooter>

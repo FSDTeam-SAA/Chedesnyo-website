@@ -21,7 +21,7 @@ import {
 
 // ✅ Zod validation schema
 const formSchema = z.object({
-  otp: z.string().length(6, "OTP must be 6 digits"),
+  otp: z.string().length(6, "OTP moet 6 cijfers bevatten"),
 });
 
 // ✅ Infer type from schema
@@ -135,10 +135,10 @@ export default function VerifyOTPForm() {
               />
             </div>
             <CardTitle className="text-center text-2xl font-bold text-gray-900">
-              Enter OTP
+              Voer OTP in
             </CardTitle>
             <CardDescription className="text-center text-gray-600 text-sm leading-6">
-              An OTP has been sent to your email address. Please verify it below.
+              Er is een OTP naar uw e-mailadres gestuurd. Verifieer deze hieronder.
             </CardDescription>
           </CardHeader>
 
@@ -175,11 +175,11 @@ export default function VerifyOTPForm() {
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-200"
               disabled={otpMutation.isPending || otpValues.join("").length !== 6}
             >
-              {otpMutation.isPending ? "Verifying..." : "Verify"}
+              {otpMutation.isPending ? "Bezig met verifiëren..." : "Verifiëren"}
             </Button>
 
             <div className="text-center text-sm">
-              <span className="text-gray-600">Didn&apos;t Receive OTP? </span>
+              <span className="text-gray-600">Geen OTP ontvangen? </span>
               <button
                 type="button"
                 onClick={() => {
@@ -189,7 +189,7 @@ export default function VerifyOTPForm() {
                 }}
                 className="text-red-600 hover:text-red-700 font-semibold"
               >
-                Resend OTP
+                Opnieuw verzenden
               </button>
             </div>
           </CardFooter>

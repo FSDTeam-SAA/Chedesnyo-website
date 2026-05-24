@@ -173,16 +173,16 @@ function PostAnAssignmentAdd() {
   return (
     <div className="min-h-screen">
       <BreadcrumbHeader
-        title="Post An Assignment"
+        title="Plaats een opdracht"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Post An Assignment", href: "/post_an_assignment" },
+          { label: "Startpagina", href: "/" },
+          { label: "Plaats een opdracht", href: "/post_an_assignment" },
         ]}
       />
 
       <div className="max-w-5xl mx-auto rounded-lg py-[96px] px-10">
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          Post an Assignment
+          Plaats een opdracht
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -193,10 +193,10 @@ function PostAnAssignmentAdd() {
             </Label>
             <label className="flex items-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors bg-white">
               <div className="flex items-center gap-3">
-                <span className="text-gray-700 font-medium">Choose File</span>
+                <span className="text-gray-700 font-medium">Bestand kiezen</span>
                 <span className="h-5 w-px bg-gray-300"></span>
                 <span className="text-gray-500 text-sm truncate max-w-[200px]">
-                  {formData.banner ? formData.banner.name : "No File Chosen"}
+                  {formData.banner ? formData.banner.name : "Geen bestand gekozen"}
                 </span>
               </div>
               <input type="file" className="hidden" onChange={handleBannerUpload} />
@@ -206,7 +206,7 @@ function PostAnAssignmentAdd() {
           {/* Assignment Title */}
           <div>
             <Label htmlFor="title" className="text-sm font-medium text-gray-700 mb-2 block">
-              Assignment Title
+              Opdracht titel
             </Label>
             <Input
               id="title"
@@ -214,7 +214,7 @@ function PostAnAssignmentAdd() {
               name="title"
               value={formData.title}
               onChange={handleInputChange}
-              placeholder="Enter Assignment Name"
+              placeholder="Voer opdragnaam in"
               className="h-[50px]"
             />
           </div>
@@ -222,14 +222,14 @@ function PostAnAssignmentAdd() {
           {/* Description */}
           <div>
             <Label htmlFor="description" className="text-sm font-medium text-gray-700 mb-2 block">
-              Description
+              Beschrijving
             </Label>
             <Textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="Write Assignment Description"
+              placeholder="Schrijf opdrachtbeschrijving"
               rows={6}
             />
           </div>
@@ -245,7 +245,7 @@ function PostAnAssignmentAdd() {
               name="budget"
               value={formData.budget}
               onChange={handleInputChange}
-              placeholder="Write Your Budgets"
+              placeholder="Voer uw budget in"
               className="h-[50px]"
             />
           </div>
@@ -257,7 +257,7 @@ function PostAnAssignmentAdd() {
             </Label>
             <Select value={formData.pricingType} onValueChange={handlePricingTypeChange}>
               <SelectTrigger className="h-[50px]">
-                <SelectValue placeholder="Select Pricing Type" />
+                <SelectValue placeholder="Selecteer prijstype" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="hourly">Hourly</SelectItem>
@@ -274,7 +274,7 @@ function PostAnAssignmentAdd() {
             </Label>
             <Select value={formData.paymentMethod} onValueChange={handlePaymentMethodChange}>
               <SelectTrigger className="h-[50px]">
-                <SelectValue placeholder="Select Payment Method" />
+                <SelectValue placeholder="Selecteer betaalmethode" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="bank">Bank Transfer</SelectItem>
@@ -300,7 +300,7 @@ function PostAnAssignmentAdd() {
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {formData.deadline
                     ? format(new Date(formData.deadline), "PPP")
-                    : "Pick a date"}
+                    : "Kies een datum"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -326,10 +326,10 @@ function PostAnAssignmentAdd() {
             </Label>
             <label className="flex items-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors bg-white">
               <div className="flex items-center gap-3">
-                <span className="text-gray-700 font-medium">Choose File</span>
+                <span className="text-gray-700 font-medium">Bestand kiezen</span>
                 <span className="h-5 w-px bg-gray-300"></span>
                 <span className="text-gray-500 text-sm truncate max-w-[200px]">
-                  {formData.uploadFile ? formData.uploadFile.name : "No File Chosen"}
+                  {formData.uploadFile ? formData.uploadFile.name : "Geen bestand gekozen"}
                 </span>
               </div>
               <input type="file" className="hidden" onChange={handleFileUpload} />
@@ -346,7 +346,7 @@ function PostAnAssignmentAdd() {
               }
             />
             <Label htmlFor="showToPublic" className="text-sm font-medium text-gray-700 cursor-pointer">
-              Show to Public (Visitors)
+              Zichtbaar voor publiek (bezoekers)
             </Label>
           </div>
 
@@ -356,7 +356,7 @@ function PostAnAssignmentAdd() {
             disabled={postMutation.isPending}
             className="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-full h-auto"
           >
-            {postMutation.isPending ? "Submitting..." : "Submit"}
+            {postMutation.isPending ? "Bezig met indienen..." : "Indienen"}
           </Button>
         </form>
       </div>

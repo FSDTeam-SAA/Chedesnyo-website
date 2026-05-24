@@ -24,17 +24,17 @@ export default function AssignmentReviewForm({assignmentId}: {assignmentId: stri
                 body: JSON.stringify({assigment: assignmentId, rating, comment: review }),
             });
 
-            if (!res.ok) throw new Error("Failed to submit review");
+                    if (!res.ok) throw new Error("Beoordeling verzenden mislukt");
             return res.json();
         },
         onSuccess: (data) => {
-            toast.success(data?.message || "Review submitted successfully!");
+            toast.success(data?.message || "Beoordeling succesvol ingediend!");
             setReview("");
             setRating(0);
             queryClient.invalidateQueries({ queryKey: ["assignmentDetails", assignmentId] });
         },
         onError: (error) => {
-            toast.error(error?.message || "Failed to submit review");
+            toast.error(error?.message || "Beoordeling verzenden mislukt");
         },
     });
 
@@ -50,7 +50,7 @@ export default function AssignmentReviewForm({assignmentId}: {assignmentId: stri
             <div className="w-full rounded-2xl">
                 <div className="p-6 space-y-6">
                     <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-                        Share Your Feedback
+                        Deel uw mening
                     </h2>
 
                     {/* Star Rating */}
@@ -72,10 +72,10 @@ export default function AssignmentReviewForm({assignmentId}: {assignmentId: stri
 
                     {/* Review Message */}
                     <div className="space-y-2">
-                        <label className="font-medium text-gray-700">Your Review</label>
+                        <label className="font-medium text-gray-700">Uw beoordeling</label>
                         <Textarea
                             rows={4}
-                            placeholder="Write your detailed review..."
+                            placeholder="Schrijf uw gedetailleerde beoordeling..."
                             className="rounded-xl"
                             value={review}
                             onChange={(e) => setReview(e.target.value)}
@@ -88,7 +88,7 @@ export default function AssignmentReviewForm({assignmentId}: {assignmentId: stri
                         disabled={isDisabled}
                         className="w-full py-3 text-lg font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {reviewsMutation.isPending ? "Submitting..." : "Submit Review"}
+                        {reviewsMutation.isPending ? "Bezig met verzenden..." : "Review indienen"}
                     </Button>
                 </div>
             </div>

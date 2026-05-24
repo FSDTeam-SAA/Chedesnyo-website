@@ -19,7 +19,7 @@ declare global {
 const COOKIE_NAME = 'googtrans';
 
 const LanguageSwitcherComponent = () => {
-  const [currentLang, setCurrentLang] = useState('en');
+  const [currentLang, setCurrentLang] = useState('nl');
   const [config, setConfig] = useState<GoogleTranslationConfig | null>(null);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const LanguageSwitcherComponent = () => {
   };
 
   if (!config) {
-    return <div className="text-center p-2 text-xs text-gray-400">Loading...</div>;
+    return <div className="text-center p-2 text-xs text-gray-400">Laden...</div>;
   }
 
   return (

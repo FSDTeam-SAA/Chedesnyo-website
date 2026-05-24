@@ -181,16 +181,16 @@ const updateCourseMutation = useMutation({
       <DialogTrigger asChild>
         <button
           className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded transition-colors"
-          title="Edit Course"
+          title="Cursus bewerken"
         >
           <Edit2 size={18} />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-auto">
         <DialogHeader>
-          <DialogTitle>Edit Course</DialogTitle>
+          <DialogTitle>Cursus bewerken</DialogTitle>
           <DialogDescription>
-            Update the course details below and submit.
+            Werk de cursusgegevens hieronder bij en verzend.
           </DialogDescription>
         </DialogHeader>
 
@@ -198,23 +198,23 @@ const updateCourseMutation = useMutation({
           {/* Course Title & Level */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="courseTitle">Course Title</Label>
+              <Label htmlFor="courseTitle">Cursus titel</Label>
               <Input
                 id="courseTitle"
                 name="courseTitle"
                 value={formData.courseTitle}
                 onChange={handleInputChange}
-                placeholder="Enter Course Name"
+                placeholder="Voer cursusnaam in"
               />
             </div>
             <div>
-              <Label htmlFor="courseLevel">Course Level</Label>
+              <Label htmlFor="courseLevel">Cursusniveau</Label>
               <Select
                 value={formData.courseLevel}
                 onValueChange={handleCourseLevelChange}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Level" />
+                  <SelectValue placeholder="Selecteer niveau" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Beginner">Beginner</SelectItem>
@@ -240,7 +240,7 @@ const updateCourseMutation = useMutation({
 
           {/* Course Thumbnail */}
           <div>
-            <Label>Course Thumbnail</Label>
+            <Label>Miniatuur cursus</Label>
             <div className="flex flex-col gap-2 w-full">
               {(courseData?.thumbnail || previewThumbnail) && (
                 <div className="flex gap-4">
@@ -264,11 +264,11 @@ const updateCourseMutation = useMutation({
                   )}
                 </div>
               )}
-              <label className="flex items-center justify-center w-full px-4 py-3 mt-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-gray-400">
+                <label className="flex items-center justify-center w-full px-4 py-3 mt-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-gray-400">
                 <span>
                   {formData.courseThumbnail
                     ? formData.courseThumbnail.name
-                    : "Choose new file"}
+                    : "Kies nieuw bestand"}
                 </span>
                 <input
                   type="file"
@@ -281,7 +281,7 @@ const updateCourseMutation = useMutation({
 
           {/* Upload Extra Files */}
           <div>
-            <Label>Upload Extra Files</Label>
+              <Label>Extra bestanden uploaden</Label>
             <div className="flex flex-col gap-2 w-full">
               {(courseData?.extraFile || previewExtraFile) && (
                 <div className="flex gap-4">
@@ -321,7 +321,7 @@ const updateCourseMutation = useMutation({
                 <span>
                   {formData.uploadExtraFiles
                     ? formData.uploadExtraFiles.name
-                    : "Choose new file"}
+                    : "Kies nieuw bestand"}
                 </span>
                 <input
                   type="file"
@@ -334,7 +334,7 @@ const updateCourseMutation = useMutation({
 
           {/* Video & Duration */}
           <div>
-            <Label htmlFor="introductionVideo">Introduction Video URL</Label>
+            <Label htmlFor="introductionVideo">Introductievideo URL</Label>
             <Input
               id="introductionVideo"
               name="introductionVideo"
@@ -346,7 +346,7 @@ const updateCourseMutation = useMutation({
 
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="fullCourseVideo">Full Course Video URL</Label>
+              <Label htmlFor="fullCourseVideo">Volledige cursusvideo URL</Label>
               <Input
                 id="fullCourseVideo"
                 name="fullCourseVideo"
@@ -356,13 +356,13 @@ const updateCourseMutation = useMutation({
               />
             </div>
             <div>
-              <Label htmlFor="totalDuration">Total Duration</Label>
+              <Label htmlFor="totalDuration">Totale duur</Label>
               <Input
                 id="totalDuration"
                 name="totalDuration"
                 value={formData.totalDuration}
                 onChange={handleInputChange}
-                placeholder="e.g., 12 weeks"
+                placeholder="bijv. 12 weken"
               />
             </div>
           </div>
@@ -370,7 +370,7 @@ const updateCourseMutation = useMutation({
           {/* Target Audience & Language */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="targetAudience">Target Audience</Label>
+              <Label htmlFor="targetAudience">Doelgroep</Label>
               <Input
                 id="targetAudience"
                 name="targetAudience"
@@ -379,7 +379,7 @@ const updateCourseMutation = useMutation({
               />
             </div>
             <div>
-              <Label htmlFor="language">Language</Label>
+              <Label htmlFor="language">Taal</Label>
               <Input
                 id="language"
                 name="language"
@@ -392,7 +392,7 @@ const updateCourseMutation = useMutation({
           {/* Number of Modules */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="numberOfModules">Number of Modules</Label>
+              <Label htmlFor="numberOfModules">Aantal modules</Label>
               <Input
                 id="numberOfModules"
                 name="numberOfModules"
@@ -405,7 +405,7 @@ const updateCourseMutation = useMutation({
           {/* Price & Discount */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="price">Price</Label>
+              <Label htmlFor="price">Prijs</Label>
               <Input
                 id="price"
                 name="price"
@@ -414,7 +414,7 @@ const updateCourseMutation = useMutation({
               />
             </div>
             <div>
-              <Label htmlFor="discount">Discount (%)</Label>
+              <Label htmlFor="discount">Korting (%)</Label>
               <Select
                 value={formData.discount}
                 onValueChange={handleDiscountChange}
@@ -441,17 +441,17 @@ const updateCourseMutation = useMutation({
               onCheckedChange={handleCheckboxChange}
             />
             <Label htmlFor="licenseRights">
-              I confirm I have the license rights
+              Ik bevestig dat ik de licentierechten heb
             </Label>
           </div>
 
           {/* Footer */}
           <DialogFooter className="flex justify-between">
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">Annuleren</Button>
             </DialogClose>
             <Button type="submit" disabled={updateCourseMutation.isPending}>
-              {updateCourseMutation.isPending ? "Saving..." : "Save Changes"}
+              {updateCourseMutation.isPending ? "Opslaan..." : "Wijzigingen opslaan"}
             </Button>
           </DialogFooter>
         </form>

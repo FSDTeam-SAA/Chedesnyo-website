@@ -25,8 +25,8 @@ import Link from "next/link";
 
 // ✅ Zod validation schema
 const formSchema = z.object({
-  email: z.string().email("Please enter a valid email address."),
-  password: z.string().min(6, "Password must be at least 6 characters."),
+  email: z.string().email("Voer een geldig e-mailadres in."),
+  password: z.string().min(6, "Wachtwoord moet minimaal 6 tekens bevatten."),
   rememberMe: z.boolean().optional(),
 });
 
@@ -97,7 +97,7 @@ export default function SignInForm() {
       {/* Right Side - Form */}
       <div className="flex w-full lg:w-1/2 items-center justify-center bg-gray-50">
         <Card className="w-full max-w-lg p-5 rounded-2xl shadow-[0px_0px_32px_0px_#00000014]">
-          <CardHeader>
+            <CardHeader>
             <div className="flex justify-center mb-2">
               <Image
                 src="/images/chedsnyoLogo.png"
@@ -108,10 +108,10 @@ export default function SignInForm() {
               />
             </div>
             <CardTitle className="text-center text-2xl font-bold text-gray-900">
-              Welcome Back!
+              Welkom terug!
             </CardTitle>
             <CardDescription className="text-center text-gray-500">
-              Enter to get unlimited data & information
+              Meld u aan om toegang te krijgen
             </CardDescription>
           </CardHeader>
 
@@ -124,10 +124,10 @@ export default function SignInForm() {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel>Email</FieldLabel>
+                      <FieldLabel>E-mail</FieldLabel>
                       <Input
                         {...field}
-                        placeholder="Write Your Email"
+                        placeholder="Voer uw e-mailadres in"
                         type="email"
                         className="placeholder-gray-400"
                       />
@@ -142,11 +142,11 @@ export default function SignInForm() {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel>Password</FieldLabel>
+                      <FieldLabel>Wachtwoord</FieldLabel>
                       <div className="relative">
                         <Input
                           {...field}
-                          placeholder="Enter Password"
+                          placeholder="Voer uw wachtwoord in"
                           type={showPassword ? "text" : "password"}
                           className="placeholder-gray-400 pr-10"
                         />
@@ -181,14 +181,14 @@ export default function SignInForm() {
                           htmlFor="remember"
                           className="ml-2 text-sm text-gray-600 cursor-pointer"
                         >
-                          Remember Me
+                          Onthoud mij
                         </label>
                       </div>
-                      <Link
+                        <Link
                         href="/forget-password"
                         className="text-sm text-red-600 hover:text-red-700 font-medium"
                       >
-                        Forget Password?
+                        Wachtwoord vergeten?
                       </Link>
                     </div>
                   )}
@@ -204,16 +204,16 @@ export default function SignInForm() {
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
               disabled={isLoading}
             >
-              {isLoading ? "Signing In..." : "Sign In"}
+              {isLoading ? "Aan het inloggen..." : "Inloggen"}
             </Button>
 
             <p className="text-sm text-gray-600 text-center">
-              Don&apos;t have an account?{" "}
+              Nog geen account?{" "}
               <Link
                 href="/signup"
                 className="text-green-600 hover:text-green-700 font-semibold"
               >
-                Sign Up
+                Aanmelden
               </Link>
             </p>
           </CardFooter>

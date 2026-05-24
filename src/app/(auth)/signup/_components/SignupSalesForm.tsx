@@ -84,12 +84,12 @@ export default function SignupSalesForm() {
       return res.json()
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Registration successful! Please check your email.")
+      toast.success(data.message || "Registratie succesvol! Controleer uw e-mail.")
       form.reset()
       router.push("/signin")
     },
     onError: (error) => {
-      toast.error(`❌ Registration failed: ${error instanceof Error ? error.message : "Unknown error"}`)
+      toast.error(`❌ Registratie mislukt: ${error instanceof Error ? error.message : "Onbekende fout"}`)
     },
   })
 
@@ -125,13 +125,13 @@ export default function SignupSalesForm() {
               <Controller
                 name="firstName"
                 control={form.control}
-                rules={{ required: "Full Name is required" }}
+                rules={{ required: "Volledige naam is vereist" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel className="text-sm font-normal text-gray-700">
-                      Full Name <span className="text-red-500">*</span>
+                      Volledige naam <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Input {...field} placeholder="Write Your Name" className="" />
+                    <Input {...field} placeholder="Voer uw volledige naam in" className="" />
                     {fieldState.error && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
@@ -145,11 +145,11 @@ export default function SignupSalesForm() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel className="text-sm font-normal text-gray-700">
-                      Industry <span className="text-red-500">*</span>
+                      Industrie <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select value={field.value} onValueChange={field.onChange} disabled={isIndustryLoading}>
                       <SelectTrigger className="mt-1">
-                        <SelectValue placeholder={isIndustryLoading ? "Loading..." : "Select Industry"} />
+                        <SelectValue placeholder={isIndustryLoading ? "Laden..." : "Selecteer industrie"} />
                       </SelectTrigger>
                       <SelectContent>
                         {industryData?.data?.length
@@ -158,9 +158,9 @@ export default function SignupSalesForm() {
                                 {ind.name}
                               </SelectItem>
                             ))
-                          : !isIndustryLoading && (
+                              : !isIndustryLoading && (
                               <SelectItem disabled value="no-industry">
-                                No industries found
+                                Geen industrieën gevonden
                               </SelectItem>
                             )}
                       </SelectContent>
@@ -177,7 +177,7 @@ export default function SignupSalesForm() {
                 render={({ field }) => (
                   <Field>
                     <FieldLabel className="text-sm font-normal text-gray-700">
-                      Location
+                      Locatie
                     </FieldLabel>
                     <Input {...field} placeholder="" className="" />
                   </Field>
@@ -188,11 +188,11 @@ export default function SignupSalesForm() {
               <Controller
                 name="kvkVatNumber"
                 control={form.control}
-                rules={{ required: "KVK/VAT Number is required" }}
+                rules={{ required: "KVK/BTW-nummer is vereist" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel className="text-sm font-normal text-gray-700">
-                      KVK/VAT Number <span className="text-red-500">*</span>
+                      KVK/BTW-nummer <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input {...field} placeholder="# # # # #" className="" />
                     {fieldState.error && <FieldError errors={[fieldState.error]} />}
@@ -205,18 +205,18 @@ export default function SignupSalesForm() {
                 name="email"
                 control={form.control}
                 rules={{
-                  required: "Email is required",
+                  required: "E-mail is vereist",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
+                    message: "Ongeldig e-mailadres",
                   },
                 }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel className="text-sm font-normal text-gray-700">
-                      Email <span className="text-red-500">*</span>
+                      E-mail <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Input {...field} type="email" placeholder="Write Your Email" className="" />
+                    <Input {...field} type="email" placeholder="Voer uw e-mailadres in" className="" />
                     {fieldState.error && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
@@ -226,17 +226,17 @@ export default function SignupSalesForm() {
               <Controller
                 name="password"
                 control={form.control}
-                rules={{ required: "Password is required" }}
+                rules={{ required: "Wachtwoord is vereist" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel className="text-sm font-normal text-gray-700">
-                      Password <span className="text-red-500">*</span>
+                      Wachtwoord <span className="text-red-500">*</span>
                     </FieldLabel>
                     <div className="relative mt-1">
                       <Input
                         {...field}
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
+                        placeholder="Voer uw wachtwoord in"
                         className="pr-10"
                       />
                       <button
@@ -256,17 +256,17 @@ export default function SignupSalesForm() {
               <Controller
                 name="agreeToTerms"
                 control={form.control}
-                rules={{ required: "You must agree to the terms and conditions" }}
+                rules={{ required: "U moet akkoord gaan met de algemene voorwaarden" }}
                 render={({ field, fieldState }) => (
                   <div>
                     <div className="flex items-start gap-2 mt-3">
                       <Checkbox checked={field.value} onCheckedChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} className="mt-0.5" />
                       <label className="text-sm text-gray-700 cursor-pointer" onClick={() => field.onChange(!field.value)}>
-                        I agree to the{' '}
-                        <span className="text-red-500 hover:underline">
-                          terms & conditions
-                        </span>
-                      </label>
+                          Ik ga akkoord met de{' '}
+                          <span className="text-red-500 hover:underline">
+                            algemene voorwaarden
+                          </span>
+                        </label>
                     </div>
                     {fieldState.error && <p className="text-sm text-red-500 mt-1">{fieldState.error.message}</p>}
                   </div>
@@ -281,15 +281,15 @@ export default function SignupSalesForm() {
                 className="w-full bg-[#008000] hover:bg-[#066106] text-white font-medium py-3 rounded-lg"
                 disabled={salesRegistrationMutation.isPending}
               >
-                {salesRegistrationMutation.isPending ? "Registering..." : "Register"}
+                {salesRegistrationMutation.isPending ? "Registreren..." : "Registreren"}
               </Button>
             </div>
 
             {/* Log In Link */}
             <div className="text-center text-sm text-gray-600 pt-2 pb-1">
-              Already have an account?{' '}
+              Heeft u al een account?{' '}
               <Link href="/signin" className="text-blue-600 hover:underline font-medium">
-                Log In
+                Inloggen
               </Link>
             </div>
           </form>

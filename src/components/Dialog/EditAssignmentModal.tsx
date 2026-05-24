@@ -192,13 +192,13 @@ export function EditAssignmentModal({
 
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         {isLoading ? (
-          <p className="text-center py-10">Loading assignment...</p>
+          <p className="text-center py-10">Opdracht laden...</p>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             <DialogHeader>
-              <DialogTitle>Edit Assignment</DialogTitle>
+              <DialogTitle>Opdracht bewerken</DialogTitle>
               <DialogDescription>
-                Update your assignment details and click save when done.
+                Werk uw opdrachtgegevens bij en klik op opslaan wanneer u klaar bent.
               </DialogDescription>
             </DialogHeader>
 
@@ -207,14 +207,14 @@ export function EditAssignmentModal({
               <Label>Banner</Label>
               <label className="flex items-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 bg-white">
                 <div className="flex items-center gap-3">
-                  <span className="text-gray-700 font-medium">Choose File</span>
+                  <span className="text-gray-700 font-medium">Kies bestand</span>
                   <span className="h-5 w-px bg-gray-300"></span>
                   <span className="text-gray-500 text-sm truncate max-w-[200px]">
                     {formData.banner
                       ? formData.banner.name
                       : singleAssignmentData?.data?.banner
                       ? singleAssignmentData.data.banner.split("/").pop()
-                      : "No File Chosen"}
+                        : "Geen bestand gekozen"}
                   </span>
                 </div>
                 <input
@@ -237,26 +237,26 @@ export function EditAssignmentModal({
 
             {/* Title */}
             <div>
-              <Label htmlFor="title">Assignment Title</Label>
+              <Label htmlFor="title">Opdracht titel</Label>
               <Input
                 id="title"
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
-                placeholder="Enter Assignment Name"
+                placeholder="Voer opdrachtnaam in"
                 className="h-[50px]"
               />
             </div>
 
             {/* Description */}
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">Beschrijving</Label>
               <Textarea
                 id="description"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
-                placeholder="Write Assignment Description"
+                placeholder="Schrijf de opdrachtbeschrijving"
                 rows={5}
               />
             </div>
@@ -269,7 +269,7 @@ export function EditAssignmentModal({
                 name="budget"
                 value={formData.budget}
                 onChange={handleInputChange}
-                placeholder="Enter Budget"
+                placeholder="Voer budget in"
                 className="h-[50px]"
               />
             </div>
@@ -282,12 +282,12 @@ export function EditAssignmentModal({
                 onValueChange={handlePricingTypeChange}
               >
                 <SelectTrigger className="h-[50px]">
-                  <SelectValue placeholder="Select Pricing Type" />
+                  <SelectValue placeholder="Selecteer prijstype" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="fixed">Fixed</SelectItem>
-                  <SelectItem value="hourly">Hourly</SelectItem>
-                  <SelectItem value="project">Project Based</SelectItem>
+                  <SelectItem value="fixed">Vast</SelectItem>
+                  <SelectItem value="hourly">Per uur</SelectItem>
+                  <SelectItem value="project">Op projectbasis</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -299,12 +299,12 @@ export function EditAssignmentModal({
                 value={formData.paymentMethod}
                 onValueChange={handlePaymentMethodChange}
               >
-                <SelectTrigger className="h-[50px]">
-                  <SelectValue placeholder="Select Payment Method" />
+                  <SelectTrigger className="h-[50px]">
+                  <SelectValue placeholder="Selecteer betaalmethode" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bank">Bank Transfer</SelectItem>
-                  <SelectItem value="card">Credit Card</SelectItem>
+                  <SelectItem value="bank">Overschrijving</SelectItem>
+                  <SelectItem value="card">Creditcard</SelectItem>
                   <SelectItem value="stripe">Stripe</SelectItem>
                   <SelectItem value="wallet">Wallet</SelectItem>
                 </SelectContent>
@@ -325,7 +325,7 @@ export function EditAssignmentModal({
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {formData.deadline
                       ? format(new Date(formData.deadline), "PPP")
-                      : "Pick a date"}
+                      : "Kies een datum"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -350,17 +350,17 @@ export function EditAssignmentModal({
 
             {/* Upload File */}
             <div>
-              <Label>Upload File (Optional)</Label>
+              <Label>Bestand uploaden (optioneel)</Label>
               <label className="flex items-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 bg-white">
                 <div className="flex items-center gap-3">
-                  <span className="text-gray-700 font-medium">Choose File</span>
+                  <span className="text-gray-700 font-medium">Kies bestand</span>
                   <span className="h-5 w-px bg-gray-300"></span>
                   <span className="text-gray-500 text-sm truncate max-w-[200px]">
                     {formData.uploadFile
                       ? formData.uploadFile.name
                       : singleAssignmentData?.data?.uploadFile
                       ? singleAssignmentData.data.uploadFile.split("/").pop()
-                      : "No File Chosen"}
+                      : "Geen bestand gekozen"}
                   </span>
                 </div>
                 <input
@@ -377,7 +377,7 @@ export function EditAssignmentModal({
                   rel="noopener noreferrer"
                   className="text-blue-600 text-sm mt-2 block"
                 >
-                  View existing file
+                  Bekijk bestaand bestand
                 </a>
               )}
             </div>
@@ -395,7 +395,7 @@ export function EditAssignmentModal({
                 htmlFor="showToPublic"
                 className="text-sm font-medium text-gray-700"
               >
-                Show to Public (Visitors)
+                Zichtbaar voor publiek (bezoekers)
               </Label>
             </div>
 
@@ -405,7 +405,7 @@ export function EditAssignmentModal({
                 disabled={updateMutation.isPending}
                 className="bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-full h-auto"
               >
-                {updateMutation.isPending ? "Saving..." : "Save Changes"}
+                {updateMutation.isPending ? "Opslaan..." : "Wijzigingen opslaan"}
               </Button>
             </DialogFooter>
           </form>

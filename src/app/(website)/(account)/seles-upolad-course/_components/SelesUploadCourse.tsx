@@ -139,33 +139,33 @@ function SelesUploadCourse() {
   return (
     <div className="min-h-screen">
       <BreadcrumbHeader
-        title="Upload New Course"
+        title="Nieuwe cursus uploaden"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Upload New Course", href: "/upload_new_course" },
+          { label: "Startpagina", href: "/" },
+          { label: "Nieuwe cursus uploaden", href: "/upload_new_course" },
         ]}
       />
       <div className="container mx-auto bg-white rounded-lg p-[96px]">
         <h1 className="text-3xl font-bold text-gray-900 mb-14 text-center">
-          Upload New Course
+          Nieuwe cursus uploaden
         </h1>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Course Title & Level */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="courseTitle">Course Title</Label>
+              <Label htmlFor="courseTitle">Cursusnaam</Label>
               <Input
                 id="courseTitle"
                 name="courseTitle"
                 value={formData.courseTitle}
                 onChange={handleInputChange}
-                placeholder="Enter Course Name"
+                placeholder="Voer cursusnaam in"
               />
             </div>
 
             <div>
-              <Label htmlFor="courseLevel">Course Level</Label>
+              <Label htmlFor="courseLevel">Niveau</Label>
               <Select
                 value={formData.courseLevel}
                 onValueChange={handleCourseLevelChange}
@@ -185,13 +185,13 @@ function SelesUploadCourse() {
 
           {/* Description */}
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Beschrijving</Label>
             <Textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="Write Course Description"
+              placeholder="Schrijf cursusbeschrijving"
               rows={5}
             />
           </div>
@@ -199,12 +199,12 @@ function SelesUploadCourse() {
           {/* Thumbnail & Intro Video */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label>Course Thumbnail</Label>
+              <Label>Cursusvoorbeeldafbeelding</Label>
               <label className="flex items-center justify-center w-full px-4 py-3 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-gray-400">
                 <span>
                   {formData.courseThumbnail
                     ? formData.courseThumbnail.name
-                    : "No File Chosen"}
+                    : "Geen bestand gekozen"}
                 </span>
                 <input
                   type="file"
@@ -214,13 +214,13 @@ function SelesUploadCourse() {
               </label>
             </div>
             <div>
-              <Label htmlFor="introductionVideo">Introduction Video URL</Label>
+              <Label htmlFor="introductionVideo">Introductievideo URL</Label>
               <Input
                 id="introductionVideo"
                 name="introductionVideo"
                 value={formData.introductionVideo}
                 onChange={handleInputChange}
-                placeholder="Enter video URL"
+                placeholder="Voer video-URL in"
               />
             </div>
           </div>
@@ -228,23 +228,23 @@ function SelesUploadCourse() {
           {/* Full Course Video & Total Duration */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="fullCourseVideo">Full Course Video URL</Label>
+              <Label htmlFor="fullCourseVideo">Volledige cursusvideo URL</Label>
               <Input
                 id="fullCourseVideo"
                 name="fullCourseVideo"
                 value={formData.fullCourseVideo}
                 onChange={handleInputChange}
-                placeholder="Enter video URL"
+                placeholder="Voer video-URL in"
               />
             </div>
             <div>
-              <Label htmlFor="totalDuration">Total Duration</Label>
+              <Label htmlFor="totalDuration">Totale duur</Label>
               <Input
                 id="totalDuration"
                 name="totalDuration"
                 value={formData.totalDuration}
                 onChange={handleInputChange}
-                placeholder="e.g., 2 hours 30 minutes"
+                placeholder="bijv. 2 uur 30 minuten"
               />
             </div>
           </div>
@@ -252,23 +252,23 @@ function SelesUploadCourse() {
           {/* Target Audience & Language */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="targetAudience">Target Audience</Label>
+              <Label htmlFor="targetAudience">Doelgroep</Label>
               <Input
                 id="targetAudience"
                 name="targetAudience"
                 value={formData.targetAudience}
                 onChange={handleInputChange}
-                placeholder="Enter target audience"
+                placeholder="Voer doelgroep in"
               />
             </div>
             <div>
-              <Label htmlFor="language">Language</Label>
+              <Label htmlFor="language">Taal</Label>
               <Input
                 id="language"
                 name="language"
                 value={formData.language}
                 onChange={handleInputChange}
-                placeholder="Enter language"
+                placeholder="Voer taal in"
               />
             </div>
           </div>
@@ -276,22 +276,22 @@ function SelesUploadCourse() {
           {/* Number of Modules & Extra Files */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="numberOfModules">Number of Modules</Label>
+              <Label htmlFor="numberOfModules">Aantal modules</Label>
               <Input
                 id="numberOfModules"
                 name="numberOfModules"
                 value={formData.numberOfModules}
                 onChange={handleInputChange}
-                placeholder="Enter number"
+                placeholder="Voer aantal in"
               />
             </div>
             <div>
-              <Label>Upload Extra Files</Label>
+              <Label>Extra bestanden uploaden</Label>
               <label className="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400">
                 <span>
                   {formData.uploadExtraFiles
                     ? formData.uploadExtraFiles.name
-                    : "No File Chosen"}
+                    : "Geen bestand gekozen"}
                 </span>
                 <input
                   type="file"
@@ -305,23 +305,23 @@ function SelesUploadCourse() {
           {/* Price & Discount */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="price">Price</Label>
+              <Label htmlFor="price">Prijs</Label>
               <Input
                 id="price"
                 name="price"
                 value={formData.price}
                 onChange={handleInputChange}
-                placeholder="Enter price"
+                placeholder="Voer prijs in"
               />
             </div>
             <div>
-              <Label htmlFor="discount">Discount (%)</Label>
+              <Label htmlFor="discount">Korting (%)</Label>
               <Select
                 value={formData.discount}
                 onValueChange={handleDiscountChange}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select discount" />
+                  <SelectValue placeholder="Selecteer korting" />
                 </SelectTrigger>
                 <SelectContent>
                   {["0", "5", "10", "15", "20", "25", "30"].map((d) => (
@@ -342,13 +342,13 @@ function SelesUploadCourse() {
               onCheckedChange={handleCheckboxChange}
             />
             <Label htmlFor="licenseRights" className="cursor-pointer">
-              I confirm I have the license rights to upload this course
+              Ik bevestig dat ik de licentierechten heb om deze cursus te uploaden
             </Label>
           </div>
 
           {/* Submit Button */}
           <Button type="submit" className="w-full mt-6">
-            {createCourseMutation.isPending ? "Uploading..." : "Submit Course"}
+            {createCourseMutation.isPending ? "Bezig met uploaden..." : "Cursus uploaden"}
           </Button>
         </form>
       </div>

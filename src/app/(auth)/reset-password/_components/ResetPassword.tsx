@@ -32,13 +32,13 @@ const formSchema = z
   .object({
     newPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters.")
-      .regex(/[0-9]/, "Password must contain at least one number."),
-    confirmPassword: z.string().min(6, "Please confirm your password."),
+      .min(6, "Wachtwoord moet minimaal 6 tekens bevatten.")
+      .regex(/[0-9]/, "Wachtwoord moet ten minste één nummer bevatten."),
+    confirmPassword: z.string().min(6, "Bevestig uw wachtwoord."),
     rememberMe: z.boolean().optional(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match.",
+    message: "Wachtwoorden komen niet overeen.",
     path: ["confirmPassword"],
   });
 
@@ -133,10 +133,10 @@ export default function ResetPassword() {
               />
             </div>
             <CardTitle className="text-center text-2xl font-bold text-gray-900">
-              New Password
+              Nieuw wachtwoord
             </CardTitle>
             <CardDescription className="text-center text-gray-600 text-sm">
-              Please create your new password
+              Maak uw nieuwe wachtwoord aan
             </CardDescription>
           </CardHeader>
 
@@ -149,11 +149,11 @@ export default function ResetPassword() {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel>New Password</FieldLabel>
+                      <FieldLabel>Nieuw wachtwoord</FieldLabel>
                       <div className="relative">
                         <Input
                           {...field}
-                          placeholder="Enter Password..."
+                          placeholder="Voer uw wachtwoord in..."
                           type={showNewPassword ? "text" : "password"}
                           className="placeholder-gray-400 pr-10"
                         />
@@ -176,11 +176,11 @@ export default function ResetPassword() {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel>Re-enter Password</FieldLabel>
+                      <FieldLabel>Bevestig wachtwoord</FieldLabel>
                       <div className="relative">
                         <Input
                           {...field}
-                          placeholder="Enter Password..."
+                          placeholder="Voer uw wachtwoord opnieuw in..."
                           type={showConfirmPassword ? "text" : "password"}
                           className="placeholder-gray-400 pr-10"
                         />
@@ -214,7 +214,7 @@ export default function ResetPassword() {
                         htmlFor="remember"
                         className="ml-2 text-sm text-gray-600 cursor-pointer"
                       >
-                        Remember Me
+                        Onthoud mij
                       </label>
                     </div>
                   )}
@@ -230,7 +230,7 @@ export default function ResetPassword() {
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-200"
               disabled={resetPasswordMutation.isPending}
             >
-              {resetPasswordMutation.isPending ? "Submitting..." : "Continue"}
+              {resetPasswordMutation.isPending ? "Bezig met verzenden..." : "Doorgaan"}
             </Button>
           </CardFooter>
         </Card>

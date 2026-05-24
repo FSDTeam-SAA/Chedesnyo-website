@@ -24,12 +24,12 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "email" },
-        password: { label: "Password", type: "password", placeholder: "password" },
+        email: { label: "E-mail", type: "text", placeholder: "e-mail" },
+        password: { label: "Wachtwoord", type: "password", placeholder: "wachtwoord" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Please enter your email and password");
+          throw new Error("Voer uw e-mailadres en wachtwoord in");
         }
 
         try {
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
 
           const response = await res.json();
           if (!res.ok || !response?.success) {
-            throw new Error(response?.message || "Login failed");
+            throw new Error(response?.message || "Inloggen mislukt");
           }
 
           const user = response.data.user;
@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
           const errorMessage =
             error instanceof Error
               ? error.message
-              : "Authentication failed. Please try again.";
+              : "Authenticatie mislukt. Probeer het opnieuw.";
           throw new Error(errorMessage);
         }
       },

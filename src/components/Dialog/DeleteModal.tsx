@@ -24,17 +24,17 @@ export function DeleteModal({ open, onClose, onConfirm }: DeleteModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you sure?</DialogTitle>
+          <DialogTitle>Weet u het zeker?</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-gray-600">
-          Do you really want to delete this item? This action cannot be undone.
+          Weet u zeker dat u dit item wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
         </p>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            Cancel
+            Annuleren
           </Button>
           <Button variant="destructive" onClick={onConfirm}>
-            Delete
+            Verwijderen
           </Button>
         </DialogFooter>
       </DialogContent>

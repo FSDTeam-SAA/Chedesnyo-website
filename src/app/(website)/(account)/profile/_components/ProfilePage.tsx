@@ -197,10 +197,10 @@ function SalesProfile() {
   return (
     <div>
       <BreadcrumbHeader
-        title="Profile"
+        title="Profiel"
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Profile", href: "/sales-profile" },
+          { label: "Startpagina", href: "/" },
+          { label: "Profiel", href: "/sales-profile" },
         ]}
       />
 
@@ -227,7 +227,7 @@ function SalesProfile() {
             <div className="mt-4 w-full flex flex-col gap-2">
               <label className="cursor-pointer flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm w-full">
                 <Upload size={16} />
-                Select Image
+                Selecteer afbeelding
                 <input
                   type="file"
                   className="hidden"
@@ -240,13 +240,13 @@ function SalesProfile() {
                 onClick={handleUploadImageClick}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg"
               >
-                Upload Image
+                Afbeelding uploaden
               </Button>
             </div>
 
             <div className="w-full border-t border-gray-300 mt-6"></div>
             <h1 className="text-2xl font-bold text-gray-900 mt-6 text-center">
-              Profile Setting
+              Profielinstellingen
             </h1>
           </div>
 
@@ -255,14 +255,14 @@ function SalesProfile() {
             <form onSubmit={handleSaveProfile} className="space-y-6">
               {/* Full Name */}
               <div>
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">Volledige naam</Label>
                 <Input
                   id="fullName"
                   name="fullName"
                   type="text"
                   value={profileData.fullName}
                   onChange={handleInputChange}
-                  placeholder="Enter full name"
+                  placeholder="Voer volledige naam in"
                   className="w-full"
                 />
               </div>
@@ -278,7 +278,7 @@ function SalesProfile() {
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Industry" />
+                      <SelectValue placeholder="Selecteer industrie" />
                     </SelectTrigger>
                     <SelectContent>
                       {industryData?.data.map((ind) => (
@@ -291,7 +291,7 @@ function SalesProfile() {
                 </div>
 
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">E-mail</Label>
                   <Input
                   readOnly
                     id="email"
@@ -299,7 +299,7 @@ function SalesProfile() {
                     type="email"
                     value={profileData.email}
                     onChange={handleInputChange}
-                    placeholder="example@gmail.com"
+                    placeholder="voorbeeld@gmail.com"
                   />
                 </div>
               </div>
@@ -355,7 +355,7 @@ function SalesProfile() {
                 type="submit"
                 className="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-full"
               >
-                {updateProfileMutation.isPending ? "Saving..." : "Save Profile"}
+                {updateProfileMutation.isPending ? "Opslaan..." : "Profiel opslaan"}
               </Button>
             </form>
           </div>

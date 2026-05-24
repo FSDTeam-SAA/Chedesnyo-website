@@ -19,10 +19,10 @@ function Footer() {
               </div>
             </div>
             <p className="text-gray-600 text-sm mb-2">
-              Amsterdam, The Netherlands
+              Amsterdam, Nederland
             </p>
             <p className="text-gray-600 text-sm">
-              <span className="font-semibold">Email:</span> info@dealclosed.com
+              <span className="font-semibold">E-mail:</span> info@dealclosed.com
             </p>
           </div>
 
@@ -32,21 +32,21 @@ function Footer() {
 
               {/* Useful Links */}
               <div>
-                <h4 className="font-bold text-gray-900 mb-6">Useful Links</h4>
+                <h4 className="font-bold text-gray-900 mb-6">Handige links</h4>
                 <ul className="space-y-3">
                   <li>
                     <Link href="/explore-freelancers" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      Explore Freelancers
+                      Ontdek freelancers
                     </Link>
                   </li>
                   <li>
                     <Link href="/assignments" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      Assignments
+                      Opdrachten
                     </Link>
                   </li>
                   <li>
                     <Link href="/leaderboard" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      Leaderboard
+                      Ranglijst
                     </Link>
                   </li>
                   {/* <li>
@@ -56,7 +56,7 @@ function Footer() {
                   </li> */}
                   <li>
                     <Link href="/blogs" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      Blogs
+                      Blog
                     </Link>
                   </li>
                 </ul>
@@ -64,7 +64,7 @@ function Footer() {
 
               {/* Other Links */}
               <div>
-                <h4 className="font-bold text-gray-900 mb-6">Other Links</h4>
+                <h4 className="font-bold text-gray-900 mb-6">Andere links</h4>
                 <ul className="space-y-3">
                   {/* <li>
                     <Link href="/contact" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
@@ -73,12 +73,12 @@ function Footer() {
                   </li> */}
                   <li>
                     <Link href="/find-business" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      Find Business
+                      Vind bedrijven
                     </Link>
                   </li>
                   <li>
                     <Link href="/courses" className="text-gray-600 hover:text-green-600 text-sm transition-colors">
-                      Courses
+                      Cursussen
                     </Link>
                   </li>
                   {/* <li>
@@ -98,7 +98,7 @@ function Footer() {
 
             {/* Follow Us */}
             <div>
-              <h4 className="font-bold text-gray-900 mb-6">Follow Us</h4>
+              <h4 className="font-bold text-gray-900 mb-6">Volg ons</h4>
               <div className="flex justify-center sm:justify-start gap-4">
                 <a
                   href="https://www.facebook.com"
@@ -132,8 +132,8 @@ function Footer() {
 
         {/* Divider */}
         <div className="border-t border-gray-200 pt-6 mt-10">
-          <p className="text-center text-gray-600 text-sm">
-            © 2025 <span className="font-bold">Deal Closed</span>. All Rights Reserved
+            <p className="text-center text-gray-600 text-sm">
+            © 2025 <span className="font-bold">Deal Closed</span>. Alle rechten voorbehouden
           </p>
         </div>
       </div>

@@ -3,7 +3,7 @@ import ResetPassword from './_components/ResetPassword'
 
 function page() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Laden...</div>}>
       <ResetPassword />
     </Suspense>
   )
